@@ -122,6 +122,44 @@ Json::Value Control::DeleteAnnouncement(Json::Value &deletejson) {
     return resjson;
 }
 
+// ----------------------讨论----------------------------
+Json::Value Control::SelectDiscussList(Json::Value &queryjson) {
+    return DiscussList::GetInstance()->SelectDiscussList(queryjson);
+}
+
+Json::Value Control::SelectDiscussListByAdmin(Json::Value &queryjson) {
+    return DiscussList::GetInstance()->SelectDiscussListByAdmin(queryjson);
+}
+
+Json::Value Control::SelectDiscuss(Json::Value &queryjson) {
+    return DiscussList::GetInstance()->SelectDiscuss(queryjson);
+}
+
+Json::Value Control::SelectDiscussByEdit(Json::Value &queryjson) {
+    return DiscussList::GetInstance()->SelectDiscussByEdit(queryjson);
+}
+
+Json::Value Control::InsertDiscuss(Json::Value &insertjson) {
+    return DiscussList::GetInstance()->InsertDiscuss(insertjson);
+}
+
+Json::Value Control::UpdateDiscuss(Json::Value &updatejson) {
+    return DiscussList::GetInstance()->UpdateDiscuss(updatejson);
+}
+
+Json::Value Control::DeleteDiscuss(Json::Value &deletejson) {
+    Json::Value resjson = DiscussList::GetInstance()->DeleteDiscuss(deletejson);
+
+    // 当评论模块完成时，将下面注释去掉
+    // if (resjson["Result"].asString() == "Success")
+    // {
+    //     Json::Value json;
+    //     json["ArticleId"] = deletejson["DiscussId"];
+    //     CommentList::GetInstance()->DeleteArticleComment(json);
+    // }
+    return resjson;
+}
+
 // 构造函数
 Control::Control() {
     // 初始化题目标签

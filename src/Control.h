@@ -76,6 +76,28 @@ public:
     // 删除公告
     Json::Value DeleteAnnouncement(Json::Value &deletejson);
 
+    // ----------------------讨论-----------------------
+    // 查询题解列表
+    Json::Value SelectDiscussList(Json::Value &queryjson);
+
+    // 管理员查询
+    Json::Value SelectDiscussListByAdmin(Json::Value &queryjson);
+
+    // 查询题解
+    Json::Value SelectDiscuss(Json::Value &queryjson);
+
+    // 查询题解进行编辑
+    Json::Value SelectDiscussByEdit(Json::Value &queryjson);
+
+    // 插入题解
+    Json::Value InsertDiscuss(Json::Value &insertjson);
+
+    // 更新题解
+    Json::Value UpdateDiscuss(Json::Value &updatejson);
+
+    // 删除题解
+    Json::Value DeleteDiscuss(Json::Value &deletejson);
+
     Control();
 
     ~Control();

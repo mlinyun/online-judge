@@ -192,6 +192,63 @@ public:
     */
     Json::Value DeleteAnnouncement(Json::Value &deletejson);
 
+    // +++++++++++++++++++++++++Disscuss 讨论表++++++++++++++++++++++++++++
+    /*
+        功能：添加讨论
+        传入：Json(Title,Content,ParentId,UserId) 如果是父讨论ParentId=0
+        传出：Json(Result)
+    */
+    Json::Value InsertDiscuss(Json::Value &insertjson);
+
+    /*
+        功能：分页查询讨论
+        传入：Json(SearchInfo,Page,PageSize)
+        传出：Json(_id,Title,Views,Comments,CreateTime,User.Avatar,User.NickName)
+    */
+    Json::Value SelectDiscussList(Json::Value &queryjson);
+
+    /*
+        功能：管理员分页查询讨论
+        传入：Json(Page,PageSize)
+        传出：Json(_id,Title,Views,Comments,CreateTime,User.Avatar,User.NickName)
+    */
+    Json::Value SelectDiscussListByAdmin(Json::Value &queryjson);
+
+    /*
+        功能：查询讨论的详细信息，主要是编辑时的查询
+        传入：Json(DiscussId)
+        传出：Json(Result,Reason,Title,Content)
+    */
+    Json::Value SelectDiscussByEdit(Json::Value &queryjson);
+
+    /*
+        功能：查询讨论的详细内容，并且将其浏览量加一
+        传入：Json(DiscussId)
+        传出：Json(Resutl,Reason,Content,Views,Comments,CreateTime,UpdateTime,User.NickName,User.Avatar)
+    */
+    Json::Value SelectDiscuss(Json::Value &queryjson);
+
+    /*
+        功能：修改讨论的评论数
+        传入：Json(DiscussId,Num)
+        传出：bool
+    */
+    bool UpdateDiscussComments(Json::Value &updatejson);
+
+    /*
+        功能：更新讨论
+        传入：Json(DiscussId,Title,Content)
+        传出；Json(Result,Reason)
+    */
+    Json::Value UpdateDiscuss(Json::Value &updatejson);
+
+    /*
+        功能：删除讨论
+        传入：Json(DiscussId)
+        传出：Json(Result,Reason)
+    */
+    Json::Value DeleteDiscuss(Json::Value &deletejson);
+
 private:
     /*
         功能：获取某一个集合中最大的ID
