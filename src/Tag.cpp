@@ -10,6 +10,15 @@ Tag *Tag::GetInstance() {
     return &tag;
 }
 
+void Tag::InitProblemTags() {
+    Json::Value jsonvalue = MoDB::GetInstance()->getProblemTags();
+    problemtags["Tags"] = jsonvalue["values"];
+}
+
+Json::Value Tag::getProblemTags() {
+    return problemtags;
+}
+
 Tag::Tag() {
 }
 

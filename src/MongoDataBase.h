@@ -76,6 +76,73 @@ public:
     */
     Json::Value DeleteUser(Json::Value &deletejson);
 
+    // ++++++++++++++++++++++++++题目表Problem+++++++++++++++++++++++++++++
+
+    /*
+        功能：管理员查询题目信息
+        传入：Json(ProblemId)
+        传出：Json(Result,Reason,_id,Title,Description,TimeLimit,MemoryLimit,UserNickName,JudgeNum,Tags)
+    */
+    Json::Value SelectProblemInfoByAdmin(Json::Value &queryjson);
+
+    /*
+        功能：获取题目信息
+        传入：Json(ProblemId)
+        传出：Json(Result,Reason,_id,Title,Description,TimeLimit,MemoryLimit,JudgeNum,SubmitNum,ACNum,UserNickName,Tags)
+    */
+    Json::Value SelectProblem(Json::Value &queryjson);
+
+    /*
+        功能：插入题目
+        传入：Json(Title,Description,TimeLimit,MemoryLimit,JudgeNum,Tags,UseNickName)
+        传出：Json(Reuslt,Reason,ProblemId)
+    */
+    Json::Value InsertProblem(Json::Value &insertjson);
+
+    /*
+        功能：修改题目信息
+        传入：Json(ProblemId,Title,Description,TimeLimit,MemoryLimit,JudgeNum,Tags,UseNickName)
+        传出：Json(Result,Reason)
+    */
+    Json::Value UpdateProblem(Json::Value &updatejson);
+
+    /*
+        功能：删除题目
+        传入：Json(ProblemId)
+        传出：Json(Result,Reason)
+    */
+    Json::Value DeleteProblem(Json::Value &deletejson);
+
+    /*
+        功能：分页获取题目列表（包含查询条件，暂时未添加）
+        前端传入
+        Json(SearchInfo,Page,PageSize,MatchString)
+        后端传出
+        Json(ProblemId,Title,SubmitNum,CENum,ACNum,WANum,TLENum,MLENum,SENum,Tags),TotalNum
+    */
+    Json::Value SelectProblemList(Json::Value &queryjson);
+
+    /*
+        功能：管理员分页获取题目列表
+        传入：Json(Page,PageSize)
+        传出：Json(ArrayInfo([ProblemId,Title,SubmitNum,CENum,ACNum,WANum,TLENum,MLENum,SENum,Tags]),TotalNum)
+    */
+    Json::Value SelectProblemListByAdmin(Json::Value &queryjson);
+
+    /*
+        功能：更新题目的状态数量
+        传入：Json(ProblemId,Status)
+        传出：bool
+    */
+    bool UpdateProblemStatusNum(Json::Value &updatejson);
+
+    /*
+        功能：获取题目的所有标签
+        传入：void
+        传出：Json(tags)
+    */
+    Json::Value getProblemTags();
+
 private:
     /*
         功能：获取某一个集合中最大的ID

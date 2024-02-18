@@ -32,6 +32,28 @@ public:
     // 删除用户
     Json::Value DeleteUser(Json::Value &deletejson);
 
+    // ---------------题目 Problem ------------------
+    // 管理员查看题目数据
+    Json::Value SelectProblemInfoByAdmin(Json::Value &queryjson);
+
+    // 用户查询题目信息
+    Json::Value SelectProblem(Json::Value &queryjson);
+
+    // 编辑题目
+    Json::Value EditProblem(Json::Value &insertjson);
+
+    // 删除题目
+    Json::Value DeleteProblem(Json::Value &deletejson);
+
+    // 返回题库
+    Json::Value SelectProblemList(Json::Value &queryjson);
+
+    // 管理员查询列表
+    Json::Value SelectProblemListByAdmin(Json::Value &queryjson);
+
+    // 获取标签
+    Json::Value GetTags(Json::Value &queryjson);
+
     Control();
 
     ~Control();
