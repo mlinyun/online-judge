@@ -12,6 +12,70 @@ public:
     // 局部静态特性的方式实现单实例
     static MoDB *GetInstance();
 
+    // +++++++++++++++++++++++用户表User+++++++++++++++++++++++++++++
+    /*
+        功能：用户注册
+        传入：Json(NickName,Account,PassWord,PersonalProfile,School,Major)
+        传出：Json(Result,Reason)
+    */
+    Json::Value RegisterUser(Json::Value &registerjson);
+
+    /*
+        功能：用户登录
+        传入：Json(Account,PassWord)
+        传出：Json(Result,Reason,Info(_id,NickName,Avatar,CommentLikes,Solves,Authority))
+    */
+    Json::Value LoginUser(Json::Value &loginjson);
+
+    /*
+        功能：更新用户的题目信息，当用户提交代码时
+        传入：Json(UserId,ProblemId,Status)
+        传出：bool(如果AC是否向其添加)
+    */
+    bool UpdateUserProblemInfo(Json::Value &updatejson);
+
+    /*
+        功能：获取用户的Rank排名
+        传入：Json(Page,PageSize)
+        传出：Json(ArrayInfo[_id,Rank,Avatar,NickName,PersonalProfile,SubmitNum,ACNum],TotalNum)
+    */
+    Json::Value SelectUserRank(Json::Value &queryjson);
+
+    /*
+        功能：用户主页展示
+        传入：Json(UserId)
+        传出：Json(Result,Reason,_id,Avatar,NickName,PersonalProfile,School,Major,JoinTime,Solves,ACNum,SubmitNum)
+    */
+    Json::Value SelectUserInfo(Json::Value &queryjson);
+
+    /*
+        功能：更改用户信息
+        传入：Json(UserId,Avatar,PersonalProfile,School,Major)
+        传出：Json(Result,Reason)
+    */
+    Json::Value UpdateUserInfo(Json::Value &updatejson);
+
+    /*
+        功能：查询用户表，用于修改用户
+        传入：Json(UserId)
+        传出：Json(_id,Avatar,NickName,PersonalProfile,School,Major)
+    */
+    Json::Value SelectUserUpdateInfo(Json::Value &queryjson);
+
+    /*
+        功能：分页查询用户列表
+        传入：Json(Page,PageSize)
+        传出：Json(_id,NickName,PersonalProfile,School,Major,JoinTime,TotalNum)
+    */
+    Json::Value SelectUserSetInfo(Json::Value &queryjson);
+
+    /*
+        功能：删除用户
+        传入：Json(UserId)
+        传出：Json(Result,Reason)
+    */
+    Json::Value DeleteUser(Json::Value &deletejson);
+
 private:
     /*
         功能：获取某一个集合中最大的ID

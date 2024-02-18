@@ -1,0 +1,85 @@
+
+use('OnlineJudge');
+
+db.User.insertMany([
+  {
+    '_id':1,
+    'Avatar':'http://127.0.0.1:8081/image/2',
+    'NickName':'小a',
+    'Account':'111111',
+    'PassWord':'111111',
+    'PersonalProfile':'helloworld',
+    'School':'xxx',
+    'Major':'xxx',
+    'JoinTime':'2000-01-01 00:00:00',
+    'CommentLikes':[],
+    'Solves':[],
+    'SubmitNum':10,
+    'ACNum':10,
+    'Authority':5
+  },
+  {
+    '_id':2,
+    'Avatar':'http://127.0.0.1:8081/image/1',
+    'NickName':'小b',
+    'Account':'222222',
+    'PassWord':'222222',
+    'PersonalProfile':'helloworld2',
+    'School':'xxx',
+    'Major':'xxx',
+    'JoinTime':'2000-01-01 00:00:00',
+    'CommentLikes':[],
+    'Solves':[],
+    'SubmitNum':7,
+    'ACNum':5,
+    'Authority':3
+  },
+  {
+    '_id':3,
+    'Avatar':'http://127.0.0.1:8081/image/1',
+    'NickName':'小c',
+    'Account':'333333',
+    'PassWord':'333333',
+    'PersonalProfile':'helloworld',
+    'School':'xxx',
+    'Major':'xxx',
+    'JoinTime':'2000-01-01 00:00:00',
+    'CommentLikes':[],
+    'Solves':[],
+    'SubmitNum':1,
+    'ACNum':1,
+    'Authority':3
+  },
+  {
+    '_id':4,
+    'Avatar':'http://127.0.0.1:8081/image/1',
+    'NickName':'小d',
+    'Account':'444444',
+    'PassWord':'444444',
+    'PersonalProfile':'helloworld',
+    'School':'xxx',
+    'Major':'xxx',
+    'JoinTime':'2000-01-01 00:00:00',
+    'CommentLikes':[],
+    'Solves':[],
+    'SubmitNum':4,
+    'ACNum':3,
+    'Authority':3
+  },
+  {
+    '_id':5,
+    'Avatar':'http://127.0.0.1:8081/image/1',
+    'NickName':'小e',
+    'Account':'555555',
+    'PassWord':'555555',
+    'PersonalProfile':'helloworld',
+    'School':'xxx',
+    'Major':'xxx',
+    'JoinTime':'2000-01-01 00:00:00',
+    'CommentLikes':[],
+    'Solves':[],
+    'SubmitNum':15,
+    'ACNum':10,
+    'Authority':5
+  }
+])
