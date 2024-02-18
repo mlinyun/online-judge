@@ -54,6 +54,28 @@ public:
     // 获取标签
     Json::Value GetTags(Json::Value &queryjson);
 
+    // ----------------------公告---------------------------
+    // 查询公告列表
+    Json::Value SelectAnnouncementList(Json::Value &queryjson);
+
+    // 管理员查询公告列表
+    Json::Value SelectAnnouncementListByAdmin(Json::Value &queryjson);
+
+    // 查询公告
+    Json::Value SelectAnnouncement(Json::Value &queryjson);
+
+    // 查询公告 进行编辑
+    Json::Value SelectAnnouncementByEdit(Json::Value &queryjson);
+
+    // 插入公告
+    Json::Value InsertAnnouncement(Json::Value &insertjson);
+
+    // 更新公告
+    Json::Value UpdateAnnouncement(Json::Value &updatejson);
+
+    // 删除公告
+    Json::Value DeleteAnnouncement(Json::Value &deletejson);
+
     Control();
 
     ~Control();

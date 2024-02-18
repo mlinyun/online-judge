@@ -77,7 +77,6 @@ public:
     Json::Value DeleteUser(Json::Value &deletejson);
 
     // ++++++++++++++++++++++++++题目表Problem+++++++++++++++++++++++++++++
-
     /*
         功能：管理员查询题目信息
         传入：Json(ProblemId)
@@ -142,6 +141,56 @@ public:
         传出：Json(tags)
     */
     Json::Value getProblemTags();
+
+    // +++++++++++++++++++++++++Announcement 公告表++++++++++++++++++++++++++++
+    /*
+        功能：添加公告
+        传入：Json(Title,Content,UserId,Level)
+        传出：Json(Result,Reason)
+    */
+    Json::Value InsertAnnouncement(Json::Value &insertjson);
+
+    /*
+        功能：分页查询公告
+        传入：Json(Page,PageSize)
+        传出：Json([Result,Reason,_id,Title,Views,Comments,CreateTime],TotalNum)
+    */
+    Json::Value SelectAnnouncementList(Json::Value &queryjson);
+
+    /*
+        功能：查询公告的详细信息，主要是编辑时的查询
+        传入：Json(AnnouncementId)
+        传出：Json(Result,Reason,Title,Content,Level)
+    */
+    Json::Value SelectAnnouncementByEdit(Json::Value &queryjson);
+
+    /*
+        功能：查询公告的详细内容，并且将其浏览量加一
+        传入：Json(AnnouncementId)
+        传出：Json(Title,Content,Views,Comments,CreateTime,UpdateTime)
+    */
+    Json::Value SelectAnnouncement(Json::Value &queryjson);
+
+    /*
+        功能：修改公告的评论数
+        传入：Json(ArticleId,Num)
+        传出：bool
+    */
+    bool UpdateAnnouncementComments(Json::Value &updatejson);
+
+    /*
+        功能：更新公告
+        传入：Json(AnnouncementId,Title,Content,Level)
+        传出；Json(Result,Reason)
+    */
+    Json::Value UpdateAnnouncement(Json::Value &updatejson);
+
+    /*
+        功能：删除公告
+        传入：Json(AnnouncementId)
+        传出：Json(Result,Reason)
+    */
+    Json::Value DeleteAnnouncement(Json::Value &deletejson);
 
 private:
     /*

@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// 用户
+// --------------------用户------------------------
 Json::Value Control::RegisterUser(Json::Value &registerjson) {
     return UserList::GetInstance()->RegisterUser(registerjson);
 }
@@ -45,7 +45,7 @@ Json::Value Control::DeleteUser(Json::Value &deletejson) {
     return UserList::GetInstance()->DeleteUser(deletejson);
 }
 
-// 题目
+// --------------------题目------------------------
 Json::Value Control::SelectProblemInfoByAdmin(Json::Value &queryjson) {
     return ProblemList::GetInstance()->SelectProblemInfoByAdmin(queryjson);
 }
@@ -77,10 +77,49 @@ Json::Value Control::SelectProblemListByAdmin(Json::Value &queryjson) {
     return ProblemList::GetInstance()->SelectProblemListByAdmin(queryjson);
 }
 
+// --------------------标签------------------------
 Json::Value Control::GetTags(Json::Value &queryjson) {
     if (queryjson["TagType"].asString() == "Problem") {
         return Tag::GetInstance()->getProblemTags();
     }
+}
+
+// --------------------公告------------------------
+Json::Value Control::SelectAnnouncementList(Json::Value &queryjson) {
+    return AnnouncementList::GetInstance()->SelectAnnouncementList(queryjson);
+}
+
+Json::Value Control::SelectAnnouncementListByAdmin(Json::Value &queryjson) {
+    return AnnouncementList::GetInstance()->SelectAnnouncementListByAdmin(queryjson);
+}
+
+Json::Value Control::SelectAnnouncement(Json::Value &queryjson) {
+    return AnnouncementList::GetInstance()->SelectAnnouncement(queryjson);
+}
+
+Json::Value Control::SelectAnnouncementByEdit(Json::Value &queryjson) {
+    return AnnouncementList::GetInstance()->SelectAnnouncementByEdit(queryjson);
+}
+
+Json::Value Control::InsertAnnouncement(Json::Value &insertjson) {
+    return AnnouncementList::GetInstance()->InsertAnnouncement(insertjson);
+}
+
+Json::Value Control::UpdateAnnouncement(Json::Value &updatejson) {
+    return AnnouncementList::GetInstance()->UpdateAnnouncement(updatejson);
+}
+
+Json::Value Control::DeleteAnnouncement(Json::Value &deletejson) {
+    Json::Value resjson = AnnouncementList::GetInstance()->DeleteAnnouncement(deletejson);
+
+    // 当评论模块完成时，将下面注释去掉
+    // if (resjson["Result"].asString() == "Success")
+    // {
+    //     Json::Value json;
+    //     json["ArticleId"] = deletejson["AnnouncementId"];
+    //     CommentList::GetInstance()->DeleteArticleComment(json);
+    // }
+    return resjson;
 }
 
 // 构造函数

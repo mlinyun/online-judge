@@ -256,6 +256,7 @@ void doGetProblemInfo(const httplib::Request &req, httplib::Response &res) {
     res.set_content(resjson.toStyledString(), "json");
 }
 
+// 编辑题目
 void doEditProblem(const httplib::Request &req, httplib::Response &res) {
     printf("doEditProblem start!!!\n");
     Json::Value jsonvalue;
@@ -268,6 +269,7 @@ void doEditProblem(const httplib::Request &req, httplib::Response &res) {
     res.set_content(resjson.toStyledString(), "json");
 }
 
+// 删除题目
 void doDeleteProblem(const httplib::Request &req, httplib::Response &res) {
     printf("doDeleteProblem start!!!\n");
     Json::Value resjson;
@@ -286,6 +288,7 @@ void doDeleteProblem(const httplib::Request &req, httplib::Response &res) {
     res.set_content(resjson.toStyledString(), "json");
 }
 
+// 获取标签
 void doGetTags(const httplib::Request &req, httplib::Response &res) {
     printf("doGetTags start!!!\n");
     Json::Value queryjson;
@@ -297,6 +300,131 @@ void doGetTags(const httplib::Request &req, httplib::Response &res) {
     res.set_content(resjson.toStyledString(), "json");
 }
 
+// ------------------公告------------------------------
+void doGetAnnouncementList(const httplib::Request &req, httplib::Response &res) {
+    printf("doGetAnnouncementList start!!!\n");
+
+    Json::Value resjson;
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectAnnouncementList(queryjson);
+    }
+
+    printf("doGetAnnouncementList end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+void doGetAnnouncementListByAdmin(const httplib::Request &req, httplib::Response &res) {
+    printf("doGetAnnouncementListByAdmin start!!!\n");
+
+    Json::Value resjson;
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectAnnouncementListByAdmin(queryjson);
+    }
+
+    printf("doGetAnnouncementListByAdmin end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+void doGetAnnouncement(const httplib::Request &req, httplib::Response &res) {
+    printf("doGetAnnouncement start!!!\n");
+    Json::Value resjson;
+
+    if (!req.has_param("AnnouncementId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string announcementid = req.get_param_value("AnnouncementId");
+        Json::Value queryjson;
+        queryjson["AnnouncementId"] = announcementid;
+        resjson = control.SelectAnnouncement(queryjson);
+    }
+    printf("doGetAnnouncement end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+void doSelectAnnouncement(const httplib::Request &req, httplib::Response &res) {
+    printf("doSelectAnnouncement start!!!\n");
+
+    Json::Value resjson;
+    if (!req.has_param("AnnouncementId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string announcementid = req.get_param_value("AnnouncementId");
+
+        Json::Value queryjson;
+        queryjson["AnnouncementId"] = announcementid;
+        resjson = control.SelectAnnouncementByEdit(queryjson);
+    }
+    printf("doSelectAnnouncement end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+void doInsertAnnouncement(const httplib::Request &req, httplib::Response &res) {
+    printf("doInsertAnnouncement start!!!\n");
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.InsertAnnouncement(jsonvalue);
+    printf("doInsertAnnouncement end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+void doUpdateAnnouncement(const httplib::Request &req, httplib::Response &res) {
+    printf("doUpdateAnnouncement start!!!\n");
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.UpdateAnnouncement(jsonvalue);
+    printf("doUpdateAnnouncement end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+void doDeleteAnnouncement(const httplib::Request &req, httplib::Response &res) {
+    printf("doDeleteAnnouncement start!!!\n");
+    Json::Value resjson;
+
+    if (!req.has_param("AnnouncementId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string announcementid = req.get_param_value("AnnouncementId");
+        Json::Value deletejson;
+        deletejson["AnnouncementId"] = announcementid;
+        resjson = control.DeleteAnnouncement(deletejson);
+    }
+    printf("doDeleteAnnouncement end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+// 获取图片
 void doGetImage(const httplib::Request &req, httplib::Response &res) {
     printf("doGetImage start!!!\n");
     int index = stoi(req.matches[1]);
@@ -349,8 +477,25 @@ void HttpServer::Run() {
     // 删除题目
     server.Delete("/problem", doDeleteProblem);
 
+    // ----------------标签------------------
     // 获取标签
     server.Get("/tags", doGetTags);
+
+    // --------------公告--------------------
+    // 获取公告列表
+    server.Get("/announcementlist", doGetAnnouncementList);
+    // 获取公告列表
+    server.Get("/announcementlist/admin", doGetAnnouncementListByAdmin);
+    // 获取公告内容
+    server.Get("/announcement", doGetAnnouncement);
+    // 获取公告信息用于编辑
+    server.Get("/announcement/select", doSelectAnnouncement);
+    // 用户提交公告
+    server.Post("/announcement/insert", doInsertAnnouncement);
+    // 用户修改公告
+    server.Post("/announcement/update", doUpdateAnnouncement);
+    // 用户删除公告
+    server.Delete("/announcement", doDeleteAnnouncement);
 
     // 获取图片资源
     server.Get(R"(/image/(\d+))", doGetImage);
