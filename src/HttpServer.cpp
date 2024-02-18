@@ -673,6 +673,86 @@ void doDeleteSolution(const httplib::Request &req, httplib::Response &res) {
     res.set_content(resjson.toStyledString(), "json");
 }
 
+void doSelectCommentListByAdmin(const httplib::Request &req, httplib::Response &res) {
+    printf("doSelectCommentListByAdmin start!!!\n");
+    Json::Value resjson;
+
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectCommentListByAdmin(queryjson);
+    }
+    printf("doSelectCommentListByAdmin end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+void doGetComment(const httplib::Request &req, httplib::Response &res) {
+    printf("doGetComment start!!!\n");
+    Json::Value resjson;
+
+    if (!req.has_param("Type") || !req.has_param("ParentId") || !req.has_param("Page") || !req.has_param("PageSize") ||
+        !req.has_param("SonNum")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string type = req.get_param_value("Type");
+        string parentid = req.get_param_value("ParentId");
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+        string sonsnum = req.get_param_value("SonNum");
+        Json::Value queryjson;
+        queryjson["Type"] = type;
+        queryjson["ParentId"] = parentid;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        queryjson["SonNum"] = sonsnum;
+        resjson = control.GetComment(queryjson);
+    }
+
+    printf("doGetComment end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+void doInsertComment(const httplib::Request &req, httplib::Response &res) {
+    printf("doInsertComment start!!!\n");
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.InsertComment(jsonvalue["Info"]);
+    printf("doInsertComment end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+void doDeleteComment(const httplib::Request &req, httplib::Response &res) {
+    printf("doDeleteComment start!!!\n");
+    Json::Value resjson;
+    if (!req.has_param("ArticleId") || !req.has_param("CommentId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string articleid = req.get_param_value("ArticleId");
+        string commentid = req.get_param_value("CommentId");
+        Json::Value deletejson;
+        deletejson["ArticleId"] = articleid;
+        deletejson["CommentId"] = commentid;
+        resjson = control.DeleteComment(deletejson);
+    }
+    printf("doDeleteComment end!!!\n");
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
 // 获取图片
 void doGetImage(const httplib::Request &req, httplib::Response &res) {
     printf("doGetImage start!!!\n");
@@ -777,6 +857,16 @@ void HttpServer::Run() {
     server.Post("/solution/update", doUpdateSolution);
     // 用户删除题解
     server.Delete("/solution", doDeleteSolution);
+
+    // ---------------评论--------------------
+    // 管理员获取评论
+    server.Get("/commentlist/admin", doSelectCommentListByAdmin);
+    // 获取评论
+    server.Get("/comment", doGetComment);
+    // 提交评论
+    server.Post("/comment/insert", doInsertComment);
+    // 删除评论
+    server.Delete("/comment", doDeleteComment);
 
     // 获取图片资源
     server.Get(R"(/image/(\d+))", doGetImage);

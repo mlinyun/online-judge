@@ -306,6 +306,67 @@ public:
     */
     Json::Value DeleteSolution(Json::Value &deletejson);
 
+    // ++++++++++++++++++++++评论表 Comment+++++++++++++++++++++++
+    /*
+        功能：管理员查询评论
+        传入：Json(Page,PageSize)
+        传出：Json(_id,ParentId,ParentType,Content,CreateTime,
+            Child_Comments._id,Child_Comments.Content,Child_Comments.CreateTime)
+    */
+    Json::Value SelectCommentListByAdmin(Json::Value &queryjson);
+
+    /*
+        功能：查询父评论
+        传入：Json(ParentId,Skip,Limie,SonNum)
+        传出：
+        Json(ParentId,Content,Likes,CreateTime,Child_Total,
+        User(Avatar,NickName),
+        Child_Comments(_id,Content,Likes,CreateTime,User(Avatar,NickName)))
+    */
+    Json::Value getFatherComment(Json::Value &queryjson);
+
+    /*
+        功能：获取子评论
+        传入：Json(ParentId,Skip,Limit)
+        传出：Json(Child_Total,Child_Comments(_id,Content,Likes,CreateTime,User(NickName,Avatar)))
+    */
+    Json::Value getSonComment(Json::Value &queryjson);
+
+    /*
+        功能：插入父评论
+        传入：Json(ParentId,Content,UserId)
+        传出：Json(_id,CreateTime)
+    */
+    Json::Value InsertFatherComment(Json::Value &insertjson);
+
+    /*
+        功能：插入子评论
+        传入：Json(ParentId,Content,UserId)
+        传出：Json(_id,CreateTime)
+    */
+    Json::Value InsertSonComment(Json::Value &insertjson);
+
+    /*
+        功能：删除某一篇文章（讨论，题解，公告）的所有文章，主要服务于删除文章
+        传入：Json(ArticleId)
+        传出：bool
+    */
+    bool DeleteArticleComment(Json::Value &deletejson);
+
+    /*
+        功能：删除父评论
+        传入：Json(CommentId)
+        传出：Json(Result,Reason,DeleteNum)
+    */
+    Json::Value DeleteFatherComment(Json::Value &deletejson);
+
+    /*
+        功能：删除子评论
+        传入：Json(CommentId)
+        传出：Json(Result,Reason,DeleteNum)
+    */
+    Json::Value DeleteSonComment(Json::Value &deletejson);
+
 private:
     /*
         功能：获取某一个集合中最大的ID

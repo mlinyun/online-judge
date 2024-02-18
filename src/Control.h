@@ -7,7 +7,7 @@
 class Control {
 public:
 
-    // ----------------用户表 User-----------------
+    // ----------------------用户---------------------------
     // 注册用户
     Json::Value RegisterUser(Json::Value &registerjson);
 
@@ -32,7 +32,7 @@ public:
     // 删除用户
     Json::Value DeleteUser(Json::Value &deletejson);
 
-    // ---------------题目 Problem ------------------
+    // ----------------------题目---------------------------
     // 管理员查看题目数据
     Json::Value SelectProblemInfoByAdmin(Json::Value &queryjson);
 
@@ -76,7 +76,7 @@ public:
     // 删除公告
     Json::Value DeleteAnnouncement(Json::Value &deletejson);
 
-    // ----------------------讨论-----------------------
+    // ----------------------讨论---------------------------
     // 查询讨论列表
     Json::Value SelectDiscussList(Json::Value &queryjson);
 
@@ -98,7 +98,7 @@ public:
     // 删除讨论
     Json::Value DeleteDiscuss(Json::Value &deletejson);
 
-    // ----------------------题解-----------------------
+    // ----------------------题解---------------------------
     // 查询题解列表
     Json::Value SelectSolutionList(Json::Value &queryjson);
 
@@ -119,6 +119,19 @@ public:
 
     // 删除题解
     Json::Value DeleteSolution(Json::Value &deletejson);
+
+    // ----------------------评论---------------------------
+    // 管理员查询评论
+    Json::Value SelectCommentListByAdmin(Json::Value &queryjson);
+
+    // 获取评论 根据Id
+    Json::Value GetComment(Json::Value &queryjson);
+
+    // 插入评论
+    Json::Value InsertComment(Json::Value &insertjson);
+
+    // 删除评论
+    Json::Value DeleteComment(Json::Value &deletejson);
 
     Control();
 
