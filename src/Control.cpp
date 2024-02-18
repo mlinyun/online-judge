@@ -160,6 +160,44 @@ Json::Value Control::DeleteDiscuss(Json::Value &deletejson) {
     return resjson;
 }
 
+// ----------------------题解----------------------------
+Json::Value Control::SelectSolutionList(Json::Value &queryjson) {
+    return SolutionList::GetInstance()->SelectSolutionList(queryjson);
+}
+
+Json::Value Control::SelectSolutionListByAdmin(Json::Value &queryjson) {
+    return SolutionList::GetInstance()->SelectSolutionListByAdmin(queryjson);
+}
+
+Json::Value Control::SelectSolution(Json::Value &queryjson) {
+    return SolutionList::GetInstance()->SelectSolution(queryjson);
+}
+
+Json::Value Control::SelectSolutionByEdit(Json::Value &queryjson) {
+    return SolutionList::GetInstance()->SelectSolutionByEdit(queryjson);
+}
+
+Json::Value Control::InsertSolution(Json::Value &insertjson) {
+    return SolutionList::GetInstance()->InsertSolution(insertjson);
+}
+
+Json::Value Control::UpdateSolution(Json::Value &updatejson) {
+    return SolutionList::GetInstance()->UpdateSolution(updatejson);
+}
+
+Json::Value Control::DeleteSolution(Json::Value &deletejson) {
+    Json::Value resjson = SolutionList::GetInstance()->DeleteSolution(deletejson);
+
+    // 当评论模块完成时，将下面注释去掉
+    // if (resjson["Result"].asString() == "Success")
+    // {
+    //     Json::Value json;
+    //     json["ArticleId"] = deletejson["SolutionId"];
+    //     CommentList::GetInstance()->DeleteArticleComment(json);
+    // }
+    return resjson;
+}
+
 // 构造函数
 Control::Control() {
     // 初始化题目标签

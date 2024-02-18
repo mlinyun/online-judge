@@ -249,6 +249,63 @@ public:
     */
     Json::Value DeleteDiscuss(Json::Value &deletejson);
 
+    // +++++++++++++++++++++++++Solution 题解表++++++++++++++++++++++++++++
+    /*
+        功能：添加题解
+        传入：Json(Title,Content,ParentId,UserId,Public)
+        传出：Json(Result,Reason)
+    */
+    Json::Value InsertSolution(Json::Value &insertjson);
+
+    /*
+        功能：分页查询题解（公开题解）
+        传入：Json(SearchInfo,Page,PageSize)
+        传出：Json(_id,Title,Views,Comments,CreateTime,User.Avatar,User.NickName)
+    */
+    Json::Value SelectSolutionList(Json::Value &queryjson);
+
+    /*
+        功能：管理员分页查询题解
+        传入：Json(Page,PageSize)
+        传出：Json(_id,Title,Views,Comments,CreateTime,User.Avatar,User.NickName)
+    */
+    Json::Value SelectSolutionListByAdmin(Json::Value &queryjson);
+
+    /*
+        功能：查询题解的详细信息，主要是编辑时的查询
+        传入：Json(SolutionId)
+        传出：Json(Result,Reason,Title,Content,Public)
+    */
+    Json::Value SelectSolutionByEdit(Json::Value &queryjson);
+
+    /*
+        功能：查询题解的详细内容，并且将其浏览量加一
+        传入：Json(SolutionId)
+        传出：Json(Result,Reason,Title,Content,Views,Comments,CreateTime,UpdateTime,User.NicaName,User.Avatar)
+    */
+    Json::Value SelectSolution(Json::Value &queryjson);
+
+    /*
+        功能：修改题解的评论数
+        传入：Json(ArticleId,Num)
+        传出：bool
+    */
+    bool UpdateSolutionComments(Json::Value &updatejson);
+
+    /*
+        功能：更新题解
+        传入：Json(SolutionId,Title,Content,Public)
+        传出；Json(Result,Reason)
+    */
+    Json::Value UpdateSolution(Json::Value &updatejson);
+
+    /*
+        功能：删除题解
+        传入：Json(ArticleId)
+        传出：Json(Result,Reason)
+    */
+    Json::Value DeleteSolution(Json::Value &deletejson);
+
 private:
     /*
         功能：获取某一个集合中最大的ID

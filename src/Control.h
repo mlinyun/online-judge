@@ -77,26 +77,48 @@ public:
     Json::Value DeleteAnnouncement(Json::Value &deletejson);
 
     // ----------------------讨论-----------------------
-    // 查询题解列表
+    // 查询讨论列表
     Json::Value SelectDiscussList(Json::Value &queryjson);
 
     // 管理员查询
     Json::Value SelectDiscussListByAdmin(Json::Value &queryjson);
 
-    // 查询题解
+    // 查询讨论
     Json::Value SelectDiscuss(Json::Value &queryjson);
 
-    // 查询题解进行编辑
+    // 查询讨论进行编辑
     Json::Value SelectDiscussByEdit(Json::Value &queryjson);
 
-    // 插入题解
+    // 插入讨论
     Json::Value InsertDiscuss(Json::Value &insertjson);
 
-    // 更新题解
+    // 更新讨论
     Json::Value UpdateDiscuss(Json::Value &updatejson);
 
-    // 删除题解
+    // 删除讨论
     Json::Value DeleteDiscuss(Json::Value &deletejson);
+
+    // ----------------------题解-----------------------
+    // 查询题解列表
+    Json::Value SelectSolutionList(Json::Value &queryjson);
+
+    // 管理员查询
+    Json::Value SelectSolutionListByAdmin(Json::Value &queryjson);
+
+    // 查询题解
+    Json::Value SelectSolution(Json::Value &queryjson);
+
+    // 查询题解进行编辑
+    Json::Value SelectSolutionByEdit(Json::Value &queryjson);
+
+    // 插入题解
+    Json::Value InsertSolution(Json::Value &insertjson);
+
+    // 更新题解
+    Json::Value UpdateSolution(Json::Value &updatejson);
+
+    // 删除题解
+    Json::Value DeleteSolution(Json::Value &deletejson);
 
     Control();
 
