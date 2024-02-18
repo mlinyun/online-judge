@@ -367,6 +367,36 @@ public:
     */
     Json::Value DeleteSonComment(Json::Value &deletejson);
 
+    // ++++++++++++++++++++++++评测表 StatusRecord+++++++++++++++++++++++++
+    /*
+        功能：插入待测评记录
+        传入：Json(ProblemId,UserId,UserNickName,ProblemTitle,Language,Code)
+        传出：SubmitId测评的ID
+    */
+    std::string InsertStatusRecord(Json::Value &insertjson);
+
+    /*
+        功能：更新测评记录
+        传入：Json(SubmitId,Status,RunTime,RunMemory,Length,ComplierInfo,
+        TestInfo[(Status,StandardInput,StandardOutput,PersonalOutput,RunTime,RunMemory)])
+        传出：bool
+    */
+    bool UpdateStatusRecord(Json::Value &updatejson);
+
+    /*
+        功能：分页查询测评记录
+        传入：Json(SearchInfo,PageSize,Page)
+        传出：测评全部信息，详情请见MongoDB集合表
+    */
+    Json::Value SelectStatusRecordList(Json::Value &queryjson);
+
+    /*
+        功能：查询测评记录
+        传入：Json(SubmitId)
+        传出：全部记录，详情请看MongoDB集合表
+    */
+    Json::Value SelectStatusRecord(Json::Value &queryjson);
+
 private:
     /*
         功能：获取某一个集合中最大的ID

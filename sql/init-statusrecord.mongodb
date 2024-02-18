@@ -1,0 +1,64 @@
+
+use('OnlineJudge');
+
+db.StatusRecord.insertMany([
+  { '_id': 1, 
+    'ProblemId': 1, 
+    'UserId': 0, 
+    'UserNickName': 'xxx', 
+    'ProblemTitle':'A+B Problem',
+    'Status':2,
+    'RunTime':'0MS',
+    'RunMemory':'3MB',
+    'Length':'132B',
+    'Language':'C++',
+    'SubmitTime':'2023-04-05 16:05:45',
+    'Code':`#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    int a,b;
+    cin>>a>>b;
+    cout<<a+b<<endl;
+
+    return 0;
+}`,
+    'ComplierInfo':'',
+    'TestInfo':[
+      {
+        'Status':2,
+        'StandardInput':'3 9',
+        'StandardOutput':'12',
+        'PersonalOutput':'12',
+        'RunTime':'0MS',
+        'RunMemory':'3MB'
+      },
+      {
+        'Status':2,
+        'StandardInput':'100 200',
+        'StandardOutput':'300',
+        'PersonalOutput':'300',
+        'RunTime':'0MS',
+        'RunMemory':'3MB'
+      },
+      {
+        'Status':2,
+        'StandardInput':'13578 -213',
+        'StandardOutput':'13365',
+        'PersonalOutput':'13365',
+        'RunTime':'0MS',
+        'RunMemory':'3MB'
+      },
+      {
+        'Status':2,
+        'StandardInput':'1000000 1000000',
+        'StandardOutput':'2000000',
+        'PersonalOutput':'2000000',
+        'RunTime':'0MS',
+        'RunMemory':'3MB'
+      }
+    ]
+  }
+]);

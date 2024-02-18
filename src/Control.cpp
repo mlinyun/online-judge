@@ -150,12 +150,11 @@ Json::Value Control::DeleteDiscuss(Json::Value &deletejson) {
     Json::Value resjson = DiscussList::GetInstance()->DeleteDiscuss(deletejson);
 
     // 当评论模块完成时，将下面注释去掉
-     if (resjson["Result"].asString() == "Success")
-     {
-         Json::Value json;
-         json["ArticleId"] = deletejson["DiscussId"];
-         CommentList::GetInstance()->DeleteArticleComment(json);
-     }
+    if (resjson["Result"].asString() == "Success") {
+        Json::Value json;
+        json["ArticleId"] = deletejson["DiscussId"];
+        CommentList::GetInstance()->DeleteArticleComment(json);
+    }
     return resjson;
 }
 
@@ -188,12 +187,11 @@ Json::Value Control::DeleteSolution(Json::Value &deletejson) {
     Json::Value resjson = SolutionList::GetInstance()->DeleteSolution(deletejson);
 
     // 当评论模块完成时，将下面注释去掉
-     if (resjson["Result"].asString() == "Success")
-     {
-         Json::Value json;
-         json["ArticleId"] = deletejson["SolutionId"];
-         CommentList::GetInstance()->DeleteArticleComment(json);
-     }
+    if (resjson["Result"].asString() == "Success") {
+        Json::Value json;
+        json["ArticleId"] = deletejson["SolutionId"];
+        CommentList::GetInstance()->DeleteArticleComment(json);
+    }
     return resjson;
 }
 
@@ -264,6 +262,15 @@ Json::Value Control::DeleteComment(Json::Value &deletejson) {
 
     resjson["Result"] = "Success";
     return resjson;
+}
+
+// ----------------------测评记录----------------------------
+Json::Value Control::SelectStatusRecordList(Json::Value &queryjson) {
+    return StatusRecordList::GetInstance()->SelectStatusRecordList(queryjson);
+}
+
+Json::Value Control::SelectStatusRecord(Json::Value &queryjson) {
+    return StatusRecordList::GetInstance()->SelectStatusRecord(queryjson);
 }
 
 // 构造函数

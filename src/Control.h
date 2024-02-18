@@ -133,6 +133,13 @@ public:
     // 删除评论
     Json::Value DeleteComment(Json::Value &deletejson);
 
+    // ---------------测评表-------------------------
+    // 返回状态记录的信息
+    Json::Value SelectStatusRecordList(Json::Value &queryjson);
+
+    // 查询一条详细测评记录
+    Json::Value SelectStatusRecord(Json::Value &queryjson);
+
     Control();
 
     ~Control();
