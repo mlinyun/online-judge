@@ -273,6 +273,70 @@ Json::Value Control::SelectStatusRecord(Json::Value &queryjson) {
     return StatusRecordList::GetInstance()->SelectStatusRecord(queryjson);
 }
 
+// ----------------------判题----------------------------
+Json::Value Control::GetJudgeCode(Json::Value judgejson) {
+    Json::Value resjson;
+    // 传入Json(ProblemId,UserId,UserNickName,Code,Language,TimeLimit,MemoryLimit,JudgeNum,ProblemTitle)
+
+    // 添加状态记录
+    // 传入：Json(ProblemId,UserId,UserNickName,ProblemTitle,Language,Code);
+    Json::Value insertjson;
+    insertjson["ProblemId"] = judgejson["ProblemId"];
+    insertjson["UserId"] = judgejson["UserId"];
+    insertjson["UserNickName"] = judgejson["UserNickName"];
+    insertjson["ProblemTitle"] = judgejson["ProblemTitle"];
+    insertjson["Language"] = judgejson["Language"];
+    insertjson["Code"] = judgejson["Code"];
+
+    string submitid = StatusRecordList::GetInstance()->InsertStatusRecord(insertjson);
+
+    if (submitid == "0") {
+        resjson["Result"] = "Fail";
+        resjson["Reason"] = "系统出错！";
+        return resjson;
+    }
+
+    // 运行代码
+    // Json(SubmitId,ProblemId,JudgeNum,Code,Language,TimeLimit,MemoryLimit)
+    Json::Value runjson;
+    runjson["Code"] = judgejson["Code"];
+    runjson["SubmitId"] = submitid;
+    runjson["ProblemId"] = judgejson["ProblemId"];
+    runjson["Language"] = judgejson["Language"];
+    runjson["JudgeNum"] = judgejson["JudgeNum"];
+    runjson["TimeLimit"] = judgejson["TimeLimit"];
+    runjson["MemoryLimit"] = judgejson["MemoryLimit"];
+
+    // 创建判题对象
+    Judger judger;
+    Json::Value json = judger.Run(runjson);
+
+    // 更新状态信息
+    /*
+        传入：Json(SubmitId,Status,RunTime,RunMemory,Length,ComplierInfo,
+        TestInfo[(Status,StandardOutput,PersonalOutput,RunTime,RunMemory)])
+    */
+    StatusRecordList::GetInstance()->UpdateStatusRecord(json);
+    // 更新题目的状态
+    Json::Value updatejson;
+    updatejson["ProblemId"] = judgejson["ProblemId"];
+    updatejson["Status"] = json["Status"];
+    ProblemList::GetInstance()->UpdateProblemStatusNum(updatejson);
+
+    updatejson["UserId"] = judgejson["UserId"];
+
+    // 更新用户的状态
+    if (UserList::GetInstance()->UpdateUserProblemInfo(updatejson))
+        resjson["IsFirstAC"] = true;
+    else
+        resjson["IsFirstAC"] = false;
+
+    resjson["Result"] = "Success";
+    resjson["Status"] = json["Status"];
+    resjson["ComplierInfo"] = json["ComplierInfo"];
+    return resjson;
+}
+
 // 构造函数
 Control::Control() {
     // 初始化题目标签

@@ -799,6 +799,18 @@ void doGetStatusRecord(const httplib::Request &req, httplib::Response &res) {
     res.set_content(resjson.toStyledString(), "json");
 }
 
+// 前端提交代码进行判定并返回结果
+void doPostCode(const httplib::Request &req, httplib::Response &res) {
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.GetJudgeCode(jsonvalue);
+
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
 // 获取图片
 void doGetImage(const httplib::Request &req, httplib::Response &res) {
     printf("doGetImage start!!!\n");
@@ -919,6 +931,10 @@ void HttpServer::Run() {
     server.Get("/statusrecordlist", doGetStatusRecordList);
     // 获取一条测评记录
     server.Get("/statusrecord", doGetStatusRecord);
+
+    // ---------------判题-----------------
+    // 提交代码
+    server.Post("/problemcode", doPostCode);
 
     // 获取图片资源
     server.Get(R"(/image/(\d+))", doGetImage);
