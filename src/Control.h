@@ -144,6 +144,10 @@ public:
     // 返回判题信息
     Json::Value GetJudgeCode(Json::Value judgejson);
 
+    // ---------------token-------------------------
+    // 登录用户通过Token
+    Json::Value LoginUserByToken(Json::Value &loginjson);
+
     Control();
 
     ~Control();

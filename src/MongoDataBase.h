@@ -397,6 +397,21 @@ public:
     */
     Json::Value SelectStatusRecord(Json::Value &queryjson);
 
+    // +++++++++++++++++ Token ++++++++++++++++++++++++++++
+    /*
+        功能：用户登录通过Token
+        传入：Json(UserId)
+        传出：Json(Result,Reason,Info(_id,NickName,Avatar,CommentLikes,Solves,Authority))
+    */
+    Json::Value LoginUserByToken(Json::Value &loginjson);
+
+    /*
+        功能：查询所有用户的权限
+        传入：void
+        传出：Json(Result,_id,Authority)
+    */
+    Json::Value SelectUserAuthority();
+
 private:
     /*
         功能：获取某一个集合中最大的ID

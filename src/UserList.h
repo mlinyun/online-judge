@@ -36,10 +36,32 @@ public:
     // 删除用户
     Json::Value DeleteUser(Json::Value &deletejson);
 
+    // =============== Token鉴权 ===============
+    // 登录用户通过Token
+    Json::Value LoginUserByToken(Json::Value &loginjson);
+
+    // 初始化用户权限
+    bool InitUserAuthority();
+
+    // 获取用户权限
+    int GetUserAuthority(Json::Value &json);
+
+    // 权限是否是普通用户或以上
+    bool IsOrdinaryUser(Json::Value &json);
+
+    // 权限是否是作者本人或以上
+    bool IsAuthor(Json::Value &json);
+
+    // 权限是否是管理员或以上
+    bool IsAdministrator(Json::Value &json);
+
 private:
     UserList();
 
     ~UserList();
+
+    // 用户权限的哈希表，键：用户ID，值：用户权限
+    std::unordered_map<int64_t, int> UserAuthorityMap;
 };
 
 #endif
