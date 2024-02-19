@@ -28,7 +28,30 @@ bool StatusRecordList::UpdateStatusRecord(Json::Value &updatejson) {
 
 // 查询一条详细测评记录
 Json::Value StatusRecordList::SelectStatusRecord(Json::Value &queryjson) {
-    return MoDB::GetInstance()->SelectStatusRecord(queryjson);
+    string statusrecordid = queryjson["SubmitId"].asString();
+
+    // 获取缓存
+    string resstr = ReDB::GetInstance()->GetStatusRecordCache(statusrecordid);
+
+    Json::Value resjson;
+    Json::Reader reader;
+    // 如果有缓存
+    if (resstr != "") {
+        // 解析缓存json
+        reader.parse(resstr, resjson);
+
+        return resjson;
+    }
+
+    // 如果没有缓存
+    resjson = MoDB::GetInstance()->SelectStatusRecord(queryjson);
+
+    // 添加缓存 （状态不能为等待）
+    if (resjson["Result"].asString() == "Success" && resjson["Status"].asInt() > 0) {
+        ReDB::GetInstance()->AddStatusRecordCache(statusrecordid, resjson.toStyledString());
+    }
+
+    return resjson;
 }
 
 StatusRecordList::StatusRecordList() {
