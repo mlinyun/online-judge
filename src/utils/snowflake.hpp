@@ -1,23 +1,21 @@
 #pragma once
+
 #include <cstdint>
 #include <chrono>
 #include <stdexcept>
 #include <mutex>
 
-class snowflake_nonlock
-{
+class snowflake_nonlock {
 public:
-    void lock()
-    {
+    void lock() {
     }
-    void unlock()
-    {
+
+    void unlock() {
     }
 };
 
-template <int64_t Twepoch, typename Lock = snowflake_nonlock>
-class snowflake
-{
+template<int64_t Twepoch, typename Lock = snowflake_nonlock>
+class snowflake {
     using lock_type = Lock;
     static constexpr int64_t TWEPOCH = Twepoch;
     static constexpr int64_t WORKER_ID_BITS = 5L;
@@ -33,7 +31,8 @@ class snowflake
     using time_point = std::chrono::time_point<std::chrono::steady_clock>;
 
     time_point start_time_point_ = std::chrono::steady_clock::now();
-    int64_t start_millsecond_ = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    int64_t start_millsecond_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::system_clock::now().time_since_epoch()).count();
 
     int64_t last_timestamp_ = -1;
     int64_t workerid_ = 0;
@@ -48,15 +47,12 @@ public:
 
     snowflake &operator=(const snowflake &) = delete;
 
-    void init(int64_t workerid, int64_t datacenterid)
-    {
-        if (workerid > MAX_WORKER_ID || workerid < 0)
-        {
+    void init(int64_t workerid, int64_t datacenterid) {
+        if (workerid > MAX_WORKER_ID || workerid < 0) {
             throw std::runtime_error("worker Id can't be greater than 31 or less than 0");
         }
 
-        if (datacenterid > MAX_DATACENTER_ID || datacenterid < 0)
-        {
+        if (datacenterid > MAX_DATACENTER_ID || datacenterid < 0) {
             throw std::runtime_error("datacenter Id can't be greater than 31 or less than 0");
         }
 
@@ -64,41 +60,35 @@ public:
         datacenterid_ = datacenterid;
     }
 
-    int64_t nextid()
-    {
+    int64_t nextid() {
         std::lock_guard<lock_type> lock(lock_);
         // std::chrono::steady_clock  cannot decrease as physical time moves forward
         auto timestamp = millsecond();
-        if (last_timestamp_ == timestamp)
-        {
+        if (last_timestamp_ == timestamp) {
             sequence_ = (sequence_ + 1) & SEQUENCE_MASK;
-            if (sequence_ == 0)
-            {
+            if (sequence_ == 0) {
                 timestamp = wait_next_millis(last_timestamp_);
             }
-        }
-        else
-        {
+        } else {
             sequence_ = 0;
         }
 
         last_timestamp_ = timestamp;
 
-        return ((timestamp - TWEPOCH) << TIMESTAMP_LEFT_SHIFT) | (datacenterid_ << DATACENTER_ID_SHIFT) | (workerid_ << WORKER_ID_SHIFT) | sequence_;
+        return ((timestamp - TWEPOCH) << TIMESTAMP_LEFT_SHIFT) | (datacenterid_ << DATACENTER_ID_SHIFT) |
+               (workerid_ << WORKER_ID_SHIFT) | sequence_;
     }
 
 private:
-    int64_t millsecond() const noexcept
-    {
-        auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time_point_);
+    int64_t millsecond() const noexcept {
+        auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now() - start_time_point_);
         return start_millsecond_ + diff.count();
     }
 
-    int64_t wait_next_millis(int64_t last) const noexcept
-    {
+    int64_t wait_next_millis(int64_t last) const noexcept {
         auto timestamp = millsecond();
-        while (timestamp <= last)
-        {
+        while (timestamp <= last) {
             timestamp = millsecond();
         }
         return timestamp;

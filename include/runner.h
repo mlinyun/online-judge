@@ -82,4 +82,5 @@ struct result {
 
 
 void run(struct config *, struct result *);
+
 #endif //JUDGER_RUNNER_H

@@ -2,10 +2,10 @@
 #include <iostream>
 #include <string>
 #include <cctype>
+
 using namespace std;
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     ifstream f_out(argv[2]);
     ifstream f_user(argv[3]);
 
@@ -18,16 +18,11 @@ int main(int argc, char *argv[])
     /*****spj代码区域*******/
     // 以下是一个a+b的例子
 
-    if (s1.size() != s2.size())
-    {
+    if (s1.size() != s2.size()) {
         ret = 1;
-    }
-    else
-    {
-        for (size_t i = 0; i < s1.size(); i++)
-        {
-            if (tolower(s1[i]) != tolower(s2[i]))
-            {
+    } else {
+        for (size_t i = 0; i < s1.size(); i++) {
+            if (tolower(s1[i]) != tolower(s2[i])) {
                 ret = 1;
             }
         }
