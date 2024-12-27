@@ -8,7 +8,7 @@
 class Control
 {
 public:
-    // ++++++++++++++++++++ 用户表模块 Start ++++++++++++++++++++
+    // ++++++++++++++++++++ 用户模块 Start ++++++++++++++++++++
     // 注册用户
     Json::Value RegisterUser(Json::Value &registerjson);
 
@@ -32,7 +32,30 @@ public:
 
     // 获取用户 Rank 排名
     Json::Value SelectUserRank(Json::Value &queryjson);
-    // ++++++++++++++++++++ 用户表模块 End ++++++++++++++++++++
+    // ++++++++++++++++++++ 用户模块 End ++++++++++++++++++++
+
+    // ++++++++++++++++++++ 题目模块 Start ++++++++++++++++++++
+    // 管理员查看题目详细信息
+    Json::Value SelectProblemInfoByAdmin(Json::Value &queryjson);
+
+    // 用户查询题目详细信息
+    Json::Value SelectProblem(Json::Value &queryjson);
+
+    // 编辑题目
+    Json::Value EditProblem(Json::Value &insertjson);
+
+    // 删除题目
+    Json::Value DeleteProblem(Json::Value &deletejson);
+
+    // 通过普通查询获取题库数据
+    Json::Value SelectProblemList(Json::Value &queryjson);
+
+    // 管理员查询列表
+    Json::Value SelectProblemListByAdmin(Json::Value &queryjson);
+
+    // 获取标签
+    Json::Value GetTags(Json::Value &queryjson);
+    // ++++++++++++++++++++ 题目模块 End ++++++++++++++++++++
 
     Control();
 

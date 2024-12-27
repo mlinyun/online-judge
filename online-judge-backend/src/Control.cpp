@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// ++++++++++++++++++++++++++++++ 用户表模块 Start ++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++ 用户模块 Start ++++++++++++++++++++++++++++++
 // 注册用户
 Json::Value Control::RegisterUser(Json::Value &registerjson)
 {
@@ -60,10 +60,69 @@ Json::Value Control::SelectUserRank(Json::Value &queryjson)
 {
     return UserList::GetInstance()->SelectUserRank(queryjson);
 }
-// ++++++++++++++++++++++++++++++ 用户表模块 End ++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++ 用户模块 End ++++++++++++++++++++++++++++++
+
+// ++++++++++++++++++++++++++++++ 题目模块 Start ++++++++++++++++++++++++++++++
+// 管理员查看题目详细信息
+Json::Value Control::SelectProblemInfoByAdmin(Json::Value &queryjson)
+{
+    return ProblemList::GetInstance()->SelectProblemInfoByAdmin(queryjson);
+}
+
+// 用户查询题目详细信息
+Json::Value Control::SelectProblem(Json::Value &queryjson)
+{
+    return ProblemList::GetInstance()->SelectProblem(queryjson);
+}
+
+// 编辑题目
+Json::Value Control::EditProblem(Json::Value &insertjson)
+{
+    Json::Value resjson;
+    if (insertjson["EditType"].asString() == "Insert")
+    {
+        resjson = ProblemList::GetInstance()->InsertProblem(insertjson);
+    }
+    else if (insertjson["EditType"].asString() == "Update")
+    {
+        resjson = ProblemList::GetInstance()->UpdateProblem(insertjson);
+    }
+    Tag::GetInstance()->InitProblemTags();
+    return resjson;
+}
+
+// 删除题目
+Json::Value Control::DeleteProblem(Json::Value &deletejson)
+{
+    return ProblemList::GetInstance()->DeleteProblem(deletejson);
+}
+
+// 通过普通查询获取题库数据
+Json::Value Control::SelectProblemList(Json::Value &queryjson)
+{
+    return ProblemList::GetInstance()->SelectProblemList(queryjson);
+}
+
+// 管理员查询列表
+Json::Value Control::SelectProblemListByAdmin(Json::Value &queryjson)
+{
+    return ProblemList::GetInstance()->SelectProblemListByAdmin(queryjson);
+}
+
+// 获取标签
+Json::Value Control::GetTags(Json::Value &queryjson)
+{
+    if (queryjson["TagType"].asString() == "Problem")
+    {
+        return Tag::GetInstance()->getProblemTags();
+    }
+}
+// ++++++++++++++++++++++++++++++ 题目模块 End ++++++++++++++++++++++++++++++
 
 Control::Control()
 {
+    // 初始化题目标签
+    Tag::GetInstance()->InitProblemTags();
 }
 
 Control::~Control()

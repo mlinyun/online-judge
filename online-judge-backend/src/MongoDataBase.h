@@ -52,7 +52,7 @@ public:
 
     /*
         功能：分页查询用户列表
-        传入：Json(Page,PageSize)
+        传入：Json(Page, PageSize)
         传出：Json(_id, NickName, PersonalProfile, School, Major, JoinTime, TotalNum)
     */
     Json::Value SelectUserSetInfo(Json::Value &queryjson);
@@ -78,6 +78,70 @@ public:
     */
     Json::Value SelectUserRank(Json::Value &queryjson);
     // ++++++++++++++++++++++++++++++ 用户表 User End ++++++++++++++++++++++++++++++
+
+    // ++++++++++++++++++++++++++++++ 题目表 Problem Start ++++++++++++++++++++++++++++++
+    /*
+        功能：管理员查询题目详细信息
+        传入：Json(ProblemId)
+        传出：Json(Result, Reason,_id, Title, Description, TimeLimit, MemoryLimit, UserNickName, JudgeNum, Tags)
+    */
+    Json::Value SelectProblemInfoByAdmin(Json::Value &queryjson);
+
+    /*
+        功能：用户查询题目详细信息
+        传入：Json(ProblemId)
+        传出：Json(Result, Reason, _id, Title,Description, TimeLimit, MemoryLimit, JudgeNum, SubmitNum, ACNum, UserNickName, Tags)
+    */
+    Json::Value SelectProblem(Json::Value &queryjson);
+    /*
+        功能：插入题目
+        传入：Json(Title, Description, TimeLimit, MemoryLimit, JudgeNum, Tags, UseNickName)
+        传出：Json(Reuslt, Reason, ProblemId)
+    */
+    Json::Value InsertProblem(Json::Value &insertjson);
+
+    /*
+        功能：修改题目信息
+        传入：Json(ProblemId, Title, Description, TimeLimit, MemoryLimit, JudgeNum, Tags, UseNickName)
+        传出：Json(Result, Reason)
+    */
+    Json::Value UpdateProblem(Json::Value &updatejson);
+
+    /*
+        功能：删除题目
+        传入：Json(ProblemId)
+        传出：Json(Result, Reason)
+    */
+    Json::Value DeleteProblem(Json::Value &deletejson);
+
+    /*
+        功能：分页获取题目列表（包含查询条件，暂时未添加）
+        传入：Json(SearchInfo{Id, Title, Tags[]}, Page, PageSize)
+        传出：Json((Result, Reason, ArrayInfo[ProblemId, Title, SubmitNum, CENum, ACNum, WANum, RENum, TLENum, MLENum, SENum, Tags]), TotalNum)
+    */
+    Json::Value SelectProblemList(Json::Value &queryjson);
+
+    /*
+        功能：管理员分页获取题目列表
+        传入：Json(Page, PageSize)
+        传出：Json(ArrayInfo([ProblemId, Title, SubmitNum, CENum, ACNum, WANum, TLENum, MLENum, SENum, Tags]), TotalNum)
+    */
+    Json::Value SelectProblemListByAdmin(Json::Value &queryjson);
+
+    /*
+        功能：更新题目的状态数量
+        传入：Json(ProblemId, Status)
+        传出：bool
+    */
+    bool UpdateProblemStatusNum(Json::Value &updatejson);
+
+    /*
+        功能：获取题目的所有标签
+        传入：void
+        传出：Json(tags)
+    */
+    Json::Value getProblemTags();
+    // ++++++++++++++++++++++++++++++ 题目表 Problem Start ++++++++++++++++++++++++++++++
 
 private:
     /*

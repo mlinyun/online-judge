@@ -11,6 +11,19 @@ Tag *Tag::GetInstance()
     return &tag;
 }
 
+// 初始化题目标签
+void Tag::InitProblemTags()
+{
+    Json::Value jsonvalue = MoDB::GetInstance()->getProblemTags();
+    problemtags["Tags"] = jsonvalue["values"];
+}
+
+// 获取题目的所有标签
+Json::Value Tag::getProblemTags()
+{
+    return problemtags;
+}
+
 Tag::Tag()
 {
 }
