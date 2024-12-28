@@ -172,6 +172,59 @@ Json::Value Control::DeleteAnnouncement(Json::Value &deletejson)
 }
 // ++++++++++++++++++++++++++++++ 公告模块 End ++++++++++++++++++++++++++++++
 
+// ++++++++++++++++++++++++++++++ 讨论模块 Start ++++++++++++++++++++++++++++++
+// 添加讨论
+Json::Value Control::InsertDiscuss(Json::Value &insertjson)
+{
+    return DiscussList::GetInstance()->InsertDiscuss(insertjson);
+}
+
+// 分页查询讨论
+Json::Value Control::SelectDiscussList(Json::Value &queryjson)
+{
+    return DiscussList::GetInstance()->SelectDiscussList(queryjson);
+}
+
+// 管理员分页查询讨论
+Json::Value Control::SelectDiscussListByAdmin(Json::Value &queryjson)
+{
+    return DiscussList::GetInstance()->SelectDiscussListByAdmin(queryjson);
+}
+
+// 查询讨论的详细内容，并且将其浏览量加一
+Json::Value Control::SelectDiscuss(Json::Value &queryjson)
+{
+    return DiscussList::GetInstance()->SelectDiscuss(queryjson);
+}
+
+// 查询讨论的详细信息，主要是编辑时的查询
+Json::Value Control::SelectDiscussByEdit(Json::Value &queryjson)
+{
+    return DiscussList::GetInstance()->SelectDiscussByEdit(queryjson);
+}
+
+// 修改评论数的数量
+Json::Value Control::UpdateDiscuss(Json::Value &updatejson)
+{
+    return DiscussList::GetInstance()->UpdateDiscuss(updatejson);
+}
+
+// 删除讨论
+Json::Value Control::DeleteDiscuss(Json::Value &deletejson)
+{
+    Json::Value resjson = DiscussList::GetInstance()->DeleteDiscuss(deletejson);
+
+    // 当评论模块完成时，将下面注释去掉
+    // if (resjson["Result"].asString() == "Success")
+    // {
+    //     Json::Value json;
+    //     json["ArticleId"] = deletejson["DiscussId"];
+    //     CommentList::GetInstance()->DeleteArticleComment(json);
+    // }
+    return resjson;
+}
+// ++++++++++++++++++++++++++++++ 讨论模块 End ++++++++++++++++++++++++++++++
+
 Control::Control()
 {
     // 初始化题目标签
