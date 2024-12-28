@@ -148,6 +148,11 @@ public:
     Json::Value SelectStatusRecord(Json::Value &queryjson);
     // ++++++++++++++++++++ 评测记录模块 End ++++++++++++++++++++
 
+    // ++++++++++++++++++++ 判题模块 Start ++++++++++++++++++++
+    // 返回判题信息
+    Json::Value GetJudgeCode(Json::Value judgejson);
+    // ++++++++++++++++++++ 判题模块 End ++++++++++++++++++++
+
     Control();
 
     ~Control();
