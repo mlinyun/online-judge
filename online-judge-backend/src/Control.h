@@ -103,6 +103,30 @@ public:
     Json::Value DeleteDiscuss(Json::Value &deletejson);
     // ++++++++++++++++++++ 讨论模块 End ++++++++++++++++++++
 
+    // ++++++++++++++++++++ 题解模块 Start ++++++++++++++++++++
+    // ----------------------题解-----------------------
+    // 查询题解列表
+    Json::Value SelectSolutionList(Json::Value &queryjson);
+
+    // 管理员查询
+    Json::Value SelectSolutionListByAdmin(Json::Value &queryjson);
+
+    // 查询题解
+    Json::Value SelectSolution(Json::Value &queryjson);
+
+    // 查询题解进行编辑
+    Json::Value SelectSolutionByEdit(Json::Value &queryjson);
+
+    // 插入题解
+    Json::Value InsertSolution(Json::Value &insertjson);
+
+    // 更新题解
+    Json::Value UpdateSolution(Json::Value &updatejson);
+
+    // 删除题解
+    Json::Value DeleteSolution(Json::Value &deletejson);
+    // ++++++++++++++++++++ 题解模块 End ++++++++++++++++++++
+
     Control();
 
     ~Control();
