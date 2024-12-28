@@ -116,6 +116,9 @@ Json::Value Control::GetTags(Json::Value &queryjson)
     {
         return Tag::GetInstance()->getProblemTags();
     }
+
+    // 默认返回空的 Json::Value
+    return Json::Value();
 }
 // ++++++++++++++++++++++++++++++ 题目模块 End ++++++++++++++++++++++++++++++
 
@@ -369,6 +372,20 @@ Json::Value Control::DeleteComment(Json::Value &deletejson)
     return resjson;
 }
 // ++++++++++++++++++++++++++++++ 评论模块 End ++++++++++++++++++++++++++++++
+
+// ++++++++++++++++++++++++++++++ 测评记录模块 Start ++++++++++++++++++++++++++++++
+// 返回测评记录列表
+Json::Value Control::SelectStatusRecordList(Json::Value &queryjson)
+{
+    return StatusRecordList::GetInstance()->SelectStatusRecordList(queryjson);
+}
+
+// 查询一条详细测评记录
+Json::Value Control::SelectStatusRecord(Json::Value &queryjson)
+{
+    return StatusRecordList::GetInstance()->SelectStatusRecord(queryjson);
+}
+// ++++++++++++++++++++++++++++++ 测评记录模块 End ++++++++++++++++++++++++++++++
 
 Control::Control()
 {
