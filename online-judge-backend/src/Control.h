@@ -57,6 +57,29 @@ public:
     Json::Value GetTags(Json::Value &queryjson);
     // ++++++++++++++++++++ 题目模块 End ++++++++++++++++++++
 
+    // ++++++++++++++++++++ 公告模块 Start ++++++++++++++++++++
+    // 添加公告
+    Json::Value InsertAnnouncement(Json::Value &insertjson);
+
+    // 分页查询公告
+    Json::Value SelectAnnouncementList(Json::Value &queryjson);
+
+    // 管理员分页查询公告
+    Json::Value SelectAnnouncementListByAdmin(Json::Value &queryjson);
+
+    // 查询公告的详细信息
+    Json::Value SelectAnnouncement(Json::Value &queryjson);
+
+    // 查询公告 进行编辑
+    Json::Value SelectAnnouncementByEdit(Json::Value &queryjson);
+
+    // 更新公告
+    Json::Value UpdateAnnouncement(Json::Value &updatejson);
+
+    // 删除公告
+    Json::Value DeleteAnnouncement(Json::Value &deletejson);
+    // ++++++++++++++++++++ 公告模块 End ++++++++++++++++++++
+
     Control();
 
     ~Control();

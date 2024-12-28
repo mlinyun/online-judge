@@ -14,7 +14,7 @@ public:
     // 局部静态特性的方式实现单实例
     static MoDB *GetInstance();
 
-    // ++++++++++++++++++++++++++++++ 用户表 User Start ++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++ 用户 User Start ++++++++++++++++++++++++++++++
     /*
         功能：用户注册
         传入：Json(NickName, Account, PassWord, PersonalProfile, School, Major)
@@ -77,9 +77,9 @@ public:
         传出：Json(ArrayInfo[_id, Rank, Avatar, NickName, PersonalProfile, SubmitNum, ACNum], TotalNum)
     */
     Json::Value SelectUserRank(Json::Value &queryjson);
-    // ++++++++++++++++++++++++++++++ 用户表 User End ++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++ 用户 User End ++++++++++++++++++++++++++++++
 
-    // ++++++++++++++++++++++++++++++ 题目表 Problem Start ++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++ 题目 Problem Start ++++++++++++++++++++++++++++++
     /*
         功能：管理员查询题目详细信息
         传入：Json(ProblemId)
@@ -141,7 +141,58 @@ public:
         传出：Json(tags)
     */
     Json::Value getProblemTags();
-    // ++++++++++++++++++++++++++++++ 题目表 Problem Start ++++++++++++++++++++++++++++++
+    // ++++++++++++++++++++++++++++++ 题目 Problem End ++++++++++++++++++++++++++++++
+
+    // ++++++++++++++++++++++++++++++ 公告 Announcement Start ++++++++++++++++++++++++++++++
+    /*
+        功能：添加公告
+        传入：Json(Title, Content, UserId, Level)
+        传出：Json(Result, Reason)
+    */
+    Json::Value InsertAnnouncement(Json::Value &insertjson);
+
+    /*
+        功能：分页查询公告
+        传入：Json(Page, PageSize)
+        传出：Json([Result, Reason, _id, Title, Views, Comments, CreateTime], TotalNum)
+    */
+    Json::Value SelectAnnouncementList(Json::Value &queryjson);
+
+    /*
+        功能：查询公告的详细信息，主要是编辑时的查询
+        传入：Json(AnnouncementId)
+        传出：Json(Result, Reason, Title, Content, Level)
+    */
+    Json::Value SelectAnnouncementByEdit(Json::Value &queryjson);
+
+    /*
+        功能：查询公告的详细内容，并且将其浏览量加一
+        传入：Json(AnnouncementId)
+        传出：Json(Title, Content, Views, Comments, CreateTime, UpdateTime)
+    */
+    Json::Value SelectAnnouncement(Json::Value &queryjson);
+
+    /*
+        功能：修改公告的评论数
+        传入：Json(ArticleId, Num)
+        传出：bool
+    */
+    bool UpdateAnnouncementComments(Json::Value &updatejson);
+
+    /*
+        功能：更新公告
+        传入：Json(AnnouncementId, Title, Content, Level)
+        传出；Json(Result, Reason)
+    */
+    Json::Value UpdateAnnouncement(Json::Value &updatejson);
+
+    /*
+        功能：删除公告
+        传入：Json(AnnouncementId)
+        传出：Json(Result,Reason)
+    */
+    Json::Value DeleteAnnouncement(Json::Value &deletejson);
+    // ++++++++++++++++++++++++++++++ 公告 Announcement End ++++++++++++++++++++++++++++++
 
 private:
     /*

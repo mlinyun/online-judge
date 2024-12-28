@@ -119,6 +119,59 @@ Json::Value Control::GetTags(Json::Value &queryjson)
 }
 // ++++++++++++++++++++++++++++++ 题目模块 End ++++++++++++++++++++++++++++++
 
+// ++++++++++++++++++++++++++++++ 公告模块 Start ++++++++++++++++++++++++++++++
+// 添加公告
+Json::Value Control::InsertAnnouncement(Json::Value &insertjson)
+{
+    return AnnouncementList::GetInstance()->InsertAnnouncement(insertjson);
+}
+
+// 分页查询公告
+Json::Value Control::SelectAnnouncementList(Json::Value &queryjson)
+{
+    return AnnouncementList::GetInstance()->SelectAnnouncementList(queryjson);
+}
+
+// 管理员分页查询公告
+Json::Value Control::SelectAnnouncementListByAdmin(Json::Value &queryjson)
+{
+    return AnnouncementList::GetInstance()->SelectAnnouncementListByAdmin(queryjson);
+}
+
+// 查询公告的详细信息
+Json::Value Control::SelectAnnouncement(Json::Value &queryjson)
+{
+    return AnnouncementList::GetInstance()->SelectAnnouncement(queryjson);
+}
+
+// 查询公告 进行编辑
+Json::Value Control::SelectAnnouncementByEdit(Json::Value &queryjson)
+{
+    return AnnouncementList::GetInstance()->SelectAnnouncementByEdit(queryjson);
+}
+
+// 更新公告
+Json::Value Control::UpdateAnnouncement(Json::Value &updatejson)
+{
+    return AnnouncementList::GetInstance()->UpdateAnnouncement(updatejson);
+}
+
+// 删除公告
+Json::Value Control::DeleteAnnouncement(Json::Value &deletejson)
+{
+    Json::Value resjson = AnnouncementList::GetInstance()->DeleteAnnouncement(deletejson);
+
+    // 当评论模块完成时，将下面注释去掉
+    // if (resjson["Result"].asString() == "Success")
+    // {
+    //     Json::Value json;
+    //     json["ArticleId"] = deletejson["AnnouncementId"];
+    //     CommentList::GetInstance()->DeleteArticleComment(json);
+    // }
+    return resjson;
+}
+// ++++++++++++++++++++++++++++++ 公告模块 End ++++++++++++++++++++++++++++++
+
 Control::Control()
 {
     // 初始化题目标签
