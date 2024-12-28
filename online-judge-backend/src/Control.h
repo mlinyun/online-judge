@@ -32,6 +32,9 @@ public:
 
     // 获取用户 Rank 排名
     Json::Value SelectUserRank(Json::Value &queryjson);
+
+    // 登录用户通过Token（Token 鉴权实现）
+    Json::Value LoginUserByToken(Json::Value &loginjson);
     // ++++++++++++++++++++ 用户模块 End ++++++++++++++++++++
 
     // ++++++++++++++++++++ 题目模块 Start ++++++++++++++++++++

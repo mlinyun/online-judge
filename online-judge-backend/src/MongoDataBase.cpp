@@ -3129,6 +3129,106 @@ Json::Value MoDB::SelectStatusRecord(Json::Value &queryjson)
 }
 // ++++++++++++++++++++++++++++++ 测评记录模块 End ++++++++++++++++++++++++++++++
 
+// ++++++++++++++++++++++++++++++ Token 鉴权实现 Start ++++++++++++++++++++++++++++++
+/*
+    功能：用户登录通过 Token
+    传入：Json(UserId)
+    传出：Json(Result, Reason, Info(_id, NickName, Avatar, CommentLikes, Solves, Authority))
+*/
+Json::Value MoDB::LoginUserByToken(Json::Value &loginjson)
+{
+    Json::Value resjson;
+    try
+    {
+        int64_t userid = stoll(loginjson["UserId"].asString());
+        auto client = pool.acquire();
+        mongocxx::collection usercoll = (*client)["OnlineJudge"]["User"];
+
+        mongocxx::pipeline pipe;
+        bsoncxx::builder::stream::document document{};
+        document
+            << "_id" << userid;
+        pipe.match(document.view());
+
+        document.clear();
+        document
+            << "Avatar" << 1
+            << "NickName" << 1
+            << "CommentLikes" << 1
+            << "Solves" << 1
+            << "Authority" << 1;
+
+        pipe.project(document.view());
+
+        mongocxx::cursor cursor = usercoll.aggregate(pipe);
+        // 匹配失败
+        if (cursor.begin() == cursor.end())
+        {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "用户ID错误！";
+            return resjson;
+        }
+        // 匹配成功
+        Json::Reader reader;
+        for (auto doc : cursor)
+        {
+            Json::Value jsonvalue;
+            reader.parse(bsoncxx::to_json(doc), jsonvalue);
+            resjson["Info"] = jsonvalue;
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    }
+    catch (const std::exception &e)
+    {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/*
+    功能：查询所有用户的权限
+    传入：void
+    传出：Json(Result, _id, Authority)
+*/
+Json::Value MoDB::SelectUserAuthority()
+{
+    Json::Value resjson;
+    try
+    {
+        auto client = pool.acquire();
+        mongocxx::collection usercoll = (*client)["OnlineJudge"]["User"];
+
+        bsoncxx::builder::stream::document document{};
+        mongocxx::pipeline pipe;
+
+        document
+            << "Authority" << 1;
+
+        pipe.project(document.view());
+        Json::Reader reader;
+
+        mongocxx::cursor cursor = usercoll.aggregate(pipe);
+
+        for (auto doc : cursor)
+        {
+            Json::Value jsonvalue;
+            reader.parse(bsoncxx::to_json(doc), jsonvalue);
+            resjson["ArrayInfo"].append(jsonvalue);
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    }
+    catch (const std::exception &e)
+    {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+// ++++++++++++++++++++++++++++++ Token 鉴权实现 End ++++++++++++++++++++++++++++++
+
 MoDB::MoDB()
 {
     // 初始化 ID

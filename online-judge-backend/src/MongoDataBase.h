@@ -399,6 +399,22 @@ public:
     Json::Value SelectStatusRecord(Json::Value &queryjson);
     // ++++++++++++++++++++++++++++++ 评测记录 StatusRecord End ++++++++++++++++++++++++++++++
 
+    // ++++++++++++++++++++++++++++++ Token 鉴权实现 Start ++++++++++++++++++++++++++++++
+    /*
+        功能：用户登录通过 Token
+        传入：Json(UserId)
+        传出：Json(Result, Reason, Info(_id, NickName, Avatar, CommentLikes, Solves, Authority))
+    */
+    Json::Value LoginUserByToken(Json::Value &loginjson);
+
+    /*
+        功能：查询所有用户的权限
+        传入：void
+        传出：Json(Result, _id, Authority)
+    */
+    Json::Value SelectUserAuthority();
+    // ++++++++++++++++++++++++++++++ Token 鉴权实现 End ++++++++++++++++++++++++++++++
+
 private:
     /*
         功能：获取某一个集合中最大的 ID
