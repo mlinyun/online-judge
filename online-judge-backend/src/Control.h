@@ -104,7 +104,6 @@ public:
     // ++++++++++++++++++++ 讨论模块 End ++++++++++++++++++++
 
     // ++++++++++++++++++++ 题解模块 Start ++++++++++++++++++++
-    // ----------------------题解-----------------------
     // 查询题解列表
     Json::Value SelectSolutionList(Json::Value &queryjson);
 
@@ -126,6 +125,20 @@ public:
     // 删除题解
     Json::Value DeleteSolution(Json::Value &deletejson);
     // ++++++++++++++++++++ 题解模块 End ++++++++++++++++++++
+
+    // ++++++++++++++++++++ 评论模块 Start ++++++++++++++++++++
+    // 管理员查询评论
+    Json::Value SelectCommentListByAdmin(Json::Value &queryjson);
+
+    // 获取评论 根据Id
+    Json::Value GetComment(Json::Value &queryjson);
+
+    // 插入评论
+    Json::Value InsertComment(Json::Value &insertjson);
+
+    // 删除评论
+    Json::Value DeleteComment(Json::Value &deletejson);
+    // ++++++++++++++++++++ 评论模块 End ++++++++++++++++++++
 
     Control();
 

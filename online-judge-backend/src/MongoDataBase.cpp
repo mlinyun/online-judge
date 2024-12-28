@@ -2304,6 +2304,564 @@ Json::Value MoDB::DeleteSolution(Json::Value &deletejson)
 }
 // ++++++++++++++++++++++++++++++ 题解模块 End ++++++++++++++++++++++++++++++
 
+// ++++++++++++++++++++++++++++++ 评论模块 Start ++++++++++++++++++++++++++++++
+/*
+    功能：管理员查询评论
+    传入：Json(Page, PageSize)
+    传出：Json(_id, ParentId, ParentType, Content, CreateTime,
+        Child_Comments._id, Child_Comments.Content, Child_Comments.CreateTime)
+*/
+Json::Value MoDB::SelectCommentListByAdmin(Json::Value &queryjson)
+{
+    Json::Value resjson;
+    try
+    {
+        int page = stoi(queryjson["Page"].asString());
+        int pagesize = stoi(queryjson["PageSize"].asString());
+        int skip = (page - 1) * pagesize;
+
+        auto client = pool.acquire();
+        mongocxx::collection commentcoll = (*client)["OnlineJudge"]["Comment"];
+
+        mongocxx::pipeline pipe;
+        bsoncxx::builder::stream::document document{};
+        // 按照时间先后顺序
+        pipe.sort({make_document(kvp("CreateTime", -1))});
+        // 跳过多少条
+        pipe.skip(skip);
+        // 限制多少条
+        pipe.limit(pagesize);
+
+        // 选择需要的字段
+        document
+            << "ParentId" << 1
+            << "ParentType" << 1
+            << "Content" << 1
+            << "CreateTime" << 1
+            << "Child_Comments._id" << 1
+            << "Child_Comments.Content" << 1
+            << "Child_Comments.CreateTime" << 1;
+        pipe.project(document.view());
+        document.clear();
+
+        Json::Reader reader;
+
+        mongocxx::cursor cursor = commentcoll.aggregate(pipe);
+        for (auto doc : cursor)
+        {
+            Json::Value jsonvalue;
+            reader.parse(bsoncxx::to_json(doc), jsonvalue);
+            resjson["ArrayInfo"].append(jsonvalue);
+        }
+        resjson["TotalNum"] = to_string(commentcoll.count_documents({}));
+        return resjson;
+    }
+    catch (const std::exception &e)
+    {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+/*
+    功能：查询父评论
+    传入：Json(ParentId, Page, PageSize, SonNum)
+    传出：Json(ParentId, Content, Likes, CreateTime, Child_Total, User(Avatar, NickName),
+    Child_Comments(_id, Content,Likes, CreateTime, User(Avatar, NickName)))
+*/
+Json::Value MoDB::getFatherComment(Json::Value &queryjson)
+{
+    Json::Value resjson;
+    try
+    {
+        int64_t parentid = stoll(queryjson["ParentId"].asString());
+        int page = stoi(queryjson["Page"].asString());
+        int pagesize = stoi(queryjson["PageSize"].asString());
+        int sonnum = stoi(queryjson["SonNum"].asString());
+        int skip = (page - 1) * pagesize;
+
+        auto client = pool.acquire();
+        mongocxx::collection commentcoll = (*client)["OnlineJudge"]["Comment"];
+
+        mongocxx::pipeline pipe;
+        bsoncxx::builder::stream::document document{};
+        // 匹配ParentId
+        pipe.match({make_document(kvp("ParentId", parentid))});
+        // 按照时间先后顺序
+        pipe.sort({make_document(kvp("CreateTime", 1))});
+        // 跳过多少条
+        pipe.skip(skip);
+        // 限制多少条
+        pipe.limit(pagesize);
+        // 将子评论进行求个数
+        document
+            << "$set" << open_document
+            << "Child_Total" << open_document
+            << "$size"
+            << "$Child_Comments"
+            << close_document << close_document;
+
+        pipe.append_stage(document.view());
+        document.clear();
+        // 限制子评论的个数
+        document
+            << "$set" << open_document
+            << "Child_Comments" << open_document
+            << "$slice" << open_array
+            << "$Child_Comments" << 0 << sonnum << close_array
+            << close_document << close_document;
+
+        pipe.append_stage(document.view());
+        document.clear();
+        // 将数组拆散
+        document
+            << "path"
+            << "$Child_Comments"
+            << "preserveNullAndEmptyArrays" << true;
+        pipe.unwind(document.view());
+        document.clear();
+        // 将子评论的用户id和用户表进行外连接
+        document
+            << "from"
+            << "User"
+            << "localField"
+            << "Child_Comments.UserId"
+            << "foreignField"
+            << "_id"
+            << "as"
+            << "Child_Comments.User";
+        pipe.lookup(document.view());
+        document.clear();
+        // 将其合并
+        document
+            << "_id"
+            << "$_id"
+            << "ParentId" << open_document
+            << "$first"
+            << "$ParentId" << close_document
+            << "Content" << open_document
+            << "$first"
+            << "$Content" << close_document
+            << "Likes" << open_document
+            << "$first"
+            << "$Likes" << close_document
+            << "UserId" << open_document
+            << "$first"
+            << "$UserId" << close_document
+            << "CreateTime" << open_document
+            << "$first"
+            << "$CreateTime" << close_document
+            << "Child_Total" << open_document
+            << "$first"
+            << "$Child_Total" << close_document
+            << "Child_Comments" << open_document
+            << "$push"
+            << "$Child_Comments" << close_document;
+        pipe.group(document.view());
+        document.clear();
+        // 将父评论的用户Id和用户表进行外连接
+        document
+            << "from"
+            << "User"
+            << "localField"
+            << "UserId"
+            << "foreignField"
+            << "_id"
+            << "as"
+            << "User";
+        pipe.lookup(document.view());
+        document.clear();
+        // 选择需要的字段
+        document
+            << "ParentId" << 1
+            << "Content" << 1
+            << "Likes" << 1
+            << "CreateTime" << 1
+            << "Child_Total" << 1
+            << "User._id" << 1
+            << "User.Avatar" << 1
+            << "User.NickName" << 1
+            << "Child_Comments._id" << 1
+            << "Child_Comments.Content" << 1
+            << "Child_Comments.Likes" << 1
+            << "Child_Comments.CreateTime" << 1
+            << "Child_Comments.User._id" << 1
+            << "Child_Comments.User.Avatar" << 1
+            << "Child_Comments.User.NickName" << 1;
+        pipe.project(document.view());
+        document.clear();
+        // 按照时间先后顺序
+        pipe.sort({make_document(kvp("CreateTime", 1))});
+
+        Json::Reader reader;
+
+        mongocxx::cursor cursor = commentcoll.aggregate(pipe);
+        for (auto doc : cursor)
+        {
+            Json::Value jsonvalue;
+            reader.parse(bsoncxx::to_json(doc), jsonvalue);
+            resjson["ArryInfo"].append(jsonvalue);
+        }
+        resjson["TotalNum"] = to_string(commentcoll.count_documents({make_document(kvp("ParentId", parentid))}));
+        return resjson;
+    }
+    catch (const std::exception &e)
+    {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/*
+    功能：获取子评论
+    传入：Json(ParentId,Skip,Limit)
+    传出：Json(Child_Total, Child_Comments(_id, Content, Likes, CreateTime, User(NickName, Avatar)))
+*/
+Json::Value MoDB::getSonComment(Json::Value &queryjson)
+{
+    Json::Value resjson;
+
+    try
+    {
+        int64_t _id = stoll(queryjson["ParentId"].asString());
+        int page = stoi(queryjson["Page"].asString());
+        int pagesize = stoi(queryjson["PageSize"].asString());
+        int skip = (page - 1) * pagesize;
+
+        auto client = pool.acquire();
+        mongocxx::collection commentcoll = (*client)["OnlineJudge"]["Comment"];
+        mongocxx::pipeline pipe;
+        bsoncxx::builder::stream::document document{};
+        // 匹配id
+        pipe.match({make_document(kvp("_id", _id))});
+
+        // 将子评论进行求个数
+        document
+            << "$set" << open_document
+            << "Child_Total" << open_document
+            << "$size"
+            << "$Child_Comments"
+            << close_document << close_document;
+
+        pipe.append_stage(document.view());
+        document.clear();
+        // 限制子评论个数
+        document
+            << "$set" << open_document
+            << "Child_Comments" << open_document
+            << "$slice" << open_array
+            << "$Child_Comments" << skip << pagesize << close_array
+            << close_document << close_document;
+
+        pipe.append_stage(document.view());
+        document.clear();
+        // 将数组拆散
+        document
+            << "path"
+            << "$Child_Comments"
+            << "preserveNullAndEmptyArrays" << true;
+        pipe.unwind(document.view());
+        document.clear();
+        // 将子评论的用户id和用户表进行外连接
+        document
+            << "from"
+            << "User"
+            << "localField"
+            << "Child_Comments.UserId"
+            << "foreignField"
+            << "_id"
+            << "as"
+            << "Child_Comments.User";
+        pipe.lookup(document.view());
+        document.clear();
+
+        // 将其合并
+        document
+            << "_id"
+            << "$_id"
+            << "Child_Total" << open_document
+            << "$first"
+            << "$Child_Total" << close_document
+            << "Child_Comments" << open_document
+            << "$push"
+            << "$Child_Comments" << close_document;
+        pipe.group(document.view());
+        document.clear();
+        document
+            << "Child_Total" << 1
+            << "Child_Comments._id" << 1
+            << "Child_Comments.Content" << 1
+            << "Child_Comments.Likes" << 1
+            << "Child_Comments.CreateTime" << 1
+            << "Child_Comments.User._id" << 1
+            << "Child_Comments.User.NickName" << 1
+            << "Child_Comments.User.Avatar" << 1;
+        pipe.project(document.view());
+        document.clear();
+
+        Json::Reader reader;
+
+        mongocxx::cursor cursor = commentcoll.aggregate(pipe);
+        for (auto doc : cursor)
+        {
+            reader.parse(bsoncxx::to_json(doc), resjson);
+        }
+        return resjson;
+    }
+    catch (const std::exception &e)
+    {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/*
+    功能：插入父评论
+    传入：Json(ParentId, Content, UserId)
+    传出：Json(_id, CreateTime)
+*/
+Json::Value MoDB::InsertFatherComment(Json::Value &insertjson)
+{
+    Json::Value resjson;
+    try
+    {
+        int64_t id = ++m_commentid;
+        int64_t parentid = stoll(insertjson["ParentId"].asString());
+        string parenttype = insertjson["ArticleType"].asString();
+        string content = insertjson["Content"].asString();
+        int64_t userid = stoll(insertjson["UserId"].asString());
+        string createtime = GetTime();
+
+        auto client = pool.acquire();
+        mongocxx::collection commentcoll = (*client)["OnlineJudge"]["Comment"];
+        bsoncxx::builder::stream::document document{};
+        document
+            << "_id" << id
+            << "ParentId" << parentid
+            << "ParentType" << parenttype.data()
+            << "Content" << content.data()
+            << "UserId" << userid
+            << "Likes" << 0
+            << "CreateTime" << createtime.data()
+            << "Child_Comments" << open_array
+            << close_array;
+
+        commentcoll.insert_one(document.view());
+        resjson["_id"] = to_string(id);
+        resjson["CreateTime"] = createtime.data();
+        resjson["Result"] = "Success";
+        return resjson;
+    }
+    catch (const std::exception &e)
+    {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/*
+    功能：插入子评论
+    传入：Json(ParentId, Content, UserId)
+    传出：Json(_id, CreateTime)
+*/
+Json::Value MoDB::InsertSonComment(Json::Value &insertjson)
+{
+    Json::Value resjson;
+    try
+    {
+        int64_t parentid = stoll(insertjson["ParentId"].asString().data());
+        int64_t id = ++m_commentid;
+        string content = insertjson["Content"].asString();
+        int64_t userid = stoll(insertjson["UserId"].asString().data());
+        string createtime = GetTime();
+
+        auto client = pool.acquire();
+        mongocxx::collection commentcoll = (*client)["OnlineJudge"]["Comment"];
+
+        bsoncxx::builder::stream::document document{};
+        document
+            << "$addToSet" << open_document
+            << "Child_Comments" << open_document
+            << "_id" << id
+            << "Content"
+            << content.data()
+            << "UserId" << userid
+            << "Likes" << 0
+            << "CreateTime"
+            << createtime.data()
+            << close_document
+            << close_document;
+
+        commentcoll.update_one({make_document(kvp("_id", parentid))}, document.view());
+
+        resjson["_id"] = to_string(id);
+        resjson["CreateTime"] = createtime;
+        resjson["Result"] = "Success";
+        return resjson;
+    }
+    catch (const std::exception &e)
+    {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/*
+    功能：删除某一篇文章（讨论，题解，公告）的所有文章，主要服务于删除文章
+    传入：Json(ArticleId)
+    传出：bool
+*/
+bool MoDB::DeleteArticleComment(Json::Value &deletejson)
+{
+    try
+    {
+        int64_t articleid = stoll(deletejson["ArticleId"].asString());
+
+        auto client = pool.acquire();
+        mongocxx::collection commentcoll = (*client)["OnlineJudge"]["Comment"];
+        auto result = commentcoll.delete_many({make_document(kvp("ParentId", articleid))});
+
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        return false;
+    }
+}
+
+/*
+    功能：删除父评论
+    传入：Json(CommentId)
+    传出：Json(Result, Reason, DeleteNum, ArticleType)
+*/
+Json::Value MoDB::DeleteFatherComment(Json::Value &deletejson)
+{
+    Json::Value resjson;
+    try
+    {
+        int64_t commentid = stoll(deletejson["CommentId"].asString());
+
+        auto client = pool.acquire();
+        mongocxx::collection commentcoll = (*client)["OnlineJudge"]["Comment"];
+
+        mongocxx::cursor cursor = commentcoll.find({make_document(kvp("_id", commentid))});
+        // 如果未查询到父评论
+        if (cursor.begin() == cursor.end())
+        {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库未查询到该评论！";
+            return resjson;
+        }
+
+        mongocxx::pipeline pipe;
+        bsoncxx::builder::stream::document document{};
+
+        pipe.match({make_document(kvp("_id", commentid))});
+        document
+            << "$set" << open_document
+            << "Child_Total" << open_document
+            << "$size"
+            << "$Child_Comments"
+            << close_document << close_document;
+
+        pipe.append_stage(document.view());
+        cursor = commentcoll.aggregate(pipe);
+
+        Json::Value jsonvalue;
+        Json::Reader reader;
+        for (auto doc : cursor)
+        {
+            reader.parse(bsoncxx::to_json(doc), jsonvalue);
+        }
+        int sonnum = stoi(jsonvalue["Child_Total"].asString());
+        string articletype = jsonvalue["ParentType"].asString();
+
+        auto result = commentcoll.delete_one({make_document(kvp("_id", commentid))});
+
+        if ((*result).deleted_count() < 1)
+        {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库未查询到该数据！";
+            return resjson;
+        }
+        resjson["Result"] = "Success";
+        resjson["DeleteNum"] = sonnum + 1;
+        resjson["ArticleType"] = articletype;
+        return resjson;
+    }
+    catch (const std::exception &e)
+    {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/*
+    功能：删除子评论
+    传入：Json(CommentId)
+    传出：Json(Result, Reason, DeleteNum, ArticleType)
+*/
+Json::Value MoDB::DeleteSonComment(Json::Value &deletejson)
+{
+    Json::Value resjson;
+    try
+    {
+        int64_t commentid = stoll(deletejson["CommentId"].asString());
+
+        auto client = pool.acquire();
+        mongocxx::collection commentcoll = (*client)["OnlineJudge"]["Comment"];
+        // 找出父评论 ID
+        mongocxx::cursor cursor = commentcoll.find({make_document(kvp("Child_Comments._id", commentid))});
+        Json::Value jsonvalue;
+        Json::Reader reader;
+
+        if (cursor.begin() == cursor.end())
+        {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库未查询到数据！";
+            return resjson;
+        }
+        for (auto doc : cursor)
+        {
+            reader.parse(bsoncxx::to_json(doc), jsonvalue);
+        }
+        int64_t fatherid = stoll(jsonvalue["_id"].asString());
+        string articletype = jsonvalue["ParentType"].asString();
+        // 删除子评论
+        bsoncxx::builder::stream::document document{};
+        document
+            << "$pull" << open_document
+            << "Child_Comments" << open_document
+            << "_id" << commentid
+            << close_document << close_document;
+
+        auto result = commentcoll.update_one({make_document(kvp("_id", fatherid))}, document.view());
+
+        if ((*result).matched_count() < 1)
+        {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库未找到该数据！";
+            return resjson;
+        }
+        resjson["Result"] = "Success";
+        resjson["DeleteNum"] = 1;
+        resjson["ArticleType"] = articletype;
+        return resjson;
+    }
+    catch (const std::exception &e)
+    {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+// ++++++++++++++++++++++++++++++ 评论模块 End ++++++++++++++++++++++++++++++
+
 MoDB::MoDB()
 {
     // 初始化 ID
