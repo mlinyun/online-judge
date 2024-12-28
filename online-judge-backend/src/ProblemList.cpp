@@ -65,10 +65,34 @@ Json::Value ProblemList::SelectProblemInfoByAdmin(Json::Value &queryjson)
     return resjson;
 }
 
-// 用户查询题目详细信息
+// 用户查询题目详细信息（redis 缓存）
 Json::Value ProblemList::SelectProblem(Json::Value &queryjson)
 {
-    return MoDB::GetInstance()->SelectProblem(queryjson);
+    string problemid = queryjson["ProblemId"].asString();
+
+    // 获取缓存
+    string resstr = ReDB::GetInstance()->GetProblemCache(problemid);
+
+    Json::Value resjson;
+    Json::Reader reader;
+    // 如果有缓存
+    if (resstr != "")
+    {
+        // 解析缓存json
+        reader.parse(resstr, resjson);
+
+        return resjson;
+    }
+    // 如果没有缓存
+    resjson = MoDB::GetInstance()->SelectProblem(queryjson);
+
+    // 添加缓存
+    if (resjson["Result"].asString() == "Success")
+    {
+        ReDB::GetInstance()->AddProblemCache(problemid, resjson.toStyledString());
+    }
+
+    return resjson;
 }
 
 // 插入题目数据信息
@@ -145,6 +169,8 @@ Json::Value ProblemList::UpdateProblem(Json::Value &updatejson)
     // 创建文件夹
     InsertProblemDataInfo(updatejson);
 
+    // 删除缓存
+    ReDB::GetInstance()->DeleteProblemCache(problemid);
     return tmpjson;
 }
 
@@ -162,6 +188,8 @@ Json::Value ProblemList::DeleteProblem(Json::Value &deletejson)
 
     system(command.data());
 
+    // 删除缓存
+    ReDB::GetInstance()->DeleteProblemCache(deletejson["ProblemId"].asString());
     return tmpjson;
 }
 
