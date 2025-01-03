@@ -2,7 +2,7 @@
     <el-card class="box-card">
         <template #header>
         <div class="card-header">
-            <span id="homepagetitle">欢迎来到XDOJ</span>
+            <span id="homepagetitle">欢迎来到在线编程评测系统</span>
         </div>
         </template>
         <AnnouncementList></AnnouncementList>
