@@ -20,8 +20,8 @@ OJ 是 Online Judge 系统的的简称，用来在线检测程序源代码的正
 
 ## 功能架构
 
-<img alt="功能架构" src="./doc/function.png" title="功能架构"/>
+![功能架构](./doc/function.png "功能架构")
 
 ## 技术架构
 
-<img alt="技术架构" src="./doc/technology.png" title="技术架构"/>
+![技术架构](./doc/technology.png "技术架构")

@@ -31,3 +31,43 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 # 链接依赖库（PRIVATE 表示这些依赖只在当前目标中使用）
 target_link_libraries(${PROJECT_NAME} PRIVATE httplib::httplib JsonCpp::JsonCpp mongo::mongocxx_static redis++::redis++_static)
+
+# ============= 代码格式化目标 =============
+# 查找 clang-format
+find_program(CLANG_FORMAT "clang-format")
+
+if(CLANG_FORMAT)
+    message(STATUS "找到 clang-format: ${CLANG_FORMAT}")
+    
+    # 收集所有源文件
+    file(GLOB_RECURSE ALL_SOURCE_FILES 
+        ${CMAKE_SOURCE_DIR}/src/*.cpp
+        ${CMAKE_SOURCE_DIR}/src/*.h
+        ${CMAKE_SOURCE_DIR}/src/*.hpp
+    )
+    
+    # 添加格式化目标
+    add_custom_target(
+        format
+        COMMAND ${CLANG_FORMAT} -i ${ALL_SOURCE_FILES}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "正在格式化代码..."
+        VERBATIM
+    )
+    
+    # 添加格式检查目标
+    add_custom_target(
+        check-format
+        COMMAND ${CMAKE_SOURCE_DIR}/format/check_format.sh
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "正在检查代码格式..."
+        VERBATIM
+    )
+    
+    message(STATUS "已添加代码格式化目标:")
+    message(STATUS "  - make format       : 格式化所有代码")
+    message(STATUS "  - make check-format : 检查代码格式")
+else()
+    message(WARNING "未找到 clang-format，无法使用代码格式化功能")
+    message(WARNING "请安装 clang-format: sudo apt-get install clang-format")
+endif()

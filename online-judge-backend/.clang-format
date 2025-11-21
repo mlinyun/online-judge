@@ -1,0 +1,63 @@
+BasedOnStyle: Google
+Language: Cpp
+Standard: c++17
+
+# 缩进设置
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 120
+
+# 括号和空格
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+
+# 指针和引用对齐
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# 访问修饰符缩进
+AccessModifierOffset: -4
+
+# 命名空间缩进
+NamespaceIndentation: None
+
+# 注释对齐
+AlignTrailingComments: true
+
+# 连续赋值对齐
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+
+# 函数参数对齐
+AlignAfterOpenBracket: Align
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortFunctionsOnASingleLine: Inline
+
+# 控制语句
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+
+# 大括号换行
+BreakBeforeBraces: Attach
+
+# include 排序
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:           '^<.*\.h>'
+    Priority:        1
+  - Regex:           '^<.*'
+    Priority:        2
+  - Regex:           '.*'
+    Priority:        3
+
+# 其他设置
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
