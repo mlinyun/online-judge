@@ -3,3 +3,5 @@
 **/build/
 **/dist/
 **/problemdata/*/
+online-judge-backend/bin/
+online-judge-backend/CMakeUserPresets.json
