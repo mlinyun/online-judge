@@ -23,7 +23,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp" "${INCLUDE_DIR}/*.h")
 
 # 查找头文件目录
-include_directories("${INCLUDE_DIR}")
+include_directories("${CMAKE_SOURCE_DIR}/include")
 # 查找 httplib 库
 find_package(httplib REQUIRED)
 # 查找 JsonCpp 库
