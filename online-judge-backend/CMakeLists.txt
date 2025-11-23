@@ -8,15 +8,22 @@ project(online-judge-backend VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Require C++17 standard to be used")
 
+# 导出 compile_commands.json 供 IntelliSense 使用
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # 设置源文件目录
 set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
+# 设置头文件目录
+set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
 
 # 设置可执行文件输出路径
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # 查找源文件目录下的所有源文件，并将其存储在 SOURCES 变量中
-file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp" "${SRC_DIR}/*.h")
+file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp" "${INCLUDE_DIR}/*.h")
 
+# 查找头文件目录
+include_directories("${INCLUDE_DIR}")
 # 查找 httplib 库
 find_package(httplib REQUIRED)
 # 查找 JsonCpp 库
@@ -30,7 +37,15 @@ find_package(redis++ REQUIRED)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # 链接依赖库（PRIVATE 表示这些依赖只在当前目标中使用）
-target_link_libraries(${PROJECT_NAME} PRIVATE httplib::httplib JsonCpp::JsonCpp mongo::mongocxx_static redis++::redis++_static)
+target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE
+    httplib::httplib
+    JsonCpp::JsonCpp
+    mongo::mongocxx_static
+    redis++::redis++_static
+    pthread
+)
 
 # ============= 代码格式化目标 =============
 # 查找 clang-format
@@ -39,17 +54,10 @@ find_program(CLANG_FORMAT "clang-format")
 if(CLANG_FORMAT)
     message(STATUS "找到 clang-format: ${CLANG_FORMAT}")
     
-    # 收集所有源文件
-    file(GLOB_RECURSE ALL_SOURCE_FILES 
-        ${CMAKE_SOURCE_DIR}/src/*.cpp
-        ${CMAKE_SOURCE_DIR}/src/*.h
-        ${CMAKE_SOURCE_DIR}/src/*.hpp
-    )
-    
     # 添加格式化目标
     add_custom_target(
         format
-        COMMAND ${CLANG_FORMAT} -i ${ALL_SOURCE_FILES}
+        COMMAND ${CLANG_FORMAT} -i ${SOURCES}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "正在格式化代码..."
         VERBATIM

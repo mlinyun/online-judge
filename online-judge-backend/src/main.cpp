@@ -1,8 +1,9 @@
-#include <iostream>
+#include <cstdlib>
 
-using namespace std;
+#include "http/http_server.h"
 
 int main() {
-    cout << "Hello, Online Judge Backend!" << endl;
+    HttpServer server;
+    server.Run();
     return EXIT_SUCCESS;
 }

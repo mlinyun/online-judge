@@ -1,0 +1,28 @@
+// 创建 "online_judge" 数据库
+use("online_judge");
+
+// 创建数据库管理员用户
+db.createUser({
+    user: "online_judge_admin",
+    pwd: "StrongPassw0rd!",
+    roles: [
+        { role: "dbOwner", db: "online_judge" }
+    ]
+});
+
+// 创建公告表
+db.createCollection("announcements");
+// 创建评论表
+db.createCollection("comments");
+// 创建讨论表
+db.createCollection("discussions");
+// 创建题目表
+db.createCollection("problems");
+// 创建题解表
+db.createCollection("solutions");
+// 创建状态记录表
+db.createCollection("status_records");
+// 创建标签表
+db.createCollection("tags");
+// 创建用户表
+db.createCollection("users");
