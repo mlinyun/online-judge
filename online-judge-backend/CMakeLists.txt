@@ -8,6 +8,9 @@ project(online-judge-backend VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Require C++17 standard to be used")
 
+# 导出 compile_commands.json 供 IntelliSense 使用
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # 设置源文件目录
 set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
 
@@ -17,6 +20,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 # 查找源文件目录下的所有源文件，并将其存储在 SOURCES 变量中
 file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp" "${SRC_DIR}/*.h")
 
+# 查找头文件目录
+include_directories("${CMAKE_SOURCE_DIR}/include")
 # 查找 httplib 库
 find_package(httplib REQUIRED)
 # 查找 JsonCpp 库
@@ -30,7 +35,15 @@ find_package(redis++ REQUIRED)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # 链接依赖库（PRIVATE 表示这些依赖只在当前目标中使用）
-target_link_libraries(${PROJECT_NAME} PRIVATE httplib::httplib JsonCpp::JsonCpp mongo::mongocxx_static redis++::redis++_static)
+target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE
+    httplib::httplib
+    JsonCpp::JsonCpp
+    mongo::mongocxx_static
+    redis++::redis++_static
+    pthread
+)
 
 # ============= 代码格式化目标 =============
 # 查找 clang-format

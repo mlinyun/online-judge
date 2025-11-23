@@ -3,9 +3,10 @@ set -euo pipefail
 
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 SRC_DIR="${ROOT_DIR}/src"
+INCLUDE_DIR="${ROOT_DIR}/include"
 
 FAILED=0
-mapfile -t FILES < <(find "$SRC_DIR" -type f \( -name '*.cpp' -o -name '*.hpp' -o -name '*.h' \) | sort)
+mapfile -t FILES < <(find "$SRC_DIR" "$INCLUDE_DIR" -type f \( -name '*.cpp' -o -name '*.hpp' -o -name '*.h' \) | sort)
 
 if (( ${#FILES[@]} == 0 )); then
     echo "未找到需要检查的文件"
