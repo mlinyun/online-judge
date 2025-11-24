@@ -15,10 +15,184 @@ using namespace std;
 
 Control control;  // 全局 Control 对象
 
+// 根据返回结果设置状态码
+bool SetResponseStatus(const Json::Value &json, httplib::Response &res) {
+    string result = json["Result"].asString();
+    if (result == "Success") {
+        return true;
+    } else if (result == "Fail") {
+        return true;
+    } else if (result == "400") {  // 请求参数有误
+        res.status = 400;
+    } else if (result == "401") {  // 无权限
+        res.status = 401;
+    } else if (result == "500") {  // 服务器出错啦
+        res.status = 500;
+    }
+    return true;
+}
+
+/**
+ * 处理注册用户的请求
+ */
+void doRegisterUser(const httplib::Request &req, httplib::Response &res) {
+    cout << "doRegister start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.RegisterUser(jsonvalue);
+    cout << "doRegister end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理登录用户的请求
+ */
+void doLoginUser(const httplib::Request &req, httplib::Response &res) {
+    cout << "doLoginUser start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.LoginUser(jsonvalue);
+    cout << "doLoginUser end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理获取用户信息的请求
+ */
+void doGetUserInfo(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetUserInfo start!!!" << endl;
+    Json::Value resjson;
+    // 请求参数校验
+    if (!req.has_param("UserId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        // 获取用户 ID 参数
+        string userid = req.get_param_value("UserId");
+        Json::Value queryjson;
+        queryjson["UserId"] = userid;
+        resjson = control.SelectUserInfo(queryjson);
+    }
+    cout << "doGetUserInfo end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理设置页面获取用户信息的请求
+ */
+void doGetUserUpdateInfo(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetUserUpdateInfo start!!!" << endl;
+    Json::Value resjson;
+    // 请求参数校验
+    if (!req.has_param("UserId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string userid = req.get_param_value("UserId");
+        Json::Value queryjson;
+        queryjson["UserId"] = userid;
+        resjson = control.SelectUserUpdateInfo(queryjson);
+    }
+    cout << "doGetUserUpdateInfo end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理更新用户信息的请求
+ */
+void doUpdateUserInfo(const httplib::Request &req, httplib::Response &res) {
+    cout << "doUpdateUserInfo start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.UpdateUserInfo(jsonvalue);
+    cout << "doUpdateUserInfo end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理删除用户的请求
+ */
+void doDeleteUser(const httplib::Request &req, httplib::Response &res) {
+    cout << "doDeleteUser start!!!" << endl;
+    Json::Value resjson;
+    // 请求参数校验
+    if (!req.has_param("UserId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        // 获取用户 ID 参数
+        string userid = req.get_param_value("UserId");
+        Json::Value jsonvalue;
+        jsonvalue["UserId"] = userid;
+        resjson = control.DeleteUser(jsonvalue);
+    }
+    cout << "doDeleteUser end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理获取用户排名的请求
+ */
+void doGetUserRank(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetUserRank start!!!" << endl;
+    Json::Value resjson;
+
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectUserRank(queryjson);
+    }
+    cout << "doGetUserRank end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理分页获取用户列表的请求（管理员权限）
+ */
+void doGetUserSetInfo(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetUserSetInfo start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectUserSetInfo(queryjson);
+    }
+    cout << "doGetUserSetInfo end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
 /**
  * 处理获取图片的请求
  */
-void doGetImage(const httplib::Request& req, httplib::Response& res) {
+void doGetImage(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetImage start!!!" << endl;
 
     try {
@@ -58,7 +232,7 @@ void doGetImage(const httplib::Request& req, httplib::Response& res) {
         string image((istreambuf_iterator<char>(infile)), (istreambuf_iterator<char>()));
         infile.close();
         res.set_content(image, "image/png");
-    } catch (const exception& e) {
+    } catch (const exception &e) {
         res.status = 500;  // Internal Server Error
         res.set_content("Error processing request: " + string(e.what()), "text/plain");
         cerr << "Error in doGetImage: " << e.what() << endl;
@@ -73,6 +247,23 @@ void doGetImage(const httplib::Request& req, httplib::Response& res) {
 void HttpServer::Run() {
     using namespace httplib;
     Server server;
+
+    // 注册用户
+    server.Post("/api/user/register", doRegisterUser);
+    // 登录用户
+    server.Post("/api/user/login", doLoginUser);
+    // 查询用户信息
+    server.Get("/api/user/info", doGetUserInfo);
+    // 查询用户信息（在设置页面修改用户时使用）
+    server.Get("/api/user/updateinfo", doGetUserUpdateInfo);
+    // 更新用户信息
+    server.Post("/api/user/update", doUpdateUserInfo);
+    // 删除用户
+    server.Delete("/api/user/delete", doDeleteUser);
+    // 用户排名查询
+    server.Get("/api/user/rank", doGetUserRank);
+    // 分页查询用户列表（管理员权限）
+    server.Get("/api/user/list", doGetUserSetInfo);
 
     // 获取图片
     server.Get(R"(/api/image/(\d+))", doGetImage);

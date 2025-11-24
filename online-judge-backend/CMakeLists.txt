@@ -20,7 +20,7 @@ set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # 查找源文件目录下的所有源文件，并将其存储在 SOURCES 变量中
-file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp" "${INCLUDE_DIR}/*.h")
+file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp" "${INCLUDE_DIR}/*.h" "${INCLUDE_DIR}/*.hpp")
 
 # 查找头文件目录
 include_directories("${CMAKE_SOURCE_DIR}/include")
