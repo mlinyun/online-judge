@@ -32,6 +32,7 @@ bool SetResponseStatus(const Json::Value &json, httplib::Response &res) {
     return true;
 }
 
+// ------------------------------ 用户模块 Start ------------------------------
 /**
  * 处理注册用户的请求
  */
@@ -188,6 +189,149 @@ void doGetUserSetInfo(const httplib::Request &req, httplib::Response &res) {
     SetResponseStatus(resjson, res);
     res.set_content(resjson.toStyledString(), "json");
 }
+// ------------------------------ 用户模块 End ------------------------------
+
+// ------------------------------ 题目模块 Start ------------------------------
+/**
+ * 处理获取单条题目信息的请求
+ */
+void doGetProblem(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetProblem start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("ProblemId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string problemid = req.get_param_value("ProblemId");
+        Json::Value queryjson;
+        queryjson["ProblemId"] = problemid;
+        resjson = control.SelectProblem(queryjson);
+    }
+    cout << "doGetProblem end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理获取单条题目信息的请求（管理员权限）
+ */
+void doGetProblemInfoByAdmin(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetProblemInfoByAdmin start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("ProblemId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "请求参数有误！";
+    } else {
+        string problemid = req.get_param_value("ProblemId");
+
+        Json::Value queryjson;
+        queryjson["ProblemId"] = problemid;
+        resjson = control.SelectProblemInfoByAdmin(queryjson);
+    }
+    cout << "doGetProblemInfoByAdmin end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理编辑题目的请求：包含插入和更新题目（管理员权限）
+ */
+void doEditProblem(const httplib::Request &req, httplib::Response &res) {
+    cout << "doEditProblem start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.EditProblem(jsonvalue["datainfo"]);
+    cout << "doEditProblem end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理删除题目的请求（管理员权限）
+ */
+void doDeleteProblem(const httplib::Request &req, httplib::Response &res) {
+    cout << "doDeleteProblem start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("ProblemId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "请求参数有误！";
+    } else {
+        string problemid = req.get_param_value("ProblemId");
+        Json::Value deletejson;
+        deletejson["ProblemId"] = problemid;
+        resjson = control.DeleteProblem(deletejson);
+    }
+    cout << "doDeleteProblem end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理分页获取题目列表的请求
+ */
+void doGetProblemList(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetProblemList start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("SearchInfo") || !req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "请求参数有误！";
+    } else {
+        Json::Value searchinfo;
+        Json::Reader reader;
+        // 解析传入的json
+        reader.parse(req.get_param_value("SearchInfo"), searchinfo);
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["SearchInfo"] = searchinfo;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectProblemList(queryjson);
+    }
+    cout << "doGetProblemList end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理分页获取题目列表的请求（管理员权限）
+ */
+void doGetProblemListByAdmin(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetProblemListByAdmin start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "请求参数有误！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectProblemListByAdmin(queryjson);
+    }
+    cout << "doGetProblemListByAdmin end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+// ------------------------------ 题目模块 End ------------------------------
+
+// ------------------------------ 标签模块 Start ------------------------------
+// 处理获取题目的所有标签的请求
+void doGetTags(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetTags start!!!" << endl;
+    Json::Value queryjson;
+    string tagtype = req.get_param_value("TagType");
+    queryjson["TagType"] = tagtype;
+
+    Json::Value resjson = control.GetTags(queryjson);
+    cout << "doGetTags end!!!" << endl;
+    res.set_content(resjson.toStyledString(), "json");
+}
+// ------------------------------ 标签模块 End ------------------------------
 
 /**
  * 处理获取图片的请求
@@ -248,6 +392,8 @@ void HttpServer::Run() {
     using namespace httplib;
     Server server;
 
+    // 设置路由和处理函数
+    // -------------------- 用户模块 Start --------------------
     // 注册用户
     server.Post("/api/user/register", doRegisterUser);
     // 登录用户
@@ -264,6 +410,27 @@ void HttpServer::Run() {
     server.Get("/api/user/rank", doGetUserRank);
     // 分页查询用户列表（管理员权限）
     server.Get("/api/user/list", doGetUserSetInfo);
+    // -------------------- 用户模块 End --------------------
+
+    // -------------------- 题目模块 Start --------------------
+    // 查询题目信息（单条）
+    server.Get("/api/problem/info", doGetProblem);
+    // 查询题目信息（管理员权限）
+    server.Get("/api/problem/admininfo", doGetProblemInfoByAdmin);
+    // 编辑题目：包含插入和更新题目（管理员权限）
+    server.Post("/api/problem/edit", doEditProblem);
+    // 删除题目（管理员权限）
+    server.Delete("/api/problem/delete", doDeleteProblem);
+    // 分页获取题目列表
+    server.Get("/api/problem/list", doGetProblemList);
+    // 分页获取题目列表（管理员权限）
+    server.Get("/api/problem/list/admin", doGetProblemListByAdmin);
+    // -------------------- 题目模块 End --------------------
+
+    // --------------------  标签模块 Start --------------------
+    // 获取题目的所有标签
+    server.Get("/tags", doGetTags);
+    // --------------------  标签模块 End --------------------
 
     // 获取图片
     server.Get(R"(/api/image/(\d+))", doGetImage);

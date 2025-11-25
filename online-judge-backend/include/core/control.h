@@ -10,6 +10,7 @@ class Control {
 private:
     /* data */
 public:
+    // ------------------------------ 用户模块 Start ------------------------------
     // 注册用户
     Json::Value RegisterUser(Json::Value &registerjson);
 
@@ -33,6 +34,32 @@ public:
 
     // 分页查询用户列表（管理员权限）
     Json::Value SelectUserSetInfo(Json::Value &queryjson);
+    // ------------------------------ 用户模块 End ------------------------------
+
+    // ------------------------------ 题目模块 Start ------------------------------
+    // 查询题目信息（单条）
+    Json::Value SelectProblem(Json::Value &queryjson);
+
+    // 查询题目信息（管理员权限）
+    Json::Value SelectProblemInfoByAdmin(Json::Value &queryjson);
+
+    // 编辑题目：包含插入和更新题目（管理员权限）
+    Json::Value EditProblem(Json::Value &insertjson);
+
+    // 删除题目（管理员权限）
+    Json::Value DeleteProblem(Json::Value &deletejson);
+
+    // 分页获取题目列表
+    Json::Value SelectProblemList(Json::Value &queryjson);
+
+    // 分页获取题目列表（管理员权限）
+    Json::Value SelectProblemListByAdmin(Json::Value &queryjson);
+    // ------------------------------ 题目模块 End ------------------------------
+
+    // ------------------------------ 标签模块 Start ------------------------------
+    // 获取题目的所有标签
+    Json::Value GetTags(Json::Value &queryjson);
+    // ------------------------------ 标签模块 End ------------------------------
 
     Control();
 

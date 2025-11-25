@@ -14,6 +14,7 @@
 
 using namespace std;
 
+// ------------------------------ 用户模块 Start ------------------------------
 // 用户注册
 Json::Value Control::RegisterUser(Json::Value &registerjson) {
     return UserService::GetInstance()->RegisterUser(registerjson);
@@ -53,6 +54,58 @@ Json::Value Control::SelectUserRank(Json::Value &queryjson) {
 Json::Value Control::SelectUserSetInfo(Json::Value &queryjson) {
     return UserService::GetInstance()->SelectUserSetInfo(queryjson);
 }
+// ------------------------------ 用户模块 End ------------------------------
+
+// ------------------------------ 题目模块 Start ------------------------------
+// 查询题目信息（单条）
+Json::Value Control::SelectProblem(Json::Value &queryjson) {
+    return ProblemService::GetInstance()->SelectProblem(queryjson);
+}
+
+// 查询题目信息（管理员权限）
+Json::Value Control::SelectProblemInfoByAdmin(Json::Value &queryjson) {
+    return ProblemService::GetInstance()->SelectProblemInfoByAdmin(queryjson);
+}
+
+// 编辑题目：包含插入和更新题目（管理员权限）
+Json::Value Control::EditProblem(Json::Value &insertjson) {
+    Json::Value resjson;
+    string editType = insertjson["EditType"].asString();
+    if (editType == "Insert") {
+        resjson = ProblemService::GetInstance()->InsertProblem(insertjson);
+    } else if (editType == "Update") {
+        resjson = ProblemService::GetInstance()->UpdateProblem(insertjson);
+    }
+    TagService::GetInstance()->InitProblemTags();
+    return resjson;
+}
+
+// 删除题目（管理员权限）
+Json::Value Control::DeleteProblem(Json::Value &deletejson) {
+    return ProblemService::GetInstance()->DeleteProblem(deletejson);
+}
+
+// 分页获取题目列表
+Json::Value Control::SelectProblemList(Json::Value &queryjson) {
+    return ProblemService::GetInstance()->SelectProblemList(queryjson);
+}
+
+// 分页获取题目列表（管理员权限）
+Json::Value Control::SelectProblemListByAdmin(Json::Value &queryjson) {
+    return ProblemService::GetInstance()->SelectProblemListByAdmin(queryjson);
+}
+// ------------------------------ 题目模块 End ------------------------------
+
+// ------------------------------ 标签模块 Start ------------------------------
+// 获取题目的所有标签
+Json::Value Control::GetTags(Json::Value &queryjson) {
+    if (queryjson["TagType"].asString() == "Problem") {
+        return TagService::GetInstance()->GetProblemTags();
+    }
+    // 默认返回空的 Json::Value
+    return Json::Value();
+}
+// ------------------------------ 标签模块 End ------------------------------
 
 Control::Control() {
     // 构造函数实现

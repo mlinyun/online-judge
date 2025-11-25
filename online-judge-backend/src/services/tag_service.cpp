@@ -8,6 +8,17 @@ TagService* TagService::GetInstance() {
     return &tag_service;
 }
 
+// 初始化题目标签
+void TagService::InitProblemTags() {
+    Json::Value tags = MoDB::GetInstance()->GetProblemTags();
+    problem_tags["Tags"] = tags["values"];
+}
+
+// 获取题目的所有标签
+Json::Value TagService::GetProblemTags() {
+    return problem_tags;
+}
+
 TagService::TagService() {
     // 构造函数实现
 }

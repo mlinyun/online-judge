@@ -41,6 +41,7 @@ public:
     // 局部静态特性的方式实现单实例模式
     static MoDB *GetInstance();
 
+    // ------------------------------ 用户模块 Start ------------------------------
     /**
      * 功能：用户注册
      * 传入：Json(NickName, Account, PassWord, PersonalProfile, School, Major)
@@ -104,6 +105,77 @@ public:
      * 传出：bool(如果题目第一次 AC 则返回 true，否则返回 false)
      */
     bool UpdateUserProblemInfo(Json::Value &updatejson);
+    // ------------------------------ 用户模块 End ------------------------------
+
+    // ------------------------------ 题目模块 Start ------------------------------
+    /**
+     * 功能：查询题目信息（单条）
+     * 传入：Json(ProblemId)
+     * Json(Result, Reason, _id, Title,Description, TimeLimit, MemoryLimit, JudgeNum, SubmitNum, ACNum, UserNickName,
+     * Tags)
+     */
+    Json::Value SelectProblem(Json::Value &queryjson);
+
+    /**
+     * 功能：查询题目信息（管理员权限）
+     * 传入：Json(ProblemId)
+     * 传出：Json(Result, Reason,_id, Title, Description, TimeLimit, MemoryLimit, UserNickName, JudgeNum, Tags)
+     */
+    Json::Value SelectProblemInfoByAdmin(Json::Value &queryjson);
+
+    /**
+     * 功能：插入题目（管理员权限）
+     * 传入：Json(Title, Description, TimeLimit, MemoryLimit, JudgeNum, Tags, UseNickName)
+     * 传出：Json(Result, Reason, ProblemId)
+     */
+    Json::Value InsertProblem(Json::Value &insertjson);
+
+    /**
+     * 功能：更新题目信息（管理员权限）
+     * 传入：Json(ProblemId, Title, Description, TimeLimit, MemoryLimit, JudgeNum, Tags, UseNickName)
+     * 传出：Json(Result, Reason)
+     */
+    Json::Value UpdateProblem(Json::Value &updatejson);
+
+    /**
+     * 功能：删除题目（管理员权限）
+     * 传入：Json(ProblemId)
+     * 传出：Json(Result, Reason)
+     */
+    Json::Value DeleteProblem(Json::Value &deletejson);
+
+    /**
+     * 功能：分页获取题目列表
+     * 传入：Json(Page, PageSize, SearchInfo{Id, Title, Tags[]})
+     * 传出：Json((Result, Reason, ArrayInfo[ProblemId, Title, SubmitNum, CENum, ACNum, WANum, RENum,
+     * TLENum, MLENum, SENum, Tags]), TotalNum)
+     */
+    Json::Value SelectProblemList(Json::Value &queryjson);
+
+    /**
+     * 功能：分页获取题目列表（管理员权限）
+     * 传入：Json(Page, PageSize)
+     * 传出：Json((Result, Reason, ArrayInfo[ProblemId, Title, SubmitNum, CENum, ACNum, WANum, RENum,
+     * TLENum, MLENum, SENum, Tags]), TotalNum)
+     */
+    Json::Value SelectProblemListByAdmin(Json::Value &queryjson);
+
+    /**
+     * 功能：更新题目的状态数量
+     * 传入：Json(ProblemId, Status)
+     * 传出：bool
+     */
+    bool UpdateProblemStatusNum(Json::Value &updatejson);
+    // ------------------------------ 题目模块 End ------------------------------
+
+    // ------------------------------ 标签模块 Start ------------------------------
+    /**
+     * 功能：获取题目的所有标签
+     * 传入：void
+     * 传出：Json(Tags)
+     */
+    Json::Value GetProblemTags();
+    // ------------------------------ 标签模块 End ------------------------------
 };
 
 #endif  // MONGO_DATABASE_H
