@@ -24,7 +24,7 @@ constexpr const char* COLLECTION_ANNOUNCEMENTS = "announcements";
 // 评论集合
 constexpr const char* COLLECTION_COMMENTS = "comments";
 // 讨论集合
-constexpr const char* COLLECTION_DISCUSSIONS = "discussions";
+constexpr const char* COLLECTION_DISCUSSES = "discusses";
 // 题目集合
 constexpr const char* COLLECTION_PROBLEMS = "problems";
 // 题解集合

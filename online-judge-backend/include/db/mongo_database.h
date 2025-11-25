@@ -23,6 +23,7 @@ private:
 
     atomic_int64_t m_problem_id;        // 题目 ID 的最大值
     atomic_int64_t m_announcement_id;   // 公告 ID 的最大值
+    atomic_int64_t m_discussion_id;     // 讨论 ID 的最大值
     atomic_int64_t m_status_record_id;  // 提交记录 ID 的最大值
     atomic_int64_t m_comment_id;        // 评论 ID 的最大值
     atomic_int64_t m_article_id;        // 文章 ID 的最大值
@@ -228,6 +229,65 @@ public:
      */
     bool UpdateAnnouncementComments(Json::Value &updatejson);
     // ------------------------------ 公告模块 End ------------------------------
+
+    // ------------------------------ 讨论模块 Start ------------------------------
+    /**
+     * 功能：添加讨论
+     * 传入：Json(Title, Content, ParentId, UserId) 如果是父讨论ParentId=0
+     * 传出：Json(Result)
+     */
+    Json::Value InsertDiscuss(Json::Value &insertjson);
+
+    /**
+     * 功能：查询讨论的详细内容，并且将其浏览量加 1
+     * 传入：Json(DiscussId)
+     * 传出：Json(Result, Reason, _id, Title, Content, Views, Comments, CreateTime, UpdateTime, User.NickName,
+     * User.Avatar)
+     */
+    Json::Value SelectDiscuss(Json::Value &queryjson);
+
+    /**
+     * 功能：更新讨论
+     * 传入：Json(DiscussId, Title, Content)
+     * 传出；Json(Result,Reason)
+     */
+    Json::Value UpdateDiscuss(Json::Value &updatejson);
+
+    /**
+     * 功能：删除讨论
+     * 传入：Json(DiscussId)
+     * 传出：Json(Result, Reason)
+     */
+    Json::Value DeleteDiscuss(Json::Value &deletejson);
+
+    /**
+     * 功能：分页查询讨论
+     * 传入：Json(SearchInfo, Page, PageSize)
+     * 传出：Json(_id, Title, Views, Comments, CreateTime, User.Avatar, User.NickName)
+     */
+    Json::Value SelectDiscussList(Json::Value &queryjson);
+
+    /**
+     * 功能：分页查询讨论（管理员权限）
+     * 传入：Json(Page,PageSize)
+     * 传出：Json(_id, Title, Views, Comments, CreateTime, User.Avatar, User.NickName)
+     */
+    Json::Value SelectDiscussListByAdmin(Json::Value &queryjson);
+
+    /**
+     * 功能：查询讨论的详细信息，主要是编辑时的查询
+     * 传入：Json(DiscussId)
+     * 传出：Json(Result, Reason, Title, Content)
+     */
+    Json::Value SelectDiscussByEdit(Json::Value &queryjson);
+
+    /**
+     * 功能：更新讨论的评论数量
+     * 传入：Json(DiscussId, Num)
+     * 传出：bool
+     */
+    bool UpdateDiscussComments(Json::Value &updatejson);
+    // ------------------------------ 讨论模块 End ------------------------------
 };
 
 #endif  // MONGO_DATABASE_H

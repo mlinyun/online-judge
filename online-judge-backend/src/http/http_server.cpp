@@ -476,6 +476,151 @@ void doSelectAnnouncement(const httplib::Request &req, httplib::Response &res) {
 }
 // ------------------------------ 公告模块 End ------------------------------
 
+// ------------------------------ 讨论模块 Start ------------------------------
+/**
+ * 处理插入讨论的请求
+ */
+void doInsertDiscuss(const httplib::Request &req, httplib::Response &res) {
+    cout << "doInsertDiscuss start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.InsertDiscuss(jsonvalue);
+    cout << "doInsertDiscuss end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理获取单条讨论信息的请求
+ */
+void doGetDiscuss(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetDiscuss start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("DiscussId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string discussid = req.get_param_value("DiscussId");
+        Json::Value queryjson;
+        queryjson["DiscussId"] = discussid;
+        resjson = control.SelectDiscuss(queryjson);
+    }
+    cout << "doGetDiscuss end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理更新讨论的请求
+ */
+void doUpdateDiscuss(const httplib::Request &req, httplib::Response &res) {
+    cout << "doUpdateDiscuss start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.UpdateDiscuss(jsonvalue);
+    cout << "doUpdateDiscuss end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理删除讨论的请求
+ */
+void doDeleteDiscuss(const httplib::Request &req, httplib::Response &res) {
+    cout << "doDeleteDiscuss start!!!" << endl;
+    Json::Value resjson;
+
+    if (!req.has_param("DiscussId") || !req.has_param("UserId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string discussid = req.get_param_value("DiscussId");
+        string userid = req.get_param_value("UserId");
+
+        Json::Value deletejson;
+        deletejson["DiscussId"] = discussid;
+        deletejson["UserId"] = userid;
+        resjson = control.DeleteDiscuss(deletejson);
+    }
+    cout << "doDeleteDiscuss end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理分页获取讨论列表的请求
+ */
+void doGetDiscussList(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetDiscussList start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("SearchInfo") || !req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        Json::Value searchinfo;
+        Json::Reader reader;
+        // 解析传入的json
+        reader.parse(req.get_param_value("SearchInfo"), searchinfo);
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+        Json::Value queryjson;
+        queryjson["SearchInfo"] = searchinfo;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectDiscussList(queryjson);
+    }
+    cout << "doGetDiscussList end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理分页获取讨论列表的请求（管理员权限）
+ */
+void doGetDiscussListByAdmin(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetDiscussListByAdmin start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectDiscussListByAdmin(queryjson);
+    }
+    cout << "doGetDiscussListByAdmin end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理查询讨论的详细信息，主要是编辑时的查询
+ */
+void doSelectDiscussByEdit(const httplib::Request &req, httplib::Response &res) {
+    cout << "doSelectDiscussByEdit start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("DiscussId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string discussid = req.get_param_value("DiscussId");
+        Json::Value queryjson;
+        queryjson["DiscussId"] = discussid;
+        resjson = control.SelectDiscussByEdit(queryjson);
+    }
+    cout << "doSelectDiscussByEdit end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+// ------------------------------ 讨论模块 End ------------------------------
+
 /**
  * 处理获取图片的请求
  */
@@ -570,6 +715,11 @@ void HttpServer::Run() {
     server.Get("/api/problem/list/admin", doGetProblemListByAdmin);
     // -------------------- 题目模块 End --------------------
 
+    // --------------------  标签模块 Start --------------------
+    // 获取题目的所有标签
+    server.Get("/tags", doGetTags);
+    // --------------------  标签模块 End --------------------
+
     // -------------------- 公告模块 Start --------------------
     // 添加公告（管理员权限）
     server.Post("/api/announcement/insert", doInsertAnnouncement);
@@ -588,10 +738,28 @@ void HttpServer::Run() {
 
     // -------------------- 公告模块 End --------------------
 
-    // --------------------  标签模块 Start --------------------
-    // 获取题目的所有标签
-    server.Get("/tags", doGetTags);
-    // --------------------  标签模块 End --------------------
+    // --------------------  讨论模块 Start --------------------
+    // 添加讨论
+    server.Post("/api/discuss/insert", doInsertDiscuss);
+
+    // 查询讨论的详细内容，并且将其浏览量加 1
+    server.Get("/api/discuss/info", doGetDiscuss);
+
+    // 更新讨论
+    server.Post("/api/discuss/update", doUpdateDiscuss);
+
+    // 删除讨论
+    server.Delete("/api/discuss/delete", doDeleteDiscuss);
+
+    // 分页查询讨论
+    server.Get("/api/discuss/list", doGetDiscussList);
+
+    // 分页查询讨论（管理员权限）
+    server.Get("/api/discuss/list/admin", doGetDiscussListByAdmin);
+
+    // 查询讨论的详细信息，主要是编辑时的查询
+    server.Get("/api/discuss/admininfo", doSelectDiscussByEdit);
+    // --------------------  讨论模块 End --------------------
 
     // 获取图片
     server.Get(R"(/api/image/(\d+))", doGetImage);

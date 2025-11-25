@@ -144,6 +144,43 @@ Json::Value Control::SelectAnnouncementByEdit(Json::Value &queryjson) {
 }
 // ------------------------------ 公告模块 End ------------------------------
 
+// ------------------------------ 讨论模块 Start ------------------------------
+// 添加讨论
+Json::Value Control::InsertDiscuss(Json::Value &insertjson) {
+    return DiscussService::GetInstance()->InsertDiscuss(insertjson);
+}
+
+// 查询讨论的详细内容，并且将其浏览量加 1
+Json::Value Control::SelectDiscuss(Json::Value &queryjson) {
+    return DiscussService::GetInstance()->SelectDiscuss(queryjson);
+}
+
+// 更新讨论
+Json::Value Control::UpdateDiscuss(Json::Value &updatejson) {
+    return DiscussService::GetInstance()->UpdateDiscuss(updatejson);
+}
+
+// 删除讨论
+Json::Value Control::DeleteDiscuss(Json::Value &deletejson) {
+    return DiscussService::GetInstance()->DeleteDiscuss(deletejson);
+}
+
+// 分页查询讨论
+Json::Value Control::SelectDiscussList(Json::Value &queryjson) {
+    return DiscussService::GetInstance()->SelectDiscussList(queryjson);
+}
+
+// 分页查询讨论（管理员权限）
+Json::Value Control::SelectDiscussListByAdmin(Json::Value &queryjson) {
+    return DiscussService::GetInstance()->SelectDiscussListByAdmin(queryjson);
+}
+
+// 查询讨论的详细信息，主要是编辑时的查询
+Json::Value Control::SelectDiscussByEdit(Json::Value &queryjson) {
+    return DiscussService::GetInstance()->SelectDiscussByEdit(queryjson);
+}
+// ------------------------------ 讨论模块 End ------------------------------
+
 Control::Control() {
     // 构造函数实现
 }

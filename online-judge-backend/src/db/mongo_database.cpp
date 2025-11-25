@@ -23,6 +23,7 @@ using bsoncxx::builder::stream::open_array;
 using bsoncxx::builder::stream::open_document;
 
 using constants::db::COLLECTION_ANNOUNCEMENTS;
+using constants::db::COLLECTION_DISCUSSES;
 using constants::db::COLLECTION_PROBLEMS;
 using constants::db::COLLECTION_USERS;
 using constants::db::DATABASE_NAME;
@@ -1210,6 +1211,336 @@ bool MoDB::UpdateAnnouncementComments(Json::Value &updatejson) {
 }
 // ------------------------------ 公告模块 End ------------------------------
 
+// ------------------------------ 讨论模块 Start ------------------------------
+/**
+ * 功能：添加讨论
+ * 传入：Json(Title, Content, ParentId, UserId) 如果是父讨论ParentId=0
+ * 传出：Json(Result)
+ */
+Json::Value MoDB::InsertDiscuss(Json::Value &insertjson) {
+    Json::Value resjson;
+    try {
+        // 构造讨论 ID（讨论集合中 ID 的最大值 + 1）
+        int64_t id = ++m_discussion_id;
+        string title = insertjson["Title"].asString();
+        string content = insertjson["Content"].asString();
+        int64_t parentid = atoll(insertjson["ParentId"].asString().data());
+        int64_t userid = atoll(insertjson["UserId"].asString().data());
+
+        auto client = pool.acquire();
+        mongocxx::collection discusscoll = (*client)[DATABASE_NAME][COLLECTION_DISCUSSES];
+        bsoncxx::builder::stream::document document{};
+        document << "_id" << id << "Title" << title.data() << "Content" << content.data() << "ParentId" << parentid
+                 << "UserId" << userid << "Views" << 0 << "Comments" << 0 << "CreateTime" << GetTime().data()
+                 << "UpdateTime" << GetTime().data();
+
+        auto result = discusscoll.insert_one(document.view());
+
+        if ((*result).result().inserted_count() < 1) {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库插入失败！";
+            return resjson;
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：查询讨论的详细内容，并且将其浏览量加 1
+ * 传入：Json(DiscussId)
+ * 传出：Json(Result, Reason, _id, Title, Content, Views, Comments, CreateTime, UpdateTime, User.NickName,
+ * User.Avatar)
+ */
+Json::Value MoDB::SelectDiscuss(Json::Value &queryjson) {
+    Json::Value resjson;
+    try {
+        // 提取讨论 ID
+        int64_t discussid = stoll(queryjson["DiscussId"].asString());
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection discusscoll = (*client)[DATABASE_NAME][COLLECTION_DISCUSSES];
+        // 浏览量加一
+        bsoncxx::builder::stream::document document{};
+        document << "$inc" << open_document << "Views" << 1 << close_document;
+        discusscoll.update_one({make_document(kvp("_id", discussid))}, document.view());
+
+        // 查询Content
+        mongocxx::pipeline pipe;
+        pipe.match({make_document(kvp("_id", discussid))});
+        document.clear();
+        document << "from" << "User" << "localField" << "UserId" << "foreignField" << "_id" << "as" << "User";
+        pipe.lookup(document.view());
+
+        document.clear();
+        document << "Title" << 1 << "Content" << 1 << "Views" << 1 << "Comments" << 1 << "CreateTime" << 1
+                 << "UpdateTime" << 1 << "User._id" << 1 << "User.Avatar" << 1 << "User.NickName" << 1;
+        pipe.project(document.view());
+        mongocxx::cursor cursor = discusscoll.aggregate(pipe);
+
+        if (cursor.begin() == cursor.end()) {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库未查询到数据，可能是请求参数错误！";
+            return resjson;
+        }
+
+        Json::Reader reader;
+        for (auto doc : cursor) {
+            reader.parse(bsoncxx::to_json(doc), resjson);
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：更新讨论
+ * 传入：Json(DiscussId, Title, Content)
+ * 传出；Json(Result,Reason)
+ */
+Json::Value MoDB::UpdateDiscuss(Json::Value &updatejson) {
+    Json::Value resjson;
+    try {
+        int64_t discussid = stoll(updatejson["DiscussId"].asString());
+        string title = updatejson["Title"].asString();
+        string content = updatejson["Content"].asString();
+
+        auto client = pool.acquire();
+        mongocxx::collection discusscoll = (*client)[DATABASE_NAME][COLLECTION_DISCUSSES];
+
+        bsoncxx::builder::stream::document document{};
+        document << "$set" << open_document << "Title" << title.data() << "Content" << content.data() << "UpdateTime"
+                 << GetTime().data() << close_document;
+
+        discusscoll.update_one({make_document(kvp("_id", discussid))}, document.view());
+
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：删除讨论
+ * 传入：Json(DiscussId)
+ * 传出：Json(Result, Reason)
+ */
+Json::Value MoDB::DeleteDiscuss(Json::Value &deletejson) {
+    Json::Value resjson;
+    try {
+        // 提取讨论 ID
+        int64_t discussid = stoll(deletejson["DiscussId"].asString());
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection discusscoll = (*client)[DATABASE_NAME][COLLECTION_DISCUSSES];
+
+        auto result = discusscoll.delete_one({make_document(kvp("_id", discussid))});
+
+        if ((*result).deleted_count() < 1) {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库删除失败！";
+            return resjson;
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：分页查询讨论
+ * 传入：Json(SearchInfo, Page, PageSize)
+ * 传出：Json(_id, Title, Views, Comments, CreateTime, User.Avatar, User.NickName)
+ */
+Json::Value MoDB::SelectDiscussList(Json::Value &queryjson) {
+    Json::Value resjson;
+    try {
+        int64_t parentid = stoll(queryjson["SearchInfo"]["ParentId"].asString());
+        int64_t userid = stoll(queryjson["SearchInfo"]["UserId"].asString());
+        int page = stoi(queryjson["Page"].asString());
+        int pagesize = stoi(queryjson["PageSize"].asString());
+        int skip = (page - 1) * pagesize;
+
+        Json::Reader reader;
+        bsoncxx::builder::stream::document document{};
+        mongocxx::pipeline pipe, pipetot;
+
+        auto client = pool.acquire();
+        mongocxx::collection discusscoll = (*client)[DATABASE_NAME][COLLECTION_DISCUSSES];
+
+        if (parentid > 0) {
+            pipe.match({make_document(kvp("ParentId", parentid))});
+            pipetot.match({make_document(kvp("ParentId", parentid))});
+        }
+
+        if (userid > 0) {
+            pipe.match({make_document(kvp("UserId", userid))});
+            pipetot.match({make_document(kvp("UserId", userid))});
+        }
+
+        if (parentid == 0 && userid == 0) {
+            pipe.match({make_document(kvp("ParentId", 0))});
+            pipetot.match({make_document(kvp("ParentId", 0))});
+        }
+        // 获取总条数
+        pipetot.count("TotalNum");
+        mongocxx::cursor cursor = discusscoll.aggregate(pipetot);
+        for (auto doc : cursor) {
+            reader.parse(bsoncxx::to_json(doc), resjson);
+        }
+        pipe.sort({make_document(kvp("CreateTime", -1))});
+        pipe.skip(skip);
+        pipe.limit(pagesize);
+        document << "from" << "User" << "localField" << "UserId" << "foreignField" << "_id" << "as" << "User";
+        pipe.lookup(document.view());
+
+        document.clear();
+        document << "Title" << 1 << "Views" << 1 << "Comments" << 1 << "CreateTime" << 1 << "User.Avatar" << 1
+                 << "User.NickName" << 1;
+        pipe.project(document.view());
+
+        cursor = discusscoll.aggregate(pipe);
+        for (auto doc : cursor) {
+            Json::Value jsonvalue;
+            reader.parse(bsoncxx::to_json(doc), jsonvalue);
+            resjson["ArrayInfo"].append(jsonvalue);
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：分页查询讨论（管理员权限）
+ * 传入：Json(Page,PageSize)
+ * 传出：Json(_id, Title, Views, Comments, CreateTime, User.Avatar, User.NickName)
+ */
+Json::Value MoDB::SelectDiscussListByAdmin(Json::Value &queryjson) {
+    Json::Value resjson;
+    try {
+        int page = stoi(queryjson["Page"].asString());
+        int pagesize = stoi(queryjson["PageSize"].asString());
+        int skip = (page - 1) * pagesize;
+
+        Json::Reader reader;
+        bsoncxx::builder::stream::document document{};
+        mongocxx::pipeline pipe, pipetot;
+
+        auto client = pool.acquire();
+        mongocxx::collection discusscoll = (*client)[DATABASE_NAME][COLLECTION_DISCUSSES];
+        // 获取总条数
+        pipetot.count("TotalNum");
+        mongocxx::cursor cursor = discusscoll.aggregate(pipetot);
+        for (auto doc : cursor) {
+            reader.parse(bsoncxx::to_json(doc), resjson);
+        }
+
+        pipe.sort({make_document(kvp("CreateTime", -1))});
+        pipe.skip(skip);
+        pipe.limit(pagesize);
+        document << "from" << "User" << "localField" << "UserId" << "foreignField" << "_id" << "as" << "User";
+        pipe.lookup(document.view());
+
+        document.clear();
+        document << "Title" << 1 << "Views" << 1 << "Comments" << 1 << "CreateTime" << 1 << "UserId" << 1
+                 << "User.Avatar" << 1 << "User.NickName" << 1;
+        pipe.project(document.view());
+
+        cursor = discusscoll.aggregate(pipe);
+        for (auto doc : cursor) {
+            Json::Value jsonvalue;
+            reader.parse(bsoncxx::to_json(doc), jsonvalue);
+            resjson["ArrayInfo"].append(jsonvalue);
+        }
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：查询讨论的详细信息，主要是编辑时的查询
+ * 传入：Json(DiscussId)
+ * 传出：Json(Result, Reason, Title, Content)
+ */
+Json::Value MoDB::SelectDiscussByEdit(Json::Value &queryjson) {
+    Json::Value resjson;
+    try {
+        int64_t discussid = stoll(queryjson["DiscussId"].asString());
+
+        auto client = pool.acquire();
+        mongocxx::collection discusscoll = (*client)[DATABASE_NAME][COLLECTION_DISCUSSES];
+
+        bsoncxx::builder::stream::document document{};
+        mongocxx::pipeline pipe;
+        pipe.match({make_document(kvp("_id", discussid))});
+        document << "Title" << 1 << "UserId" << 1 << "Content" << 1;
+        pipe.project(document.view());
+        mongocxx::cursor cursor = discusscoll.aggregate(pipe);
+
+        Json::Reader reader;
+
+        if (cursor.begin() == cursor.end()) {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库未查询到数据！";
+            return resjson;
+        }
+        for (auto doc : cursor) {
+            reader.parse(bsoncxx::to_json(doc), resjson);
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：更新讨论的评论数量
+ * 传入：Json(DiscussId, Num)
+ * 传出：bool
+ */
+bool MoDB::UpdateDiscussComments(Json::Value &updatejson) {
+    try {
+        int64_t discussid = stoll(updatejson["ArticleId"].asString());
+        int num = stoi(updatejson["Num"].asString());
+        auto client = pool.acquire();
+        mongocxx::collection discusscoll = (*client)[DATABASE_NAME][COLLECTION_DISCUSSES];
+
+        bsoncxx::builder::stream::document document{};
+        document << "$inc" << open_document << "Comments" << num << close_document;
+        discusscoll.update_one({make_document(kvp("_id", discussid))}, document.view());
+        return true;
+    } catch (const std::exception &e) {
+        return false;
+    }
+}
+// ------------------------------ 讨论模块 End ------------------------------
+
 MoDB::MoDB() {
     // 构造函数实现
 
@@ -1219,7 +1550,7 @@ MoDB::MoDB() {
     m_comment_id = GetMaxId(constants::db::COLLECTION_COMMENTS);
     int64_t m_announcement_id = GetMaxId(constants::db::COLLECTION_ANNOUNCEMENTS);
     int64_t m_solution_id = GetMaxId(constants::db::COLLECTION_SOLUTIONS);
-    int64_t m_discussion_id = GetMaxId(constants::db::COLLECTION_DISCUSSIONS);
+    int64_t m_discussion_id = GetMaxId(constants::db::COLLECTION_DISCUSSES);
     m_article_id = max(m_solution_id, max(m_discussion_id, m_announcement_id));
 
     // TODO: 输出 ID 信息

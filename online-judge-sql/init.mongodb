@@ -15,7 +15,7 @@ db.createCollection("announcements");
 // 创建评论表
 db.createCollection("comments");
 // 创建讨论表
-db.createCollection("discussions");
+db.createCollection("discusses");
 // 创建题目表
 db.createCollection("problems");
 // 创建题解表
