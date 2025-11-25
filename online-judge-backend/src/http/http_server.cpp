@@ -333,6 +333,149 @@ void doGetTags(const httplib::Request &req, httplib::Response &res) {
 }
 // ------------------------------ 标签模块 End ------------------------------
 
+// ------------------------------ 公告模块 Start ------------------------------
+/**
+ * 处理添加公告的请求（管理员权限）
+ */
+void doInsertAnnouncement(const httplib::Request &req, httplib::Response &res) {
+    cout << "doInsertAnnouncement start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.InsertAnnouncement(jsonvalue);
+    cout << "doInsertAnnouncement end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理获取单条公告信息的请求，并将其浏览量加 1
+ */
+void doGetAnnouncement(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetAnnouncement start!!!" << endl;
+    Json::Value resjson;
+    // 请求参数校验
+    if (!req.has_param("AnnouncementId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string announcementid = req.get_param_value("AnnouncementId");
+        Json::Value queryjson;
+        queryjson["AnnouncementId"] = announcementid;
+        resjson = control.SelectAnnouncement(queryjson);
+    }
+    cout << "doGetAnnouncement end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理更新公告的请求（管理员权限）
+ */
+void doUpdateAnnouncement(const httplib::Request &req, httplib::Response &res) {
+    cout << "doUpdateAnnouncement start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.UpdateAnnouncement(jsonvalue);
+    cout << "doUpdateAnnouncement end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理删除公告的请求（管理员权限）
+ */
+void doDeleteAnnouncement(const httplib::Request &req, httplib::Response &res) {
+    cout << "doDeleteAnnouncement start!!!" << endl;
+    Json::Value resjson;
+    // 请求参数校验
+    if (!req.has_param("AnnouncementId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string announcementid = req.get_param_value("AnnouncementId");
+        Json::Value deletejson;
+        deletejson["AnnouncementId"] = announcementid;
+        resjson = control.DeleteAnnouncement(deletejson);
+    }
+    cout << "doDeleteAnnouncement end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理分页获取公告列表的请求
+ */
+void doGetAnnouncementList(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetAnnouncementList start!!!" << endl;
+    Json::Value resjson;
+    // 请求参数校验
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectAnnouncementList(queryjson);
+    }
+    cout << "doGetAnnouncementList end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理分页获取公告列表的请求（管理员权限）
+ */
+void doGetAnnouncementListByAdmin(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetAnnouncementListByAdmin start!!!" << endl;
+    Json::Value resjson;
+    // 请求参数校验
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectAnnouncementListByAdmin(queryjson);
+    }
+    cout << "doGetAnnouncementListByAdmin end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理查询公告的详细信息，主要是编辑时的查询
+ */
+void doSelectAnnouncement(const httplib::Request &req, httplib::Response &res) {
+    cout << "doSelectAnnouncement start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("AnnouncementId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string announcementid = req.get_param_value("AnnouncementId");
+
+        Json::Value queryjson;
+        queryjson["AnnouncementId"] = announcementid;
+        resjson = control.SelectAnnouncementByEdit(queryjson);
+    }
+    cout << "doSelectAnnouncement end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+// ------------------------------ 公告模块 End ------------------------------
+
 /**
  * 处理获取图片的请求
  */
@@ -426,6 +569,24 @@ void HttpServer::Run() {
     // 分页获取题目列表（管理员权限）
     server.Get("/api/problem/list/admin", doGetProblemListByAdmin);
     // -------------------- 题目模块 End --------------------
+
+    // -------------------- 公告模块 Start --------------------
+    // 添加公告（管理员权限）
+    server.Post("/api/announcement/insert", doInsertAnnouncement);
+    // 查询公告详细信息，并将其浏览量加 1
+    server.Get("/api/announcement/info", doGetAnnouncement);
+    // 更新公告（管理员权限）
+    server.Post("/api/announcement/update", doUpdateAnnouncement);
+    // 删除公告（管理员权限）
+    server.Delete("/api/announcement/delete", doDeleteAnnouncement);
+    // 分页获取公告列表
+    server.Get("/api/announcement/list", doGetAnnouncementList);
+    // 分页获取公告列表（管理员权限）
+    server.Get("/api/announcement/list/admin", doGetAnnouncementListByAdmin);
+    // 查询公告的详细信息，主要是编辑时的查询
+    server.Get("/api/announcement/admininfo", doSelectAnnouncement);
+
+    // -------------------- 公告模块 End --------------------
 
     // --------------------  标签模块 Start --------------------
     // 获取题目的所有标签

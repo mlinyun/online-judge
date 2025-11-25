@@ -22,6 +22,7 @@ using bsoncxx::builder::stream::finalize;
 using bsoncxx::builder::stream::open_array;
 using bsoncxx::builder::stream::open_document;
 
+using constants::db::COLLECTION_ANNOUNCEMENTS;
 using constants::db::COLLECTION_PROBLEMS;
 using constants::db::COLLECTION_USERS;
 using constants::db::DATABASE_NAME;
@@ -54,24 +55,34 @@ int64_t MoDB::GetMaxId(string name) {
     auto client = pool.acquire();                                       // 获取连接池中的客户端
     mongocxx::collection coll = (*client)[DATABASE_NAME][name.data()];  // 访问指定集合
 
-    bsoncxx::builder::stream::document document{};
     mongocxx::pipeline pipe;
-    pipe.sort(make_document(kvp("id", -1))).limit(1);  // 构建管道：按 id 倒序取第一条
-    mongocxx::cursor cursor = coll.aggregate(pipe);    // 执行聚合查询
+    bsoncxx::builder::basic::document sort_doc{};
+    sort_doc.append(kvp("_id", -1));
+    pipe.sort(sort_doc.view());
+    pipe.limit(1);
+
+    mongocxx::cursor cursor = coll.aggregate(pipe);  // 执行聚合查询
 
     // 如果游标为空，说明集合没有数据，返回 0
-    if (cursor.begin() == cursor.end()) {
+    auto it = cursor.begin();
+    if (it == cursor.end()) {
         return 0;
     }
 
     Json::Value jsonvalue;
     Json::Reader reader;
-    for (auto doc : cursor) {
-        reader.parse(bsoncxx::to_json(doc), jsonvalue);  // 将 BSON 转为 JSON 以便读取字段
+    reader.parse(bsoncxx::to_json(*it), jsonvalue);
+
+    if (!jsonvalue["_id"].isNull()) {
+        if (jsonvalue["_id"].isIntegral()) {
+            return jsonvalue["_id"].asLargestInt();
+        }
+        if (jsonvalue["_id"].isString()) {
+            return stoll(jsonvalue["_id"].asString());
+        }
     }
 
-    int64_t max_id = stoll(jsonvalue["_id"].asString());  // 读取 _id 字段并转为 int64
-    return max_id;
+    return 0;
 }
 
 // 局部静态特性的方式实现单实例模式
@@ -934,6 +945,271 @@ Json::Value MoDB::GetProblemTags() {
 }
 // ------------------------------ 标签模块 End ------------------------------
 
+// ------------------------------ 公告模块 Start ------------------------------
+/**
+ * 功能：添加公告（管理员权限）
+ * 传入：Json(Title, Content, UserId, Level)
+ * 传出：Json(Result, Reason)
+ */
+Json::Value MoDB::InsertAnnouncement(Json::Value &insertjson) {
+    Json::Value resjson;
+    try {
+        // 构造公告 ID（公告集合中 ID 的最大值 + 1）
+        int64_t id = ++m_announcement_id;
+        string title = insertjson["Title"].asString();
+        string content = insertjson["Content"].asString();
+        int64_t userid = stoll(insertjson["UserId"].asString());
+        int level = stoi(insertjson["Level"].asString());
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+        bsoncxx::builder::stream::document document{};
+        document << "_id" << id << "Title" << title.data() << "Content" << content.data() << "UserId" << userid
+                 << "Views" << 0 << "Comments" << 0 << "Level" << level << "CreateTime" << GetTime().data()
+                 << "UpdateTime" << GetTime().data();
+
+        auto result = announcementcoll.insert_one(document.view());
+        if ((*result).result().inserted_count() < 1) {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库插入失败！";
+            return resjson;
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：查询公告详细信息，并将其浏览量加 1
+ * 传入：Json(AnnouncementId)
+ * 传出：Json(Result, Reason, ArrayInfo[_id, Title, Views, Comments, CreateTime], TotalNum)
+ */
+Json::Value MoDB::SelectAnnouncement(Json::Value &queryjson) {
+    Json::Value resjson;
+    try {
+        // 提取公告 ID
+        int64_t announcementid = stoll(queryjson["AnnouncementId"].asString());
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+
+        // 浏览量加一
+        bsoncxx::builder::stream::document document{};
+        document << "$inc" << open_document << "Views" << 1 << close_document;
+        announcementcoll.update_one({make_document(kvp("_id", announcementid))}, document.view());
+
+        // 查询
+        mongocxx::pipeline pipe;
+        pipe.match({make_document(kvp("_id", announcementid))});
+        document.clear();
+        document << "Title" << 1 << "Content" << 1 << "Views" << 1 << "Comments" << 1 << "CreateTime" << 1
+                 << "UpdateTime" << 1;
+        pipe.project(document.view());
+        mongocxx::cursor cursor = announcementcoll.aggregate(pipe);
+
+        if (cursor.begin() == cursor.end()) {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库未查询到数据，可能是请求参数出错！";
+            return resjson;
+        }
+
+        Json::Reader reader;
+        for (auto doc : cursor) {
+            reader.parse(bsoncxx::to_json(doc), resjson);
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：更新公告（管理员权限）
+ * 传入：Json(AnnouncementId, Title, Content, Level)
+ * 传出；Json(Result, Reason)
+ */
+Json::Value MoDB::UpdateAnnouncement(Json::Value &updatejson) {
+    Json::Value resjson;
+    try {
+        // 提取公告信息
+        int64_t announcementid = stoll(updatejson["AnnouncementId"].asString());
+        string title = updatejson["Title"].asString();
+        string content = updatejson["Content"].asString();
+        int level = stoi(updatejson["Level"].asString());
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+
+        bsoncxx::builder::stream::document document{};
+        document << "$set" << open_document << "Title" << title.data() << "Content" << content.data() << "Level"
+                 << level << "UpdateTime" << GetTime().data() << close_document;
+
+        announcementcoll.update_one({make_document(kvp("_id", announcementid))}, document.view());
+
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：删除公告（管理员权限）
+ * 传入：Json(AnnouncementId)
+ * 传出：Json(Result,Reason)
+ */
+Json::Value MoDB::DeleteAnnouncement(Json::Value &deletejson) {
+    Json::Value resjson;
+    try {
+        // 提取公告 ID
+        int64_t announcementid = stoll(deletejson["AnnouncementId"].asString());
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+
+        auto result = announcementcoll.delete_one({make_document(kvp("_id", announcementid))});
+        if ((*result).deleted_count() < 1) {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库删除失败！";
+            return resjson;
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：分页查询公告列表
+ * 传入：Json(Page, PageSize)
+ * 传出：Json([Result, Reason, _id, Title, Views, Comments, CreateTime], TotalNum)
+ */
+Json::Value MoDB::SelectAnnouncementList(Json::Value &queryjson) {
+    Json::Value resjson;
+    try {
+        // 提取查询信息
+        int page = stoi(queryjson["Page"].asString());
+        int pagesize = stoi(queryjson["PageSize"].asString());
+        int skip = (page - 1) * pagesize;
+
+        Json::Reader reader;
+        bsoncxx::builder::stream::document document{};
+        mongocxx::pipeline pipe, pipetot;
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+
+        // 获取总条数
+        pipetot.count("TotalNum");
+        mongocxx::cursor cursor = announcementcoll.aggregate(pipetot);
+        for (auto doc : cursor) {
+            reader.parse(bsoncxx::to_json(doc), resjson);
+        }
+        pipe.sort({make_document(kvp("CreateTime", -1))});
+        pipe.sort({make_document(kvp("Level", -1))});
+        pipe.skip(skip);
+        pipe.limit(pagesize);
+
+        document << "Title" << 1 << "Views" << 1 << "Comments" << 1 << "CreateTime" << 1;
+        pipe.project(document.view());
+
+        cursor = announcementcoll.aggregate(pipe);
+
+        for (auto doc : cursor) {
+            Json::Value jsonvalue;
+            reader.parse(bsoncxx::to_json(doc), jsonvalue);
+            resjson["ArrayInfo"].append(jsonvalue);
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：查询公告的详细信息，主要是编辑时的查询
+ * 传入：Json(AnnouncementId)
+ * 传出：Json(Result, Reason, Title, Content, Level)
+ */
+Json::Value MoDB::SelectAnnouncementByEdit(Json::Value &queryjson) {
+    Json::Value resjson;
+    try {
+        // 提取公告 ID
+        int64_t announcementid = stoll(queryjson["AnnouncementId"].asString());
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+
+        bsoncxx::builder::stream::document document{};
+        mongocxx::pipeline pipe;
+        pipe.match({make_document(kvp("_id", announcementid))});
+        document << "Title" << 1 << "Content" << 1 << "Level" << 1;
+        pipe.project(document.view());
+        mongocxx::cursor cursor = announcementcoll.aggregate(pipe);
+
+        Json::Reader reader;
+        if (cursor.begin() == cursor.end()) {
+            resjson["Result"] = "Fail";
+            resjson["Reason"] = "数据库未查询到数据！,可能是请求参数出错！";
+            return resjson;
+        }
+        for (auto doc : cursor) {
+            reader.parse(bsoncxx::to_json(doc), resjson);
+        }
+        resjson["Result"] = "Success";
+        return resjson;
+    } catch (const std::exception &e) {
+        resjson["Result"] = "500";
+        resjson["Reason"] = "数据库异常！";
+        return resjson;
+    }
+}
+
+/**
+ * 功能：更新公告的评论数量
+ * 传入：Json(ArticleId, Num)
+ * 传出：bool
+ */
+bool MoDB::UpdateAnnouncementComments(Json::Value &updatejson) {
+    try {
+        int64_t articleid = stoll(updatejson["ArticleId"].asString());
+        int num = stoi(updatejson["Num"].asString());
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+
+        bsoncxx::builder::stream::document document{};
+        document << "$inc" << open_document << "Comments" << num << close_document;
+        announcementcoll.update_one({make_document(kvp("_id", articleid))}, document.view());
+        return true;
+    } catch (const std::exception &e) {
+        return false;
+    }
+}
+// ------------------------------ 公告模块 End ------------------------------
+
 MoDB::MoDB() {
     // 构造函数实现
 
@@ -946,8 +1222,9 @@ MoDB::MoDB() {
     int64_t m_discussion_id = GetMaxId(constants::db::COLLECTION_DISCUSSIONS);
     m_article_id = max(m_solution_id, max(m_discussion_id, m_announcement_id));
 
-    // TODO: 输出题目 ID 的最大值，测试用
+    // TODO: 输出 ID 信息
     cout << "Max Problem ID: " << m_problem_id << endl;
+    cout << "Max Announcement ID: " << m_announcement_id << endl;
 }
 
 MoDB::~MoDB() {

@@ -107,6 +107,43 @@ Json::Value Control::GetTags(Json::Value &queryjson) {
 }
 // ------------------------------ 标签模块 End ------------------------------
 
+// ------------------------------ 公告模块 Start ------------------------------
+// 添加公告（管理员权限）
+Json::Value Control::InsertAnnouncement(Json::Value &insertjson) {
+    return AnnouncementService::GetInstance()->InsertAnnouncement(insertjson);
+}
+
+// 查询公告详细信息，并将其浏览量加 1
+Json::Value Control::SelectAnnouncement(Json::Value &queryjson) {
+    return AnnouncementService::GetInstance()->SelectAnnouncement(queryjson);
+}
+
+// 更新公告（管理员权限）
+Json::Value Control::UpdateAnnouncement(Json::Value &updatejson) {
+    return AnnouncementService::GetInstance()->UpdateAnnouncement(updatejson);
+}
+
+// 删除公告（管理员权限）
+Json::Value Control::DeleteAnnouncement(Json::Value &deletejson) {
+    return AnnouncementService::GetInstance()->DeleteAnnouncement(deletejson);
+}
+
+// 分页查询公告列表
+Json::Value Control::SelectAnnouncementList(Json::Value &queryjson) {
+    return AnnouncementService::GetInstance()->SelectAnnouncementList(queryjson);
+}
+
+// 分页查询公告列表（管理员权限）
+Json::Value Control::SelectAnnouncementListByAdmin(Json::Value &queryjson) {
+    return AnnouncementService::GetInstance()->SelectAnnouncementListByAdmin(queryjson);
+}
+
+// 查询公告的详细信息，主要是编辑时的查询
+Json::Value Control::SelectAnnouncementByEdit(Json::Value &queryjson) {
+    return AnnouncementService::GetInstance()->SelectAnnouncementByEdit(queryjson);
+}
+// ------------------------------ 公告模块 End ------------------------------
+
 Control::Control() {
     // 构造函数实现
 }
