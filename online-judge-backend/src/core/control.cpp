@@ -181,6 +181,42 @@ Json::Value Control::SelectDiscussByEdit(Json::Value &queryjson) {
 }
 // ------------------------------ 讨论模块 End ------------------------------
 
+// ------------------------------ 题解模块 Start ------------------------------
+// 添加题解
+Json::Value Control::InsertSolution(Json::Value &insertjson) {
+    return SolutionService::GetInstance()->InsertSolution(insertjson);
+}
+
+// 查询题解的详细内容，并且将其浏览量加 1
+Json::Value Control::SelectSolution(Json::Value &queryjson) {
+    return SolutionService::GetInstance()->SelectSolution(queryjson);
+}
+
+// 更新题解
+Json::Value Control::UpdateSolution(Json::Value &updatejson) {
+    return SolutionService::GetInstance()->UpdateSolution(updatejson);
+}
+
+// 删除题解
+Json::Value Control::DeleteSolution(Json::Value &deletejson) {
+    return SolutionService::GetInstance()->DeleteSolution(deletejson);
+}
+
+// 分页查询题解（公开题解）
+Json::Value Control::SelectSolutionList(Json::Value &queryjson) {
+    return SolutionService::GetInstance()->SelectSolutionList(queryjson);
+}
+
+// 分页查询题解（管理员权限）
+Json::Value Control::SelectSolutionListByAdmin(Json::Value &queryjson) {
+    return SolutionService::GetInstance()->SelectSolutionListByAdmin(queryjson);
+}
+
+// 查询题解的详细信息，主要是编辑时的查询
+Json::Value Control::SelectSolutionByEdit(Json::Value &queryjson) {
+    return SolutionService::GetInstance()->SelectSolutionByEdit(queryjson);
+}
+
 Control::Control() {
     // 构造函数实现
 }

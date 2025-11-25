@@ -24,6 +24,7 @@ private:
     atomic_int64_t m_problem_id;        // 题目 ID 的最大值
     atomic_int64_t m_announcement_id;   // 公告 ID 的最大值
     atomic_int64_t m_discussion_id;     // 讨论 ID 的最大值
+    atomic_int64_t m_solution_id;       // 题解 ID 的最大值
     atomic_int64_t m_status_record_id;  // 提交记录 ID 的最大值
     atomic_int64_t m_comment_id;        // 评论 ID 的最大值
     atomic_int64_t m_article_id;        // 文章 ID 的最大值
@@ -288,6 +289,66 @@ public:
      */
     bool UpdateDiscussComments(Json::Value &updatejson);
     // ------------------------------ 讨论模块 End ------------------------------
+
+    // ------------------------------ 题解模块 Start ------------------------------
+    /**
+     * 功能：添加题解
+     * 传入：Json(Title, Content, ParentId, UserId, Public)
+     * 传出：Json(Result, Reason)
+     */
+    Json::Value InsertSolution(Json::Value &insertjson);
+
+    /**
+     * 功能：查询题解的详细内容，并且将其浏览量加 1
+     * 传入：Json(SolutionId)
+     * 传出：Json(Result, Reason, Title, Content, Views, Comments, CreateTime, UpdateTime, User.NickName, User.Avatar)
+     */
+    Json::Value SelectSolution(Json::Value &queryjson);
+
+    /**
+     * 功能：更新题解
+     * 传入：Json(SolutionId, Title, Content, Public)
+     * 传出；Json(Result, Reason)
+     */
+    Json::Value UpdateSolution(Json::Value &updatejson);
+
+    /**
+     * 功能：删除题解
+     * 传入：Json(SolutionId)
+     * 传出：Json(Result, Reason)
+     */
+    Json::Value DeleteSolution(Json::Value &deletejson);
+
+    /**
+     * 功能：分页查询题解（公开题解）
+     * 传入：Json(SearchInfo(ParentId, UserId), Page, PageSize)
+     * 传出：Json(Result, Reason, ArrayInfo[_id, Title, Views, Comments, CreateTime, User.Avatar, User.NickName],
+     * TotalNum)
+     */
+    Json::Value SelectSolutionList(Json::Value &queryjson);
+
+    /**
+     * 功能：分页查询题解（管理员权限）
+     * 传入：Json(Page, PageSize)
+     * 传出：Json(Result, Reason, ArrayInfo[_id, Title, Views, Comments, CreateTime, User.Avatar, User.NickName],
+     * TotalNum)
+     */
+    Json::Value SelectSolutionListByAdmin(Json::Value &queryjson);
+
+    /**
+     * 功能：查询题解的详细信息，主要是编辑时的查询
+     * 传入：Json(SolutionId)
+     * 传出：Json(Result, Reason, Title, Content, UserId, Public)
+     */
+    Json::Value SelectSolutionByEdit(Json::Value &queryjson);
+
+    /**
+     * 功能：修改题解的评论数
+     * 传入：Json(ArticleId, Num)
+     * 传出：bool
+     */
+    bool UpdateSolutionComments(Json::Value &updatejson);
+    // ------------------------------ 题解模块 End ------------------------------
 };
 
 #endif  // MONGO_DATABASE_H

@@ -621,6 +621,154 @@ void doSelectDiscussByEdit(const httplib::Request &req, httplib::Response &res) 
 }
 // ------------------------------ 讨论模块 End ------------------------------
 
+// ------------------------------ 题解模块 Start ------------------------------
+/**
+ * 处理插入题解的请求
+ */
+void doInsertSolution(const httplib::Request &req, httplib::Response &res) {
+    cout << "doInsertSolution start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.InsertSolution(jsonvalue);
+    cout << "doInsertSolution end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理获取单条题解信息的请求
+ */
+void doGetSolution(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetSolution start!!!" << endl;
+    Json::Value resjson;
+
+    if (!req.has_param("SolutionId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string solutionid = req.get_param_value("SolutionId");
+        Json::Value queryjson;
+        queryjson["SolutionId"] = solutionid;
+        resjson = control.SelectSolution(queryjson);
+    }
+    cout << "doGetSolution end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理更新题解的请求
+ */
+void doUpdateSolution(const httplib::Request &req, httplib::Response &res) {
+    cout << "doUpdateSolution start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.UpdateSolution(jsonvalue);
+    cout << "doUpdateSolution end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理删除题解的请求
+ */
+void doDeleteSolution(const httplib::Request &req, httplib::Response &res) {
+    cout << "doDeleteSolution start!!!" << endl;
+    Json::Value resjson;
+
+    if (!req.has_param("SolutionId") || !req.has_param("UserId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string solutionid = req.get_param_value("SolutionId");
+        string userid = req.get_param_value("UserId");
+        Json::Value deletejson;
+        deletejson["SolutionId"] = solutionid;
+        deletejson["UserId"] = userid;
+        resjson = control.DeleteSolution(deletejson);
+    }
+    cout << "doDeleteSolution end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理分页获取题解列表的请求
+ */
+void doGetSolutionList(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetSolutionList start!!!" << endl;
+    Json::Value resjson;
+
+    if (!req.has_param("SearchInfo") || !req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        Json::Value searchinfo;
+        Json::Reader reader;
+        // 解析传入的json
+        reader.parse(req.get_param_value("SearchInfo"), searchinfo);
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+        Json::Value queryjson;
+        queryjson["SearchInfo"] = searchinfo;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectSolutionList(queryjson);
+    }
+    cout << "doGetSolutionList end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理分页获取题解列表的请求
+ */
+void doGetSolutionListByAdmin(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetSolutionListByAdmin start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectSolutionListByAdmin(queryjson);
+    }
+    cout << "doGetSolutionListByAdmin end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理查询题解的详细信息，主要是编辑时的查询
+ */
+void doSelectSolutionByEdit(const httplib::Request &req, httplib::Response &res) {
+    cout << "doSelectSolutionByEdit start!!!" << endl;
+    Json::Value resjson;
+
+    if (!req.has_param("SolutionId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string solutionid = req.get_param_value("SolutionId");
+        Json::Value queryjson;
+        queryjson["SolutionId"] = solutionid;
+        resjson = control.SelectSolutionByEdit(queryjson);
+    }
+    cout << "doSelectSolutionByEdit end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+// ------------------------------ 题解模块 End ------------------------------
+
 /**
  * 处理获取图片的请求
  */
@@ -760,6 +908,29 @@ void HttpServer::Run() {
     // 查询讨论的详细信息，主要是编辑时的查询
     server.Get("/api/discuss/admininfo", doSelectDiscussByEdit);
     // --------------------  讨论模块 End --------------------
+
+    // -------------------- 题解模块 Start --------------------
+    // 添加题解
+    server.Post("/api/solution/insert", doInsertSolution);
+
+    // 查询题解的详细内容，并且将其浏览量加 1
+    server.Get("/api/solution/info", doGetSolution);
+
+    // 更新题解
+    server.Post("/api/solution/update", doUpdateSolution);
+
+    // 删除题解
+    server.Delete("/api/solution/delete", doDeleteSolution);
+
+    // 分页查询题解（公开题解）
+    server.Get("/api/solution/list", doGetSolutionList);
+
+    // 分页查询题解（管理员权限）
+    server.Get("/api/solution/list/admin", doGetSolutionListByAdmin);
+
+    // 查询题解的详细信息，主要是编辑时的查询
+    server.Get("/api/solution/admininfo", doSelectSolutionByEdit);
+    // -------------------- 题解模块 End --------------------
 
     // 获取图片
     server.Get(R"(/api/image/(\d+))", doGetImage);
