@@ -769,6 +769,101 @@ void doSelectSolutionByEdit(const httplib::Request &req, httplib::Response &res)
 }
 // ------------------------------ 题解模块 End ------------------------------
 
+// ------------------------------ 评论模块 Start ------------------------------
+/**
+ * 处理分页获取评论列表的请求（管理员权限）
+ */
+void doGetCommentListByAdmin(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetCommentListByAdmin start!!!" << endl;
+    Json::Value resjson;
+
+    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectCommentListByAdmin(queryjson);
+    }
+    cout << "doGetCommentListByAdmin end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理分页获取评论列表的请求
+ */
+void doGetComment(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetComment start!!!" << endl;
+    Json::Value resjson;
+
+    if (!req.has_param("Type") || !req.has_param("ParentId") || !req.has_param("Page") || !req.has_param("PageSize") ||
+        !req.has_param("SonNum")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string type = req.get_param_value("Type");
+        string parentid = req.get_param_value("ParentId");
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+        string sonsnum = req.get_param_value("SonNum");
+        Json::Value queryjson;
+        queryjson["Type"] = type;
+        queryjson["ParentId"] = parentid;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        queryjson["SonNum"] = sonsnum;
+        resjson = control.GetComment(queryjson);
+    }
+
+    cout << "doGetComment end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理插入评论的请求
+ */
+void doInsertComment(const httplib::Request &req, httplib::Response &res) {
+    cout << "doInsertComment start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.InsertComment(jsonvalue["Info"]);
+    cout << "doInsertComment end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理删除评论的请求
+ */
+void doDeleteComment(const httplib::Request &req, httplib::Response &res) {
+    cout << "doDeleteComment start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("ArticleId") || !req.has_param("CommentId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string articleid = req.get_param_value("ArticleId");
+        string commentid = req.get_param_value("CommentId");
+        Json::Value deletejson;
+        deletejson["ArticleId"] = articleid;
+        deletejson["CommentId"] = commentid;
+        resjson = control.DeleteComment(deletejson);
+    }
+    cout << "doDeleteComment end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+// ------------------------------ 评论模块 End ------------------------------
+
+// ------------------------------ 图片模块 Start ------------------------------
 /**
  * 处理获取图片的请求
  */
@@ -820,6 +915,7 @@ void doGetImage(const httplib::Request &req, httplib::Response &res) {
 
     cout << "doGetImage end!!!" << endl;
 }
+// ------------------------------ 图片模块 End ------------------------------
 
 /**
  * 运行 HTTP 服务器
@@ -931,6 +1027,20 @@ void HttpServer::Run() {
     // 查询题解的详细信息，主要是编辑时的查询
     server.Get("/api/solution/admininfo", doSelectSolutionByEdit);
     // -------------------- 题解模块 End --------------------
+
+    // -------------------- 评论模块 Start --------------------
+    // 管理员查询评论
+    server.Get("/api/comment/list/admin", doGetCommentListByAdmin);
+
+    // 获取评论
+    server.Get("/api/comment/info", doGetComment);
+
+    // 插入评论
+    server.Post("/api/comment/insert", doInsertComment);
+
+    // 删除评论
+    server.Delete("/api/comment/delete", doDeleteComment);
+    // -------------------- 评论模块 End --------------------
 
     // 获取图片
     server.Get(R"(/api/image/(\d+))", doGetImage);

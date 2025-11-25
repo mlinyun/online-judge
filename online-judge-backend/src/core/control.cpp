@@ -125,7 +125,15 @@ Json::Value Control::UpdateAnnouncement(Json::Value &updatejson) {
 
 // 删除公告（管理员权限）
 Json::Value Control::DeleteAnnouncement(Json::Value &deletejson) {
-    return AnnouncementService::GetInstance()->DeleteAnnouncement(deletejson);
+    Json::Value resjson = AnnouncementService::GetInstance()->DeleteAnnouncement(deletejson);
+
+    // 评论模块完成时，添加相应的评论删除操作
+    if (resjson["Result"].asString() == "Success") {
+        Json::Value commentjson;
+        commentjson["ArticleId"] = deletejson["AnnouncementId"];
+        CommentService::GetInstance()->DeleteArticleComment(commentjson);
+    }
+    return resjson;
 }
 
 // 分页查询公告列表
@@ -162,7 +170,15 @@ Json::Value Control::UpdateDiscuss(Json::Value &updatejson) {
 
 // 删除讨论
 Json::Value Control::DeleteDiscuss(Json::Value &deletejson) {
-    return DiscussService::GetInstance()->DeleteDiscuss(deletejson);
+    Json::Value resjson = DiscussService::GetInstance()->DeleteDiscuss(deletejson);
+
+    // 评论模块完成时，添加相应的评论删除操作
+    if (resjson["Result"].asString() == "Success") {
+        Json::Value commentjson;
+        commentjson["ArticleId"] = deletejson["DiscussId"];
+        CommentService::GetInstance()->DeleteArticleComment(commentjson);
+    }
+    return resjson;
 }
 
 // 分页查询讨论
@@ -199,7 +215,15 @@ Json::Value Control::UpdateSolution(Json::Value &updatejson) {
 
 // 删除题解
 Json::Value Control::DeleteSolution(Json::Value &deletejson) {
-    return SolutionService::GetInstance()->DeleteSolution(deletejson);
+    Json::Value resjson = SolutionService::GetInstance()->DeleteSolution(deletejson);
+
+    // 评论模块完成时，添加相应的评论删除操作
+    if (resjson["Result"].asString() == "Success") {
+        Json::Value commentjson;
+        commentjson["ArticleId"] = deletejson["SolutionId"];
+        CommentService::GetInstance()->DeleteArticleComment(commentjson);
+    }
+    return resjson;
 }
 
 // 分页查询题解（公开题解）
@@ -216,6 +240,79 @@ Json::Value Control::SelectSolutionListByAdmin(Json::Value &queryjson) {
 Json::Value Control::SelectSolutionByEdit(Json::Value &queryjson) {
     return SolutionService::GetInstance()->SelectSolutionByEdit(queryjson);
 }
+// ------------------------------ 题解模块 End ------------------------------
+
+// ------------------------------ 评论模块 Start ------------------------------
+// 管理员查询评论
+Json::Value Control::SelectCommentListByAdmin(Json::Value &queryjson) {
+    return CommentService::GetInstance()->SelectCommentListByAdmin(queryjson);
+}
+
+// 获取评论 根据Id
+Json::Value Control::GetComment(Json::Value &queryjson) {
+    if (queryjson["Type"].asString() == "Father") {
+        return CommentService::GetInstance()->getFatherComment(queryjson);
+    } else {
+        return CommentService::GetInstance()->getSonComment(queryjson);
+    }
+}
+
+// 插入评论
+Json::Value Control::InsertComment(Json::Value &insertjson) {
+    // 文章添加评论数
+    Json::Value updatejson;
+    updatejson["ArticleId"] = insertjson["ArticleId"];
+    updatejson["Num"] = 1;
+    if (insertjson["ArticleType"].asString() == "Discuss") {
+        DiscussService::GetInstance()->UpdateDiscussComments(updatejson);
+    } else if (insertjson["ArticleType"].asString() == "Solution") {
+        SolutionService::GetInstance()->UpdateSolutionComments(updatejson);
+    } else if (insertjson["ArticleType"].asString() == "Announcement") {
+        AnnouncementService::GetInstance()->UpdateAnnouncementComments(updatejson);
+    }
+
+    // 父评论
+    if (insertjson["Type"].asString() == "Father") {
+        return CommentService::GetInstance()->InsertFatherComment(insertjson);
+    } else  // 子评论
+    {
+        return CommentService::GetInstance()->InsertSonComment(insertjson);
+    }
+}
+
+// 删除评论
+Json::Value Control::DeleteComment(Json::Value &deletejson) {
+    string articleid = deletejson["ArticleId"].asString();
+
+    Json::Value resjson;
+    // 删除父评论
+    Json::Value json = CommentService::GetInstance()->DeleteFatherComment(deletejson);
+    // 如果失败删除子评论
+    if (json["Result"] == "Fail")
+        json = CommentService::GetInstance()->DeleteSonComment(deletejson);
+    // 如果都失败，返回失败结果
+    if (json["Result"] == "Fail") {
+        resjson["Result"] = "Fail";
+        resjson["Reason"] = "数据库未查询到数据！";
+        return resjson;
+    }
+    // 如果删除评论成功，更新文章的评论数量
+    Json::Value articlejson;
+    articlejson["Num"] = stoi(json["DeleteNum"].asString()) * -1;
+    articlejson["ArticleId"] = articleid;
+    string articletype = json["ArticleType"].asString();
+    if (articletype == "Discuss") {
+        DiscussService::GetInstance()->UpdateDiscussComments(articlejson);
+    } else if (articletype == "Solution") {
+        SolutionService::GetInstance()->UpdateSolutionComments(articlejson);
+    } else if (articletype == "Announcement") {
+        AnnouncementService::GetInstance()->UpdateAnnouncementComments(articlejson);
+    }
+
+    resjson["Result"] = "Success";
+    return resjson;
+}
+// ------------------------------ 评论模块 End ------------------------------
 
 Control::Control() {
     // 构造函数实现

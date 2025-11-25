@@ -1,6 +1,8 @@
 #ifndef COMMENT_SERVICE_H
 #define COMMENT_SERVICE_H
 
+#include <json/json.h>
+
 /**
  * 评论服务类头文件
  */
@@ -13,6 +15,30 @@ private:
 public:
     // 局部静态特性的方式实现单实例模式
     static CommentService *GetInstance();
+
+    // 管理员查询评论
+    Json::Value SelectCommentListByAdmin(Json::Value &queryjson);
+
+    // 获取父评论
+    Json::Value getFatherComment(Json::Value &queryjson);
+
+    // 获取子评论
+    Json::Value getSonComment(Json::Value &queryjson);
+
+    // 插入父评论
+    Json::Value InsertFatherComment(Json::Value &insertjson);
+
+    // 插入子评论
+    Json::Value InsertSonComment(Json::Value &insertjson);
+
+    // 删除某一篇文章的所有评论
+    bool DeleteArticleComment(Json::Value &deletejson);
+
+    // 删除父评论
+    Json::Value DeleteFatherComment(Json::Value &deletejson);
+
+    // 删除子评论
+    Json::Value DeleteSonComment(Json::Value &deletejson);
 };
 
 #endif  // COMMENT_SERVICE_H

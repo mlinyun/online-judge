@@ -43,6 +43,11 @@ Json::Value SolutionService::SelectSolutionByEdit(Json::Value &queryjson) {
     return MoDB::GetInstance()->SelectSolutionByEdit(queryjson);
 }
 
+// 修改题解的评论数
+bool SolutionService::UpdateSolutionComments(Json::Value &updatejson) {
+    return MoDB::GetInstance()->UpdateSolutionComments(updatejson);
+}
+
 SolutionService::SolutionService() {
     // 构造函数实现
 }
