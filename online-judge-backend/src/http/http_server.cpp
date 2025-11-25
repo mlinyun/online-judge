@@ -863,6 +863,59 @@ void doDeleteComment(const httplib::Request &req, httplib::Response &res) {
 }
 // ------------------------------ 评论模块 End ------------------------------
 
+// ------------------------------ 测评记录模块 Start ------------------------------
+/**
+ * 处理分页获取测评记录列表的请求
+ */
+void doGetStatusRecordList(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetStatusRecordList start!!!" << endl;
+    Json::Value resjson;
+
+    if (!req.has_param("SearchInfo") || !req.has_param("Page") || !req.has_param("PageSize")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        Json::Value searchinfo;
+        Json::Reader reader;
+        // 解析传入的json
+        reader.parse(req.get_param_value("SearchInfo"), searchinfo);
+
+        string page = req.get_param_value("Page");
+        string pagesize = req.get_param_value("PageSize");
+
+        Json::Value queryjson;
+        queryjson["SearchInfo"] = searchinfo;
+        queryjson["Page"] = page;
+        queryjson["PageSize"] = pagesize;
+        resjson = control.SelectStatusRecordList(queryjson);
+    }
+    cout << "doGetStatusRecordList end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+/**
+ * 处理获取单条测评记录的请求
+ */
+void doGetStatusRecord(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetStatusRecord start!!!" << endl;
+    Json::Value resjson;
+    if (!req.has_param("SubmitId")) {
+        resjson["Result"] = "400";
+        resjson["Reason"] = "缺少请求参数！";
+    } else {
+        string submitid = req.get_param_value("SubmitId");
+
+        Json::Value queryjson;
+        queryjson["SubmitId"] = submitid;
+        resjson = control.SelectStatusRecord(queryjson);
+    }
+    cout << "doGetStatusRecord end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+// ------------------------------ 测评记录模块 End ------------------------------
+
 // ------------------------------ 图片模块 Start ------------------------------
 /**
  * 处理获取图片的请求
@@ -1042,8 +1095,18 @@ void HttpServer::Run() {
     server.Delete("/api/comment/delete", doDeleteComment);
     // -------------------- 评论模块 End --------------------
 
+    // -------------------- 测评记录模块 Start --------------------
+    // 返回状态记录的信息
+    server.Get("/api/status/record/list", doGetStatusRecordList);
+
+    // 查询一条详细测评记录
+    server.Get("/api/status/record", doGetStatusRecord);
+    // -------------------- 测评记录模块 End --------------------
+
+    // ------------------------------ 图片模块 Start ------------------------------
     // 获取图片
     server.Get(R"(/api/image/(\d+))", doGetImage);
+    // ------------------------------ 图片模块 End ------------------------------
 
     // 设置静态资源目录
     server.set_base_dir(constants::server::STATIC_ROOT);

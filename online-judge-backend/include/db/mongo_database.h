@@ -22,9 +22,6 @@ private:
     mongocxx::pool pool{uri};                     // 连接池
 
     atomic_int64_t m_problem_id;        // 题目 ID 的最大值
-    atomic_int64_t m_announcement_id;   // 公告 ID 的最大值
-    atomic_int64_t m_discussion_id;     // 讨论 ID 的最大值
-    atomic_int64_t m_solution_id;       // 题解 ID 的最大值
     atomic_int64_t m_comment_id;        // 评论 ID 的最大值
     atomic_int64_t m_status_record_id;  // 提交记录 ID 的最大值
     atomic_int64_t m_article_id;        // 文章 ID 的最大值
@@ -409,6 +406,37 @@ public:
      */
     Json::Value DeleteSonComment(Json::Value &deletejson);
     // ------------------------------ 评论模块 End ------------------------------
+
+    // ------------------------------ 测评记录模块 Start ------------------------------
+    /**
+     * 功能：插入待测评记录
+     * 传入：Json(ProblemId, UserId, UserNickName, ProblemTitle, Language, Code)
+     * 传出：SubmitId 测评的 ID
+     */
+    std::string InsertStatusRecord(Json::Value &insertjson);
+
+    /**
+     * 功能：更新测评记录
+     * 传入：Json(SubmitId, Status, RunTime, RunMemory, Length, ComplierInfo, TestInfo[(Status, StandardInput,
+     * StandardOutput, PersonalOutput, RunTime, RunMemory)])
+     * 传出：bool
+     */
+    bool UpdateStatusRecord(Json::Value &updatejson);
+
+    /**
+     * 功能：分页查询测评记录
+     * 传入：Json(SearchInfo, PageSize, Page)
+     * 传出：测评全部信息，详情请见 MongoDB 集合表
+     */
+    Json::Value SelectStatusRecordList(Json::Value &queryjson);
+
+    /**
+     * 功能：查询测评记录
+     * 传入：Json(SubmitId)
+     * 传出：全部记录，详情请看 MongoDB 集合表
+     */
+    Json::Value SelectStatusRecord(Json::Value &queryjson);
+    // ------------------------------ 测评记录模块 End ------------------------------
 };
 
 #endif  // MONGO_DATABASE_H

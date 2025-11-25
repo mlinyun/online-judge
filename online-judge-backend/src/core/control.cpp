@@ -314,6 +314,18 @@ Json::Value Control::DeleteComment(Json::Value &deletejson) {
 }
 // ------------------------------ 评论模块 End ------------------------------
 
+// ------------------------------ 测评记录模块 Start ------------------------------
+// 返回状态记录的信息
+Json::Value Control::SelectStatusRecordList(Json::Value &queryjson) {
+    return StatusRecordService::GetInstance()->SelectStatusRecordList(queryjson);
+}
+
+// 查询一条详细测评记录
+Json::Value Control::SelectStatusRecord(Json::Value &queryjson) {
+    return StatusRecordService::GetInstance()->SelectStatusRecord(queryjson);
+}
+// ------------------------------ 测评记录模块 End ------------------------------
+
 Control::Control() {
     // 构造函数实现
 }
