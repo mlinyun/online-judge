@@ -916,6 +916,25 @@ void doGetStatusRecord(const httplib::Request &req, httplib::Response &res) {
 }
 // ------------------------------ 测评记录模块 End ------------------------------
 
+// ------------------------------ 判题模块 Start ------------------------------
+/**
+ * 处理提交代码进行判题的请求
+ */
+void doJudgeCode(const httplib::Request &req, httplib::Response &res) {
+    cout << "doJudgeCode start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+
+    // 解析传入的json
+    reader.parse(req.body, jsonvalue);
+    Json::Value resjson = control.GetJudgeCode(jsonvalue);
+
+    cout << "doJudgeCode end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+// ------------------------------ 判题模块 End ------------------------------
+
 // ------------------------------ 图片模块 Start ------------------------------
 /**
  * 处理获取图片的请求
@@ -1103,10 +1122,15 @@ void HttpServer::Run() {
     server.Get("/api/status/record", doGetStatusRecord);
     // -------------------- 测评记录模块 End --------------------
 
-    // ------------------------------ 图片模块 Start ------------------------------
+    // -------------------- 判题模块 Start --------------------
+    // 返回判题信息
+    server.Post("/api/judge/code", doJudgeCode);
+    // -------------------- 判题模块 End --------------------
+
+    // -------------------- 图片模块 Start --------------------
     // 获取图片
     server.Get(R"(/api/image/(\d+))", doGetImage);
-    // ------------------------------ 图片模块 End ------------------------------
+    // -------------------- 图片模块 End --------------------
 
     // 设置静态资源目录
     server.set_base_dir(constants::server::STATIC_ROOT);

@@ -24,10 +24,13 @@ constexpr int MAX_TIME_LIMIT_MS = 10000;      // 最大时间限制（毫秒）
 constexpr int MAX_MEMORY_LIMIT_MB = 1024;     // 最大内存限制（MB）
 
 // 编程语言
-constexpr const char* LANG_CPP = "C++";
 constexpr const char* LANG_C = "C";
+constexpr const char* LANG_CPP = "C++";
+constexpr const char* LANG_GO = "Go";
 constexpr const char* LANG_JAVA = "Java";
-constexpr const char* LANG_PYTHON = "Python";
+constexpr const char* LANG_PYTHON2 = "Python2";
+constexpr const char* LANG_PYTHON3 = "Python3";
+constexpr const char* LANG_JAVASCRIPT = "JavaScript";
 }  // namespace judge
 }  // namespace constants
 

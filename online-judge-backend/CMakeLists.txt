@@ -24,6 +24,8 @@ file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp" "${INCLUDE_DIR}/*.h" "${INCLUDE_DIR
 
 # 查找头文件目录
 include_directories("${CMAKE_SOURCE_DIR}/include")
+# 青岛大学的安全沙箱库文件路径
+link_directories("${CMAKE_SOURCE_DIR}/lib")
 # 查找 httplib 库
 find_package(httplib REQUIRED)
 # 查找 JsonCpp 库
@@ -44,6 +46,7 @@ target_link_libraries(
     JsonCpp::JsonCpp
     mongo::mongocxx_static
     redis++::redis++_static
+    judger
     pthread
 )
 
