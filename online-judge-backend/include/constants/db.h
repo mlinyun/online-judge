@@ -43,6 +43,14 @@ constexpr const char* COLLECTION_USERS = "users";
 constexpr const char* REDIS_HOST = "127.0.0.1";
 // Redis 服务器端口
 constexpr int REDIS_PORT = 6379;
+// Redis 连接密码（若无密码则留空）
+constexpr const char* REDIS_PASSWORD = "123456";
+// Redis 数据库索引
+constexpr int REDIS_DB_INDEX = 0;
+// 连接超时设置（毫秒）
+constexpr int REDIS_CONNECTION_TIMEOUT_MS = 1000;
+// 读取超时设置（毫秒）
+constexpr int REDIS_SOCKET_TIMEOUT_MS = 50;
 }  // namespace db
 }  // namespace constants
 

@@ -32,6 +32,16 @@ bool SetResponseStatus(const Json::Value &json, httplib::Response &res) {
     return true;
 }
 
+// 获取请求中的 Token
+string GetRequestToken(const httplib::Request &req) {
+    auto res = req.headers.find("Authorization");
+    if (res != req.headers.end()) {
+        return res->second;
+    } else {
+        return "0";
+    }
+}
+
 // ------------------------------ 用户模块 Start ------------------------------
 /**
  * 处理注册用户的请求
@@ -40,7 +50,7 @@ void doRegisterUser(const httplib::Request &req, httplib::Response &res) {
     cout << "doRegister start!!!" << endl;
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
     Json::Value resjson = control.RegisterUser(jsonvalue);
     cout << "doRegister end!!!" << endl;
@@ -55,7 +65,7 @@ void doLoginUser(const httplib::Request &req, httplib::Response &res) {
     cout << "doLoginUser start!!!" << endl;
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
     Json::Value resjson = control.LoginUser(jsonvalue);
     cout << "doLoginUser end!!!" << endl;
@@ -74,9 +84,12 @@ void doGetUserInfo(const httplib::Request &req, httplib::Response &res) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
         // 获取用户 ID 参数
         string userid = req.get_param_value("UserId");
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["UserId"] = userid;
         resjson = control.SelectUserInfo(queryjson);
     }
@@ -96,8 +109,12 @@ void doGetUserUpdateInfo(const httplib::Request &req, httplib::Response &res) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取用户 ID 参数
         string userid = req.get_param_value("UserId");
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["UserId"] = userid;
         resjson = control.SelectUserUpdateInfo(queryjson);
     }
@@ -113,8 +130,11 @@ void doUpdateUserInfo(const httplib::Request &req, httplib::Response &res) {
     cout << "doUpdateUserInfo start!!!" << endl;
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
+    jsonvalue["Token"] = token;
     Json::Value resjson = control.UpdateUserInfo(jsonvalue);
     cout << "doUpdateUserInfo end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -132,9 +152,12 @@ void doDeleteUser(const httplib::Request &req, httplib::Response &res) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
         // 获取用户 ID 参数
         string userid = req.get_param_value("UserId");
         Json::Value jsonvalue;
+        jsonvalue["Token"] = token;
         jsonvalue["UserId"] = userid;
         resjson = control.DeleteUser(jsonvalue);
     }
@@ -149,15 +172,18 @@ void doDeleteUser(const httplib::Request &req, httplib::Response &res) {
 void doGetUserRank(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetUserRank start!!!" << endl;
     Json::Value resjson;
-
+    // 请求参数校验
     if (!req.has_param("Page") || !req.has_param("PageSize")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取分页参数
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
-
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
         resjson = control.SelectUserRank(queryjson);
@@ -177,15 +203,31 @@ void doGetUserSetInfo(const httplib::Request &req, httplib::Response &res) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取分页参数
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
-
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
         resjson = control.SelectUserSetInfo(queryjson);
     }
     cout << "doGetUserSetInfo end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    res.set_content(resjson.toStyledString(), "json");
+}
+
+// 通过 Token 登录用户获取信息
+void doGetUserInfoByToken(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetUserInfoByToken start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
+    Json::Value queryjson;
+    queryjson["Token"] = token;
+    Json::Value resjson = control.LoginUserByToken(queryjson);
+    cout << "doGetUserInfoByToken end!!!" << endl;
     SetResponseStatus(resjson, res);
     res.set_content(resjson.toStyledString(), "json");
 }
@@ -198,12 +240,17 @@ void doGetUserSetInfo(const httplib::Request &req, httplib::Response &res) {
 void doGetProblem(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetProblem start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("ProblemId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取题目 ID 参数
         string problemid = req.get_param_value("ProblemId");
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["ProblemId"] = problemid;
         resjson = control.SelectProblem(queryjson);
     }
@@ -218,13 +265,17 @@ void doGetProblem(const httplib::Request &req, httplib::Response &res) {
 void doGetProblemInfoByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetProblemInfoByAdmin start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("ProblemId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "请求参数有误！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取题目 ID 参数
         string problemid = req.get_param_value("ProblemId");
-
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["ProblemId"] = problemid;
         resjson = control.SelectProblemInfoByAdmin(queryjson);
     }
@@ -238,10 +289,13 @@ void doGetProblemInfoByAdmin(const httplib::Request &req, httplib::Response &res
  */
 void doEditProblem(const httplib::Request &req, httplib::Response &res) {
     cout << "doEditProblem start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
+    jsonvalue["datainfo"]["Token"] = token;
     Json::Value resjson = control.EditProblem(jsonvalue["datainfo"]);
     cout << "doEditProblem end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -254,12 +308,17 @@ void doEditProblem(const httplib::Request &req, httplib::Response &res) {
 void doDeleteProblem(const httplib::Request &req, httplib::Response &res) {
     cout << "doDeleteProblem start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("ProblemId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "请求参数有误！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取题目 ID 参数
         string problemid = req.get_param_value("ProblemId");
         Json::Value deletejson;
+        deletejson["Token"] = token;
         deletejson["ProblemId"] = problemid;
         resjson = control.DeleteProblem(deletejson);
     }
@@ -274,18 +333,22 @@ void doDeleteProblem(const httplib::Request &req, httplib::Response &res) {
 void doGetProblemList(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetProblemList start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("SearchInfo") || !req.has_param("Page") || !req.has_param("PageSize")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "请求参数有误！";
     } else {
+        // 获取搜索信息参数
         Json::Value searchinfo;
         Json::Reader reader;
-        // 解析传入的json
+        // 解析传入的 json
         reader.parse(req.get_param_value("SearchInfo"), searchinfo);
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
-
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["SearchInfo"] = searchinfo;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
@@ -302,13 +365,18 @@ void doGetProblemList(const httplib::Request &req, httplib::Response &res) {
 void doGetProblemListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetProblemListByAdmin start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("Page") || !req.has_param("PageSize")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "请求参数有误！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取分页参数
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
         resjson = control.SelectProblemListByAdmin(queryjson);
@@ -339,10 +407,13 @@ void doGetTags(const httplib::Request &req, httplib::Response &res) {
  */
 void doInsertAnnouncement(const httplib::Request &req, httplib::Response &res) {
     cout << "doInsertAnnouncement start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
+    jsonvalue["Token"] = token;
     Json::Value resjson = control.InsertAnnouncement(jsonvalue);
     cout << "doInsertAnnouncement end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -360,8 +431,12 @@ void doGetAnnouncement(const httplib::Request &req, httplib::Response &res) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取公告 ID 参数
         string announcementid = req.get_param_value("AnnouncementId");
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["AnnouncementId"] = announcementid;
         resjson = control.SelectAnnouncement(queryjson);
     }
@@ -375,10 +450,13 @@ void doGetAnnouncement(const httplib::Request &req, httplib::Response &res) {
  */
 void doUpdateAnnouncement(const httplib::Request &req, httplib::Response &res) {
     cout << "doUpdateAnnouncement start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
+    jsonvalue["Token"] = token;
     Json::Value resjson = control.UpdateAnnouncement(jsonvalue);
     cout << "doUpdateAnnouncement end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -396,8 +474,12 @@ void doDeleteAnnouncement(const httplib::Request &req, httplib::Response &res) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取公告 ID 参数
         string announcementid = req.get_param_value("AnnouncementId");
         Json::Value deletejson;
+        deletejson["Token"] = token;
         deletejson["AnnouncementId"] = announcementid;
         resjson = control.DeleteAnnouncement(deletejson);
     }
@@ -417,10 +499,13 @@ void doGetAnnouncementList(const httplib::Request &req, httplib::Response &res) 
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取分页参数
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
-
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
         resjson = control.SelectAnnouncementList(queryjson);
@@ -441,10 +526,13 @@ void doGetAnnouncementListByAdmin(const httplib::Request &req, httplib::Response
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取分页参数
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
-
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
         resjson = control.SelectAnnouncementListByAdmin(queryjson);
@@ -460,13 +548,17 @@ void doGetAnnouncementListByAdmin(const httplib::Request &req, httplib::Response
 void doSelectAnnouncement(const httplib::Request &req, httplib::Response &res) {
     cout << "doSelectAnnouncement start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("AnnouncementId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取公告 ID 参数
         string announcementid = req.get_param_value("AnnouncementId");
-
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["AnnouncementId"] = announcementid;
         resjson = control.SelectAnnouncementByEdit(queryjson);
     }
@@ -482,10 +574,13 @@ void doSelectAnnouncement(const httplib::Request &req, httplib::Response &res) {
  */
 void doInsertDiscuss(const httplib::Request &req, httplib::Response &res) {
     cout << "doInsertDiscuss start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
+    jsonvalue["Token"] = token;
     Json::Value resjson = control.InsertDiscuss(jsonvalue);
     cout << "doInsertDiscuss end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -498,12 +593,17 @@ void doInsertDiscuss(const httplib::Request &req, httplib::Response &res) {
 void doGetDiscuss(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetDiscuss start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("DiscussId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取讨论 ID 参数
         string discussid = req.get_param_value("DiscussId");
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["DiscussId"] = discussid;
         resjson = control.SelectDiscuss(queryjson);
     }
@@ -517,10 +617,13 @@ void doGetDiscuss(const httplib::Request &req, httplib::Response &res) {
  */
 void doUpdateDiscuss(const httplib::Request &req, httplib::Response &res) {
     cout << "doUpdateDiscuss start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
+    jsonvalue["Token"] = token;
     Json::Value resjson = control.UpdateDiscuss(jsonvalue);
     cout << "doUpdateDiscuss end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -533,15 +636,19 @@ void doUpdateDiscuss(const httplib::Request &req, httplib::Response &res) {
 void doDeleteDiscuss(const httplib::Request &req, httplib::Response &res) {
     cout << "doDeleteDiscuss start!!!" << endl;
     Json::Value resjson;
-
+    // 请求参数校验
     if (!req.has_param("DiscussId") || !req.has_param("UserId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取讨论 ID 参数
         string discussid = req.get_param_value("DiscussId");
+        // 获取用户 ID 参数
         string userid = req.get_param_value("UserId");
-
         Json::Value deletejson;
+        deletejson["Token"] = token;
         deletejson["DiscussId"] = discussid;
         deletejson["UserId"] = userid;
         resjson = control.DeleteDiscuss(deletejson);
@@ -557,17 +664,22 @@ void doDeleteDiscuss(const httplib::Request &req, httplib::Response &res) {
 void doGetDiscussList(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetDiscussList start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("SearchInfo") || !req.has_param("Page") || !req.has_param("PageSize")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取搜索信息参数
         Json::Value searchinfo;
         Json::Reader reader;
-        // 解析传入的json
+        // 解析传入的 json
         reader.parse(req.get_param_value("SearchInfo"), searchinfo);
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["SearchInfo"] = searchinfo;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
@@ -584,13 +696,18 @@ void doGetDiscussList(const httplib::Request &req, httplib::Response &res) {
 void doGetDiscussListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetDiscussListByAdmin start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("Page") || !req.has_param("PageSize")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取分页参数
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
         resjson = control.SelectDiscussListByAdmin(queryjson);
@@ -606,12 +723,17 @@ void doGetDiscussListByAdmin(const httplib::Request &req, httplib::Response &res
 void doSelectDiscussByEdit(const httplib::Request &req, httplib::Response &res) {
     cout << "doSelectDiscussByEdit start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("DiscussId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取讨论 ID 参数
         string discussid = req.get_param_value("DiscussId");
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["DiscussId"] = discussid;
         resjson = control.SelectDiscussByEdit(queryjson);
     }
@@ -627,10 +749,13 @@ void doSelectDiscussByEdit(const httplib::Request &req, httplib::Response &res) 
  */
 void doInsertSolution(const httplib::Request &req, httplib::Response &res) {
     cout << "doInsertSolution start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
+    jsonvalue["Token"] = token;
     Json::Value resjson = control.InsertSolution(jsonvalue);
     cout << "doInsertSolution end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -643,13 +768,17 @@ void doInsertSolution(const httplib::Request &req, httplib::Response &res) {
 void doGetSolution(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetSolution start!!!" << endl;
     Json::Value resjson;
-
+    // 请求参数校验
     if (!req.has_param("SolutionId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取题解 ID 参数
         string solutionid = req.get_param_value("SolutionId");
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["SolutionId"] = solutionid;
         resjson = control.SelectSolution(queryjson);
     }
@@ -663,10 +792,13 @@ void doGetSolution(const httplib::Request &req, httplib::Response &res) {
  */
 void doUpdateSolution(const httplib::Request &req, httplib::Response &res) {
     cout << "doUpdateSolution start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
+    jsonvalue["Token"] = token;
     Json::Value resjson = control.UpdateSolution(jsonvalue);
     cout << "doUpdateSolution end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -679,14 +811,19 @@ void doUpdateSolution(const httplib::Request &req, httplib::Response &res) {
 void doDeleteSolution(const httplib::Request &req, httplib::Response &res) {
     cout << "doDeleteSolution start!!!" << endl;
     Json::Value resjson;
-
+    // 请求参数校验
     if (!req.has_param("SolutionId") || !req.has_param("UserId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取题解 ID 参数
         string solutionid = req.get_param_value("SolutionId");
+        // 获取用户 ID 参数
         string userid = req.get_param_value("UserId");
         Json::Value deletejson;
+        deletejson["Token"] = token;
         deletejson["SolutionId"] = solutionid;
         deletejson["UserId"] = userid;
         resjson = control.DeleteSolution(deletejson);
@@ -702,18 +839,22 @@ void doDeleteSolution(const httplib::Request &req, httplib::Response &res) {
 void doGetSolutionList(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetSolutionList start!!!" << endl;
     Json::Value resjson;
-
+    // 请求参数校验
     if (!req.has_param("SearchInfo") || !req.has_param("Page") || !req.has_param("PageSize")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取搜索信息参数
         Json::Value searchinfo;
         Json::Reader reader;
-        // 解析传入的json
+        // 解析传入的 json
         reader.parse(req.get_param_value("SearchInfo"), searchinfo);
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["SearchInfo"] = searchinfo;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
@@ -730,14 +871,18 @@ void doGetSolutionList(const httplib::Request &req, httplib::Response &res) {
 void doGetSolutionListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetSolutionListByAdmin start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("Page") || !req.has_param("PageSize")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取分页参数
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
-
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
         resjson = control.SelectSolutionListByAdmin(queryjson);
@@ -753,13 +898,17 @@ void doGetSolutionListByAdmin(const httplib::Request &req, httplib::Response &re
 void doSelectSolutionByEdit(const httplib::Request &req, httplib::Response &res) {
     cout << "doSelectSolutionByEdit start!!!" << endl;
     Json::Value resjson;
-
+    // 请求参数校验
     if (!req.has_param("SolutionId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取题解 ID 参数
         string solutionid = req.get_param_value("SolutionId");
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["SolutionId"] = solutionid;
         resjson = control.SelectSolutionByEdit(queryjson);
     }
@@ -776,15 +925,18 @@ void doSelectSolutionByEdit(const httplib::Request &req, httplib::Response &res)
 void doGetCommentListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetCommentListByAdmin start!!!" << endl;
     Json::Value resjson;
-
+    // 请求参数校验
     if (!req.has_param("Page") || !req.has_param("PageSize")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取分页参数
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
-
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
         resjson = control.SelectCommentListByAdmin(queryjson);
@@ -800,18 +952,22 @@ void doGetCommentListByAdmin(const httplib::Request &req, httplib::Response &res
 void doGetComment(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetComment start!!!" << endl;
     Json::Value resjson;
-
+    // 请求参数校验
     if (!req.has_param("Type") || !req.has_param("ParentId") || !req.has_param("Page") || !req.has_param("PageSize") ||
         !req.has_param("SonNum")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取分页参数
         string type = req.get_param_value("Type");
         string parentid = req.get_param_value("ParentId");
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
         string sonsnum = req.get_param_value("SonNum");
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["Type"] = type;
         queryjson["ParentId"] = parentid;
         queryjson["Page"] = page;
@@ -830,10 +986,13 @@ void doGetComment(const httplib::Request &req, httplib::Response &res) {
  */
 void doInsertComment(const httplib::Request &req, httplib::Response &res) {
     cout << "doInsertComment start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
+    jsonvalue["Info"]["Token"] = token;
     Json::Value resjson = control.InsertComment(jsonvalue["Info"]);
     cout << "doInsertComment end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -846,13 +1005,18 @@ void doInsertComment(const httplib::Request &req, httplib::Response &res) {
 void doDeleteComment(const httplib::Request &req, httplib::Response &res) {
     cout << "doDeleteComment start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("ArticleId") || !req.has_param("CommentId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取评论 ID 参数
         string articleid = req.get_param_value("ArticleId");
         string commentid = req.get_param_value("CommentId");
         Json::Value deletejson;
+        deletejson["Token"] = token;
         deletejson["ArticleId"] = articleid;
         deletejson["CommentId"] = commentid;
         resjson = control.DeleteComment(deletejson);
@@ -870,20 +1034,22 @@ void doDeleteComment(const httplib::Request &req, httplib::Response &res) {
 void doGetStatusRecordList(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetStatusRecordList start!!!" << endl;
     Json::Value resjson;
-
+    // 请求参数校验
     if (!req.has_param("SearchInfo") || !req.has_param("Page") || !req.has_param("PageSize")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取搜索信息参数
         Json::Value searchinfo;
         Json::Reader reader;
-        // 解析传入的json
+        // 解析传入的 json
         reader.parse(req.get_param_value("SearchInfo"), searchinfo);
-
         string page = req.get_param_value("Page");
         string pagesize = req.get_param_value("PageSize");
-
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["SearchInfo"] = searchinfo;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
@@ -900,13 +1066,17 @@ void doGetStatusRecordList(const httplib::Request &req, httplib::Response &res) 
 void doGetStatusRecord(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetStatusRecord start!!!" << endl;
     Json::Value resjson;
+    // 请求参数校验
     if (!req.has_param("SubmitId")) {
         resjson["Result"] = "400";
         resjson["Reason"] = "缺少请求参数！";
     } else {
+        // 获取 Token 参数
+        string token = GetRequestToken(req);
+        // 获取提交 ID 参数
         string submitid = req.get_param_value("SubmitId");
-
         Json::Value queryjson;
+        queryjson["Token"] = token;
         queryjson["SubmitId"] = submitid;
         resjson = control.SelectStatusRecord(queryjson);
     }
@@ -922,13 +1092,14 @@ void doGetStatusRecord(const httplib::Request &req, httplib::Response &res) {
  */
 void doJudgeCode(const httplib::Request &req, httplib::Response &res) {
     cout << "doJudgeCode start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
-
-    // 解析传入的json
+    // 解析传入的 json
     reader.parse(req.body, jsonvalue);
+    jsonvalue["Token"] = token;
     Json::Value resjson = control.GetJudgeCode(jsonvalue);
-
     cout << "doJudgeCode end!!!" << endl;
     SetResponseStatus(resjson, res);
     res.set_content(resjson.toStyledString(), "json");
@@ -1014,6 +1185,8 @@ void HttpServer::Run() {
     server.Get("/api/user/rank", doGetUserRank);
     // 分页查询用户列表（管理员权限）
     server.Get("/api/user/list", doGetUserSetInfo);
+    // 用户登录通过 Token 鉴权（Token 鉴权实现）
+    server.Get("/api/user/auth", doGetUserInfoByToken);
     // -------------------- 用户模块 End --------------------
 
     // -------------------- 题目模块 Start --------------------

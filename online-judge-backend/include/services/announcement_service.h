@@ -34,7 +34,7 @@ public:
     // 分页查询公告列表（管理员权限）
     Json::Value SelectAnnouncementListByAdmin(Json::Value &queryjson);
 
-    // 查询公告的详细信息，主要是编辑时的查询
+    // 查询公告的详细信息，主要是编辑时的查询（管理员权限）
     Json::Value SelectAnnouncementByEdit(Json::Value &queryjson);
 
     // 更新公告的评论数量

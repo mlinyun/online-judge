@@ -214,7 +214,7 @@ public:
     Json::Value SelectAnnouncementList(Json::Value &queryjson);
 
     /**
-     * 功能：查询公告的详细信息，主要是编辑时的查询
+     * 功能：查询公告的详细信息，主要是编辑时的查询（管理员权限）
      * 传入：Json(AnnouncementId)
      * 传出：Json(Result, Reason, Title, Content, Level)
      */
@@ -437,6 +437,22 @@ public:
      */
     Json::Value SelectStatusRecord(Json::Value &queryjson);
     // ------------------------------ 测评记录模块 End ------------------------------
+
+    // ------------------------------ Token 鉴权实现 Start ------------------------------
+    /**
+     * 功能：用户登录通过 Token 鉴权
+     * 传入：Json(UserId)
+     * 传出：Json(Result, Reason, Info(_id, NickName, Avatar, CommentLikes, Solves, Authority))
+     */
+    Json::Value LoginUserByToken(Json::Value &loginjson);
+
+    /**
+     * 功能：查询所有用户的权限
+     * 传入：void
+     * 传出：Json(Result, _id, Authority)
+     */
+    Json::Value SelectUserAuthority();
+    // ------------------------------ Token 鉴权实现 End ------------------------------
 };
 
 #endif  // MONGO_DATABASE_H

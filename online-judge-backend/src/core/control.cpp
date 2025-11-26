@@ -14,6 +14,9 @@
 
 using namespace std;
 
+// 无权限（该变量用于当无权限情况时，直接返回该变量）
+static Json::Value NoPermission;
+
 // ------------------------------ 用户模块 Start ------------------------------
 // 用户注册
 Json::Value Control::RegisterUser(Json::Value &registerjson) {
@@ -32,16 +35,31 @@ Json::Value Control::SelectUserInfo(Json::Value &queryjson) {
 
 // 查询用户信息（在设置页面修改用户时使用）
 Json::Value Control::SelectUserUpdateInfo(Json::Value &queryjson) {
+    // 如果不是本人或者管理员，无权修改用户信息
+    bool is_author = UserService::GetInstance()->IsAuthor(queryjson);
+    if (!is_author) {
+        return NoPermission;
+    }
     return UserService::GetInstance()->SelectUserUpdateInfo(queryjson);
 }
 
 // 更新用户信息
 Json::Value Control::UpdateUserInfo(Json::Value &updatejson) {
+    // 如果不是本人或者管理员，无权修改用户信息
+    bool is_author = UserService::GetInstance()->IsAuthor(updatejson);
+    if (!is_author) {
+        return NoPermission;
+    }
     return UserService::GetInstance()->UpdateUserInfo(updatejson);
 }
 
 // 删除用户
 Json::Value Control::DeleteUser(Json::Value &deletejson) {
+    // 如果不是管理员，无权删除用户
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(deletejson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return UserService::GetInstance()->DeleteUser(deletejson);
 }
 
@@ -52,7 +70,17 @@ Json::Value Control::SelectUserRank(Json::Value &queryjson) {
 
 // 分页查询用户列表（管理员权限）
 Json::Value Control::SelectUserSetInfo(Json::Value &queryjson) {
+    // 如果不是管理员，无权查询用户列表
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(queryjson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return UserService::GetInstance()->SelectUserSetInfo(queryjson);
+}
+
+// 用户登录通过 Token 鉴权（Token 鉴权实现）
+Json::Value Control::LoginUserByToken(Json::Value &loginjson) {
+    return UserService::GetInstance()->LoginUserByToken(loginjson);
 }
 // ------------------------------ 用户模块 End ------------------------------
 
@@ -64,16 +92,30 @@ Json::Value Control::SelectProblem(Json::Value &queryjson) {
 
 // 查询题目信息（管理员权限）
 Json::Value Control::SelectProblemInfoByAdmin(Json::Value &queryjson) {
+    // 如果不是管理员，无权查询题目信息
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(queryjson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return ProblemService::GetInstance()->SelectProblemInfoByAdmin(queryjson);
 }
 
 // 编辑题目：包含插入和更新题目（管理员权限）
 Json::Value Control::EditProblem(Json::Value &insertjson) {
+    // 如果不是管理员，无权编辑题目
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(insertjson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     Json::Value resjson;
+    // 获取编辑类型
     string editType = insertjson["EditType"].asString();
+    // 根据编辑类型进行相应操作
     if (editType == "Insert") {
+        // 插入题目
         resjson = ProblemService::GetInstance()->InsertProblem(insertjson);
     } else if (editType == "Update") {
+        // 更新题目
         resjson = ProblemService::GetInstance()->UpdateProblem(insertjson);
     }
     TagService::GetInstance()->InitProblemTags();
@@ -82,6 +124,11 @@ Json::Value Control::EditProblem(Json::Value &insertjson) {
 
 // 删除题目（管理员权限）
 Json::Value Control::DeleteProblem(Json::Value &deletejson) {
+    // 如果不是管理员，无权删除题目
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(deletejson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return ProblemService::GetInstance()->DeleteProblem(deletejson);
 }
 
@@ -92,6 +139,11 @@ Json::Value Control::SelectProblemList(Json::Value &queryjson) {
 
 // 分页获取题目列表（管理员权限）
 Json::Value Control::SelectProblemListByAdmin(Json::Value &queryjson) {
+    // 如果不是管理员，无权获取题目列表
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(queryjson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return ProblemService::GetInstance()->SelectProblemListByAdmin(queryjson);
 }
 // ------------------------------ 题目模块 End ------------------------------
@@ -110,6 +162,11 @@ Json::Value Control::GetTags(Json::Value &queryjson) {
 // ------------------------------ 公告模块 Start ------------------------------
 // 添加公告（管理员权限）
 Json::Value Control::InsertAnnouncement(Json::Value &insertjson) {
+    // 如果不是管理员，无权添加公告
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(insertjson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return AnnouncementService::GetInstance()->InsertAnnouncement(insertjson);
 }
 
@@ -120,13 +177,22 @@ Json::Value Control::SelectAnnouncement(Json::Value &queryjson) {
 
 // 更新公告（管理员权限）
 Json::Value Control::UpdateAnnouncement(Json::Value &updatejson) {
+    // 如果不是管理员，无权更新公告
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(updatejson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return AnnouncementService::GetInstance()->UpdateAnnouncement(updatejson);
 }
 
 // 删除公告（管理员权限）
 Json::Value Control::DeleteAnnouncement(Json::Value &deletejson) {
+    // 如果不是管理员，无权删除公告
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(deletejson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     Json::Value resjson = AnnouncementService::GetInstance()->DeleteAnnouncement(deletejson);
-
     // 评论模块完成时，添加相应的评论删除操作
     if (resjson["Result"].asString() == "Success") {
         Json::Value commentjson;
@@ -143,11 +209,21 @@ Json::Value Control::SelectAnnouncementList(Json::Value &queryjson) {
 
 // 分页查询公告列表（管理员权限）
 Json::Value Control::SelectAnnouncementListByAdmin(Json::Value &queryjson) {
+    // 如果不是管理员，无权获取公告列表
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(queryjson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return AnnouncementService::GetInstance()->SelectAnnouncementListByAdmin(queryjson);
 }
 
-// 查询公告的详细信息，主要是编辑时的查询
+// 查询公告的详细信息，主要是编辑时的查询（管理员权限）
 Json::Value Control::SelectAnnouncementByEdit(Json::Value &queryjson) {
+    // 如果不是管理员，无权查看并编辑公告
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(queryjson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return AnnouncementService::GetInstance()->SelectAnnouncementByEdit(queryjson);
 }
 // ------------------------------ 公告模块 End ------------------------------
@@ -155,6 +231,11 @@ Json::Value Control::SelectAnnouncementByEdit(Json::Value &queryjson) {
 // ------------------------------ 讨论模块 Start ------------------------------
 // 添加讨论
 Json::Value Control::InsertDiscuss(Json::Value &insertjson) {
+    // 如果不是普通用户，无权添加讨论
+    bool is_ordinary_user = UserService::GetInstance()->IsOrdinaryUser(insertjson);
+    if (!is_ordinary_user) {
+        return NoPermission;
+    }
     return DiscussService::GetInstance()->InsertDiscuss(insertjson);
 }
 
@@ -165,13 +246,22 @@ Json::Value Control::SelectDiscuss(Json::Value &queryjson) {
 
 // 更新讨论
 Json::Value Control::UpdateDiscuss(Json::Value &updatejson) {
+    // 如果不是讨论作者本人或者管理员，无权修改讨论
+    bool is_author = UserService::GetInstance()->IsAuthor(updatejson);
+    if (!is_author) {
+        return NoPermission;
+    }
     return DiscussService::GetInstance()->UpdateDiscuss(updatejson);
 }
 
 // 删除讨论
 Json::Value Control::DeleteDiscuss(Json::Value &deletejson) {
+    // 如果不是讨论作者本人或者管理员，无权删除讨论
+    bool is_author = UserService::GetInstance()->IsAuthor(deletejson);
+    if (!is_author) {
+        return NoPermission;
+    }
     Json::Value resjson = DiscussService::GetInstance()->DeleteDiscuss(deletejson);
-
     // 评论模块完成时，添加相应的评论删除操作
     if (resjson["Result"].asString() == "Success") {
         Json::Value commentjson;
@@ -188,11 +278,21 @@ Json::Value Control::SelectDiscussList(Json::Value &queryjson) {
 
 // 分页查询讨论（管理员权限）
 Json::Value Control::SelectDiscussListByAdmin(Json::Value &queryjson) {
+    // 如果不是管理员，无权获取讨论列表
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(queryjson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return DiscussService::GetInstance()->SelectDiscussListByAdmin(queryjson);
 }
 
 // 查询讨论的详细信息，主要是编辑时的查询
 Json::Value Control::SelectDiscussByEdit(Json::Value &queryjson) {
+    // 如果不是用户本人，无权查看并编辑讨论
+    bool is_ordinary_user = UserService::GetInstance()->IsOrdinaryUser(queryjson);
+    if (!is_ordinary_user) {
+        return NoPermission;
+    }
     return DiscussService::GetInstance()->SelectDiscussByEdit(queryjson);
 }
 // ------------------------------ 讨论模块 End ------------------------------
@@ -200,6 +300,11 @@ Json::Value Control::SelectDiscussByEdit(Json::Value &queryjson) {
 // ------------------------------ 题解模块 Start ------------------------------
 // 添加题解
 Json::Value Control::InsertSolution(Json::Value &insertjson) {
+    // 如果不是普通用户，无权添加题解
+    bool is_ordinary_user = UserService::GetInstance()->IsOrdinaryUser(insertjson);
+    if (!is_ordinary_user) {
+        return NoPermission;
+    }
     return SolutionService::GetInstance()->InsertSolution(insertjson);
 }
 
@@ -210,13 +315,22 @@ Json::Value Control::SelectSolution(Json::Value &queryjson) {
 
 // 更新题解
 Json::Value Control::UpdateSolution(Json::Value &updatejson) {
+    // 如果不是题解作者本人或者管理员，无权修改题解
+    bool is_author = UserService::GetInstance()->IsAuthor(updatejson);
+    if (!is_author) {
+        return NoPermission;
+    }
     return SolutionService::GetInstance()->UpdateSolution(updatejson);
 }
 
 // 删除题解
 Json::Value Control::DeleteSolution(Json::Value &deletejson) {
+    // 如果不是题解作者本人或者管理员，无权删除题解
+    bool is_author = UserService::GetInstance()->IsAuthor(deletejson);
+    if (!is_author) {
+        return NoPermission;
+    }
     Json::Value resjson = SolutionService::GetInstance()->DeleteSolution(deletejson);
-
     // 评论模块完成时，添加相应的评论删除操作
     if (resjson["Result"].asString() == "Success") {
         Json::Value commentjson;
@@ -233,11 +347,21 @@ Json::Value Control::SelectSolutionList(Json::Value &queryjson) {
 
 // 分页查询题解（管理员权限）
 Json::Value Control::SelectSolutionListByAdmin(Json::Value &queryjson) {
+    // 如果不是管理员，无权获取题解列表
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(queryjson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return SolutionService::GetInstance()->SelectSolutionListByAdmin(queryjson);
 }
 
 // 查询题解的详细信息，主要是编辑时的查询
 Json::Value Control::SelectSolutionByEdit(Json::Value &queryjson) {
+    // 如果不是用户本人，无权查看并编辑题解
+    bool is_ordinary_user = UserService::GetInstance()->IsOrdinaryUser(queryjson);
+    if (!is_ordinary_user) {
+        return NoPermission;
+    }
     return SolutionService::GetInstance()->SelectSolutionByEdit(queryjson);
 }
 // ------------------------------ 题解模块 End ------------------------------
@@ -245,6 +369,11 @@ Json::Value Control::SelectSolutionByEdit(Json::Value &queryjson) {
 // ------------------------------ 评论模块 Start ------------------------------
 // 管理员查询评论
 Json::Value Control::SelectCommentListByAdmin(Json::Value &queryjson) {
+    // 如果不是管理员，无权获取评论列表
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(queryjson);
+    if (!is_administrator) {
+        return NoPermission;
+    }
     return CommentService::GetInstance()->SelectCommentListByAdmin(queryjson);
 }
 
@@ -259,6 +388,11 @@ Json::Value Control::GetComment(Json::Value &queryjson) {
 
 // 插入评论
 Json::Value Control::InsertComment(Json::Value &insertjson) {
+    // 如果不是普通用户，无权添加评论
+    bool is_ordinary_user = UserService::GetInstance()->IsOrdinaryUser(insertjson);
+    if (!is_ordinary_user) {
+        return NoPermission;
+    }
     // 文章添加评论数
     Json::Value updatejson;
     updatejson["ArticleId"] = insertjson["ArticleId"];
@@ -282,6 +416,11 @@ Json::Value Control::InsertComment(Json::Value &insertjson) {
 
 // 删除评论
 Json::Value Control::DeleteComment(Json::Value &deletejson) {
+    // 如果不是评论作者本人或者管理员，无权删除评论
+    bool is_author = UserService::GetInstance()->IsAuthor(deletejson);
+    if (!is_author) {
+        return NoPermission;
+    }
     string articleid = deletejson["ArticleId"].asString();
 
     Json::Value resjson;
@@ -329,6 +468,11 @@ Json::Value Control::SelectStatusRecord(Json::Value &queryjson) {
 // ------------------------------ 判题模块 Start ------------------------------
 // 返回判题信息
 Json::Value Control::GetJudgeCode(Json::Value judgejson) {
+    // 如果不是普通用户，无权进行判题
+    bool is_ordinary_user = UserService::GetInstance()->IsOrdinaryUser(judgejson);
+    if (!is_ordinary_user) {
+        return NoPermission;
+    }
     Json::Value resjson;
     // 传入 Json(ProblemId, UserId, UserNickName, Code, Language, TimeLimit, MemoryLimit, JudgeNum, ProblemTitle)
 
@@ -394,6 +538,15 @@ Json::Value Control::GetJudgeCode(Json::Value judgejson) {
 
 Control::Control() {
     // 构造函数实现
+    // 初始化题目标签
+    TagService::GetInstance()->InitProblemTags();
+
+    // 初始化用户权限
+    UserService::GetInstance()->InitUserAuthority();
+
+    // 初始化无权限返回变量
+    NoPermission["Result"] = "401";
+    NoPermission["Reason"] = "无权限访问！";
 }
 
 Control::~Control() {

@@ -3,11 +3,16 @@
 
 #include <json/json.h>
 
+#include <unordered_map>
+
 /**
  * 用户服务类头文件
  */
 class UserService {
 private:
+    // 用户权限的哈希表，键：用户ID，值：用户权限
+    std::unordered_map<int64_t, int> UserAuthorityMap;
+
     UserService();
 
     ~UserService();
@@ -42,6 +47,26 @@ public:
 
     // 更新用户题目信息（用于用户提交代码后更新题目完成情况）
     bool UpdateUserProblemInfo(Json::Value &updatejson);
+
+    // -------------------- Token 鉴权实现 Start --------------------
+    // 登录用户通过Token
+    Json::Value LoginUserByToken(Json::Value &loginjson);
+
+    // 初始化用户权限
+    bool InitUserAuthority();
+
+    // 获取用户权限
+    int GetUserAuthority(Json::Value &json);
+
+    // 权限是否是普通用户或以上
+    bool IsOrdinaryUser(Json::Value &json);
+
+    // 权限是否是作者本人或以上
+    bool IsAuthor(Json::Value &json);
+
+    // 权限是否是管理员或以上
+    bool IsAdministrator(Json::Value &json);
+    // -------------------- Token 鉴权实现 End --------------------
 };
 
 #endif  // USER_SERVICE_H

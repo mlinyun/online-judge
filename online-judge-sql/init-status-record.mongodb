@@ -1,7 +1,8 @@
 
-use('OnlineJudge');
+// 初始化状态记录数据
+use("online_judge");
 
-db.StatusRecord.insertMany([
+db.status_records.insertMany([
   {
     '_id': 1,
     'ProblemId': 1,

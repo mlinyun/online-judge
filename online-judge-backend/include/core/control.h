@@ -34,6 +34,9 @@ public:
 
     // 分页查询用户列表（管理员权限）
     Json::Value SelectUserSetInfo(Json::Value &queryjson);
+
+    // 用户登录通过 Token 鉴权（Token 鉴权实现）
+    Json::Value LoginUserByToken(Json::Value &loginjson);
     // ------------------------------ 用户模块 End ------------------------------
 
     // ------------------------------ 题目模块 Start ------------------------------

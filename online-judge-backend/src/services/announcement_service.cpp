@@ -38,7 +38,7 @@ Json::Value AnnouncementService::SelectAnnouncementListByAdmin(Json::Value &quer
     return MoDB::GetInstance()->SelectAnnouncementList(queryjson);
 }
 
-// 查询公告的详细信息，主要是编辑时的查询
+// 查询公告的详细信息，主要是编辑时的查询（管理员权限）
 Json::Value AnnouncementService::SelectAnnouncementByEdit(Json::Value &queryjson) {
     return MoDB::GetInstance()->SelectAnnouncementByEdit(queryjson);
 }
