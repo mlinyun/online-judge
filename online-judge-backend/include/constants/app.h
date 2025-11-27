@@ -8,7 +8,6 @@ namespace constants {
 namespace app {
 constexpr const char* VERSION = "1.0.0";
 constexpr const char* APP_NAME = "Online Judge Backend";
-constexpr const char* API_PREFIX = "/api/v1";
 }  // namespace app
 }  // namespace constants
 

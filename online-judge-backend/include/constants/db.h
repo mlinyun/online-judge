@@ -14,7 +14,8 @@ namespace db {
 // MongoDB 数据库名称
 constexpr const char* DATABASE_NAME = "online_judge";
 // MongoDB 连接字符串
-constexpr const char* MONGO_URI = "mongodb://admin:StrongPassw0rd!@localhost:27017/?authSource=admin";
+constexpr const char* MONGO_URI =
+    "mongodb://online_judge_admin:StrongPassw0rd!@localhost:27017/online_judge?authSource=online_judge";
 
 /**
  * MongoDB 集合名称
@@ -46,7 +47,8 @@ constexpr int REDIS_PORT = 6379;
 // Redis 连接密码（若无密码则留空）
 constexpr const char* REDIS_PASSWORD = "123456";
 // Redis 数据库索引
-constexpr int REDIS_DB_INDEX = 0;
+constexpr int REDIS_TOKEN_INDEX = 0;  // 用于存放 Token
+constexpr int REDIS_CACHE_INDEX = 1;  // 用于存放缓存
 // 连接超时设置（毫秒）
 constexpr int REDIS_CONNECTION_TIMEOUT_MS = 1000;
 // 读取超时设置（毫秒）

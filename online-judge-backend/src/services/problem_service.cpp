@@ -6,7 +6,12 @@
 
 #include "constants/problem.h"
 #include "db/mongo_database.h"
+#include "db/redis_database.h"
 
+/**
+ * PROBLEMDATAPATH 变量表示 problemdata 文件夹的相对路径，
+ * 当题目增删改时，problemdata 中的数据文件也会相应改变
+ */
 using constants::problem::PROBLEMDATAPATH;
 
 // 局部静态特性的方式实现单实例模式
@@ -15,16 +20,34 @@ ProblemService *ProblemService::GetInstance() {
     return &problem_service;
 }
 
-// 查询题目信息（单条）
+// 查询题目信息（单条）（Redis 缓存）
 Json::Value ProblemService::SelectProblem(Json::Value &queryjson) {
-    return MoDB::GetInstance()->SelectProblem(queryjson);
+    // 获取题目 ID
+    string problemid = queryjson["ProblemId"].asString();
+    // 获取缓存
+    string problem_cache = ReDB::GetInstance()->GetProblemCache(problemid);
+    Json::Value resjson;
+    Json::Reader reader;
+    // 如果有缓存
+    if (problem_cache != "") {
+        // 解析缓存 json
+        reader.parse(problem_cache, resjson);
+        return resjson;
+    }
+    // 如果没有缓存
+    resjson = MoDB::GetInstance()->SelectProblem(queryjson);
+    // 添加缓存
+    if (resjson["Result"].asString() == "Success") {
+        ReDB::GetInstance()->AddProblemCache(problemid, resjson.toStyledString());
+    }
+    // 返回结果
+    return resjson;
 }
 
 // 查询题目信息（管理员权限）
 Json::Value ProblemService::SelectProblemInfoByAdmin(Json::Value &queryjson) {
     // 获取基本信息
     Json::Value resjson = MoDB::GetInstance()->SelectProblemInfoByAdmin(queryjson);
-
     if (resjson["Result"].asString() == "Fail") {
         return resjson;
     }
@@ -87,7 +110,7 @@ bool InsertProblemDataInfo(Json::Value &insertjson) {
         outfileout << insertjson["TestInfo"][i - 1]["out"].asString();
         outfileout.close();
     }
-    // 添加SPJ文件
+    // 添加 SPJ 文件
     if (insertjson["IsSPJ"].asBool()) {
         ofstream outfilespj;
         string spjpath = DATA_PATH + "/spj.cpp";
@@ -101,10 +124,9 @@ bool InsertProblemDataInfo(Json::Value &insertjson) {
 // 插入题目（管理员权限）
 Json::Value ProblemService::InsertProblem(Json::Value &insertjson) {
     Json::Value tmpjson = MoDB::GetInstance()->InsertProblem(insertjson);
-
-    if (tmpjson["Result"] == "Fail")  // 插入失败
+    if (tmpjson["Result"] == "Fail") {  // 插入失败
         return tmpjson;
-
+    }
     // 插入信息
     Json::Value problemjson;
     problemjson["_id"] = tmpjson["ProblemId"];
@@ -113,9 +135,7 @@ Json::Value ProblemService::InsertProblem(Json::Value &insertjson) {
     problemjson["JudgeNum"] = insertjson["JudgeNum"];
     problemjson["TimeLimit"] = insertjson["TimeLimit"];
     problemjson["MemoryLimit"] = insertjson["MemoryLimit"];
-
     insertjson["ProblemId"] = tmpjson["ProblemId"];
-
     InsertProblemDataInfo(insertjson);
     return tmpjson;
 }
@@ -123,9 +143,10 @@ Json::Value ProblemService::InsertProblem(Json::Value &insertjson) {
 // 更新题目信息（管理员权限）
 Json::Value ProblemService::UpdateProblem(Json::Value &updatejson) {
     Json::Value tmpjson = MoDB::GetInstance()->UpdateProblem(updatejson);
-    if (tmpjson["Result"].asString() == "Fail")
+    if (tmpjson["Result"].asString() == "Fail") {
         return tmpjson;
-
+    }
+    // 获取题目 ID
     string problemid = updatejson["ProblemId"].asString();
     string DATA_PATH = PROBLEMDATAPATH + problemid;
     // 删除文件夹
@@ -133,23 +154,23 @@ Json::Value ProblemService::UpdateProblem(Json::Value &updatejson) {
     system(command.data());
     // 创建文件夹
     InsertProblemDataInfo(updatejson);
-
+    // 删除缓存
+    ReDB::GetInstance()->DeleteProblemCache(problemid);
     return tmpjson;
 }
 
 // 删除题目（管理员权限）
 Json::Value ProblemService::DeleteProblem(Json::Value &deletejson) {
     Json::Value tmpjson = MoDB::GetInstance()->DeleteProblem(deletejson);
-
-    if (tmpjson["Result"] == "Fail")
+    if (tmpjson["Result"] == "Fail") {
         return tmpjson;
-
+    }
     // 删除数据
     string DATA_PATH = PROBLEMDATAPATH + deletejson["ProblemId"].asString();
     string command = "rm -rf " + DATA_PATH;
-
     system(command.data());
-
+    // 删除缓存
+    ReDB::GetInstance()->DeleteProblemCache(deletejson["ProblemId"].asString());
     return tmpjson;
 }
 

@@ -17,7 +17,7 @@ using namespace std;
  */
 class MoDB {
 private:
-    static mongocxx::instance instance;           // 该实例应在程序生命周期内存在一次性
+    mongocxx::instance instance;                  // 该实例应在程序生命周期内存在一次性
     mongocxx::uri uri{constants::db::MONGO_URI};  // 连接字符串
     mongocxx::pool pool{uri};                     // 连接池
 

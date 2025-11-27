@@ -10,6 +10,7 @@ namespace server {
 constexpr const char* HOST = "0.0.0.0";
 constexpr int PORT = 8081;
 constexpr int MAX_THREAD_COUNT = 8;
+constexpr const char* API_PREFIX = "/api";
 
 // 请求限制
 constexpr int MAX_REQUEST_BODY_SIZE = 10 * 1024 * 1024;  // 10MB

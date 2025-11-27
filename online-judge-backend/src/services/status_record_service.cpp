@@ -1,6 +1,7 @@
 #include "services/status_record_service.h"
 
 #include "db/mongo_database.h"
+#include "db/redis_database.h"
 
 // 局部静态特性的方式实现单实例模式
 StatusRecordService *StatusRecordService::GetInstance() {
@@ -25,7 +26,25 @@ bool StatusRecordService::UpdateStatusRecord(Json::Value &updatejson) {
 
 // 查询一条详细测评记录
 Json::Value StatusRecordService::SelectStatusRecord(Json::Value &queryjson) {
-    return MoDB::GetInstance()->SelectStatusRecord(queryjson);
+    // 获取提交 ID
+    string statusrecordid = queryjson["SubmitId"].asString();
+    // 获取缓存
+    string status_record_cache = ReDB::GetInstance()->GetStatusRecordCache(statusrecordid);
+    Json::Value resjson;
+    Json::Reader reader;
+    // 如果有缓存
+    if (status_record_cache != "") {
+        // 解析缓存 json
+        reader.parse(status_record_cache, resjson);
+        return resjson;
+    }
+    // 如果没有缓存
+    resjson = MoDB::GetInstance()->SelectStatusRecord(queryjson);
+    // 添加缓存（状态不能为等待）
+    if (resjson["Result"].asString() == "Success" && resjson["Status"].asInt() > 0) {
+        ReDB::GetInstance()->AddStatusRecordCache(statusrecordid, resjson.toStyledString());
+    }
+    return resjson;
 }
 
 StatusRecordService::StatusRecordService() {

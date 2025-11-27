@@ -2589,10 +2589,6 @@ MoDB::MoDB() {
     int64_t m_solution_id = GetMaxId(constants::db::COLLECTION_SOLUTIONS);
     int64_t m_discussion_id = GetMaxId(constants::db::COLLECTION_DISCUSSES);
     m_article_id = max(m_solution_id, max(m_discussion_id, m_announcement_id));
-
-    // TODO: 输出 ID 信息
-    cout << "Max Problem ID: " << m_problem_id << endl;
-    cout << "Max Announcement ID: " << m_announcement_id << endl;
 }
 
 MoDB::~MoDB() {

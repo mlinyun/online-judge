@@ -55,7 +55,7 @@ void doRegisterUser(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.RegisterUser(jsonvalue);
     cout << "doRegister end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -70,7 +70,7 @@ void doLoginUser(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.LoginUser(jsonvalue);
     cout << "doLoginUser end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -95,7 +95,7 @@ void doGetUserInfo(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetUserInfo end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -120,7 +120,7 @@ void doGetUserUpdateInfo(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetUserUpdateInfo end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -138,7 +138,7 @@ void doUpdateUserInfo(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.UpdateUserInfo(jsonvalue);
     cout << "doUpdateUserInfo end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -163,7 +163,7 @@ void doDeleteUser(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doDeleteUser end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -190,7 +190,7 @@ void doGetUserRank(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetUserRank end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -216,7 +216,7 @@ void doGetUserSetInfo(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetUserSetInfo end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 // 通过 Token 登录用户获取信息
@@ -229,7 +229,7 @@ void doGetUserInfoByToken(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.LoginUserByToken(queryjson);
     cout << "doGetUserInfoByToken end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 // ------------------------------ 用户模块 End ------------------------------
 
@@ -256,7 +256,7 @@ void doGetProblem(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetProblem end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -281,7 +281,7 @@ void doGetProblemInfoByAdmin(const httplib::Request &req, httplib::Response &res
     }
     cout << "doGetProblemInfoByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -299,7 +299,7 @@ void doEditProblem(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.EditProblem(jsonvalue["datainfo"]);
     cout << "doEditProblem end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -324,7 +324,7 @@ void doDeleteProblem(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doDeleteProblem end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -356,7 +356,7 @@ void doGetProblemList(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetProblemList end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -383,7 +383,7 @@ void doGetProblemListByAdmin(const httplib::Request &req, httplib::Response &res
     }
     cout << "doGetProblemListByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 // ------------------------------ 题目模块 End ------------------------------
 
@@ -397,7 +397,7 @@ void doGetTags(const httplib::Request &req, httplib::Response &res) {
 
     Json::Value resjson = control.GetTags(queryjson);
     cout << "doGetTags end!!!" << endl;
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 // ------------------------------ 标签模块 End ------------------------------
 
@@ -417,7 +417,7 @@ void doInsertAnnouncement(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.InsertAnnouncement(jsonvalue);
     cout << "doInsertAnnouncement end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -442,7 +442,7 @@ void doGetAnnouncement(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetAnnouncement end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -460,7 +460,7 @@ void doUpdateAnnouncement(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.UpdateAnnouncement(jsonvalue);
     cout << "doUpdateAnnouncement end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -485,7 +485,7 @@ void doDeleteAnnouncement(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doDeleteAnnouncement end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -512,7 +512,7 @@ void doGetAnnouncementList(const httplib::Request &req, httplib::Response &res) 
     }
     cout << "doGetAnnouncementList end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -539,7 +539,7 @@ void doGetAnnouncementListByAdmin(const httplib::Request &req, httplib::Response
     }
     cout << "doGetAnnouncementListByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -564,7 +564,7 @@ void doSelectAnnouncement(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doSelectAnnouncement end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 // ------------------------------ 公告模块 End ------------------------------
 
@@ -584,7 +584,7 @@ void doInsertDiscuss(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.InsertDiscuss(jsonvalue);
     cout << "doInsertDiscuss end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -609,7 +609,7 @@ void doGetDiscuss(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetDiscuss end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -627,7 +627,7 @@ void doUpdateDiscuss(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.UpdateDiscuss(jsonvalue);
     cout << "doUpdateDiscuss end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -655,7 +655,7 @@ void doDeleteDiscuss(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doDeleteDiscuss end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -687,7 +687,7 @@ void doGetDiscussList(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetDiscussList end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -714,7 +714,7 @@ void doGetDiscussListByAdmin(const httplib::Request &req, httplib::Response &res
     }
     cout << "doGetDiscussListByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -739,7 +739,7 @@ void doSelectDiscussByEdit(const httplib::Request &req, httplib::Response &res) 
     }
     cout << "doSelectDiscussByEdit end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 // ------------------------------ 讨论模块 End ------------------------------
 
@@ -759,7 +759,7 @@ void doInsertSolution(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.InsertSolution(jsonvalue);
     cout << "doInsertSolution end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -784,7 +784,7 @@ void doGetSolution(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetSolution end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -802,7 +802,7 @@ void doUpdateSolution(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.UpdateSolution(jsonvalue);
     cout << "doUpdateSolution end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -830,7 +830,7 @@ void doDeleteSolution(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doDeleteSolution end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -862,7 +862,7 @@ void doGetSolutionList(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetSolutionList end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -889,7 +889,7 @@ void doGetSolutionListByAdmin(const httplib::Request &req, httplib::Response &re
     }
     cout << "doGetSolutionListByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -914,7 +914,7 @@ void doSelectSolutionByEdit(const httplib::Request &req, httplib::Response &res)
     }
     cout << "doSelectSolutionByEdit end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 // ------------------------------ 题解模块 End ------------------------------
 
@@ -943,7 +943,7 @@ void doGetCommentListByAdmin(const httplib::Request &req, httplib::Response &res
     }
     cout << "doGetCommentListByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -978,7 +978,7 @@ void doGetComment(const httplib::Request &req, httplib::Response &res) {
 
     cout << "doGetComment end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -996,7 +996,7 @@ void doInsertComment(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.InsertComment(jsonvalue["Info"]);
     cout << "doInsertComment end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -1023,7 +1023,7 @@ void doDeleteComment(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doDeleteComment end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 // ------------------------------ 评论模块 End ------------------------------
 
@@ -1057,7 +1057,7 @@ void doGetStatusRecordList(const httplib::Request &req, httplib::Response &res) 
     }
     cout << "doGetStatusRecordList end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 
 /**
@@ -1082,7 +1082,7 @@ void doGetStatusRecord(const httplib::Request &req, httplib::Response &res) {
     }
     cout << "doGetStatusRecord end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 // ------------------------------ 测评记录模块 End ------------------------------
 
@@ -1102,7 +1102,7 @@ void doJudgeCode(const httplib::Request &req, httplib::Response &res) {
     Json::Value resjson = control.GetJudgeCode(jsonvalue);
     cout << "doJudgeCode end!!!" << endl;
     SetResponseStatus(resjson, res);
-    res.set_content(resjson.toStyledString(), "json");
+    res.set_content(resjson.toStyledString(), "application/json");
 }
 // ------------------------------ 判题模块 End ------------------------------
 
@@ -1167,142 +1167,186 @@ void HttpServer::Run() {
     using namespace httplib;
     Server server;
 
+    // ==================== 服务器配置 Start ====================
+    // 设置工作线程数
+    server.new_task_queue = [] { return new ThreadPool(constants::server::MAX_THREAD_COUNT); };
+
+    // 设置请求体大小限制
+    server.set_payload_max_length(constants::server::MAX_REQUEST_BODY_SIZE);
+
+    // 设置读取超时时间
+    server.set_read_timeout(constants::server::REQUEST_TIMEOUT_SECONDS, 0);
+    server.set_write_timeout(constants::server::REQUEST_TIMEOUT_SECONDS, 0);
+
+    // 设置全局异常处理器
+    server.set_exception_handler([](const Request &req, Response &res, std::exception_ptr ep) {
+        try {
+            std::rethrow_exception(ep);
+        } catch (const std::exception &e) {
+            cerr << "Exception caught: " << e.what() << endl;
+            Json::Value error;
+            error["Result"] = "500";
+            error["Reason"] = "服务器内部错误";
+            res.status = 500;
+            res.set_content(error.toStyledString(), "application/json");
+        }
+    });
+
+    // 设置错误处理器
+    server.set_error_handler([](const Request &req, Response &res) {
+        Json::Value error;
+        error["Result"] = to_string(res.status);
+        if (res.status == 404) {
+            error["Reason"] = "请求的资源不存在";
+        } else if (res.status == 405) {
+            error["Reason"] = "请求方法不允许";
+        } else {
+            error["Reason"] = "请求处理失败";
+        }
+        res.set_content(error.toStyledString(), "application/json");
+    });
+
+    // 设置 CORS 跨域支持
+    server.set_pre_routing_handler([](const Request &req, Response &res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization, Token");
+        // 处理预检请求
+        if (req.method == "OPTIONS") {
+            res.status = 204;
+            return Server::HandlerResponse::Handled;
+        }
+        return Server::HandlerResponse::Unhandled;
+    });
+
+    // 设置请求日志（可选，调试时使用）
+    server.set_logger([](const Request &req, const Response &res) {
+        cout << "[" << req.method << "] " << req.path << " -> " << res.status << endl;
+    });
+    // ==================== 服务器配置 End ====================
+
+    // API 前缀
+    const string API = constants::server::API_PREFIX;
+
     // 设置路由和处理函数
     // -------------------- 用户模块 Start --------------------
     // 注册用户
-    server.Post("/api/user/register", doRegisterUser);
+    server.Post(API + "/user/register", doRegisterUser);
     // 登录用户
-    server.Post("/api/user/login", doLoginUser);
+    server.Post(API + "/user/login", doLoginUser);
     // 查询用户信息
-    server.Get("/api/user/info", doGetUserInfo);
+    server.Get(API + "/user/info", doGetUserInfo);
     // 查询用户信息（在设置页面修改用户时使用）
-    server.Get("/api/user/updateinfo", doGetUserUpdateInfo);
+    server.Get(API + "/user/updateinfo", doGetUserUpdateInfo);
     // 更新用户信息
-    server.Post("/api/user/update", doUpdateUserInfo);
+    server.Post(API + "/user/update", doUpdateUserInfo);
     // 删除用户
-    server.Delete("/api/user/delete", doDeleteUser);
+    server.Delete(API + "/user/delete", doDeleteUser);
     // 用户排名查询
-    server.Get("/api/user/rank", doGetUserRank);
+    server.Get(API + "/user/rank", doGetUserRank);
     // 分页查询用户列表（管理员权限）
-    server.Get("/api/user/list", doGetUserSetInfo);
+    server.Get(API + "/user/list", doGetUserSetInfo);
     // 用户登录通过 Token 鉴权（Token 鉴权实现）
-    server.Get("/api/user/auth", doGetUserInfoByToken);
+    server.Get(API + "/user/auth", doGetUserInfoByToken);
     // -------------------- 用户模块 End --------------------
 
     // -------------------- 题目模块 Start --------------------
     // 查询题目信息（单条）
-    server.Get("/api/problem/info", doGetProblem);
+    server.Get(API + "/problem/info", doGetProblem);
     // 查询题目信息（管理员权限）
-    server.Get("/api/problem/admininfo", doGetProblemInfoByAdmin);
+    server.Get(API + "/problem/admininfo", doGetProblemInfoByAdmin);
     // 编辑题目：包含插入和更新题目（管理员权限）
-    server.Post("/api/problem/edit", doEditProblem);
+    server.Post(API + "/problem/edit", doEditProblem);
     // 删除题目（管理员权限）
-    server.Delete("/api/problem/delete", doDeleteProblem);
+    server.Delete(API + "/problem/delete", doDeleteProblem);
     // 分页获取题目列表
-    server.Get("/api/problem/list", doGetProblemList);
+    server.Get(API + "/problem/list", doGetProblemList);
     // 分页获取题目列表（管理员权限）
-    server.Get("/api/problem/list/admin", doGetProblemListByAdmin);
+    server.Get(API + "/problem/list/admin", doGetProblemListByAdmin);
     // -------------------- 题目模块 End --------------------
 
     // --------------------  标签模块 Start --------------------
     // 获取题目的所有标签
-    server.Get("/tags", doGetTags);
+    server.Get(API + "/tags", doGetTags);
     // --------------------  标签模块 End --------------------
 
     // -------------------- 公告模块 Start --------------------
     // 添加公告（管理员权限）
-    server.Post("/api/announcement/insert", doInsertAnnouncement);
+    server.Post(API + "/announcement/insert", doInsertAnnouncement);
     // 查询公告详细信息，并将其浏览量加 1
-    server.Get("/api/announcement/info", doGetAnnouncement);
+    server.Get(API + "/announcement/info", doGetAnnouncement);
     // 更新公告（管理员权限）
-    server.Post("/api/announcement/update", doUpdateAnnouncement);
+    server.Post(API + "/announcement/update", doUpdateAnnouncement);
     // 删除公告（管理员权限）
-    server.Delete("/api/announcement/delete", doDeleteAnnouncement);
+    server.Delete(API + "/announcement/delete", doDeleteAnnouncement);
     // 分页获取公告列表
-    server.Get("/api/announcement/list", doGetAnnouncementList);
+    server.Get(API + "/announcement/list", doGetAnnouncementList);
     // 分页获取公告列表（管理员权限）
-    server.Get("/api/announcement/list/admin", doGetAnnouncementListByAdmin);
+    server.Get(API + "/announcement/list/admin", doGetAnnouncementListByAdmin);
     // 查询公告的详细信息，主要是编辑时的查询
-    server.Get("/api/announcement/admininfo", doSelectAnnouncement);
-
+    server.Get(API + "/announcement/admininfo", doSelectAnnouncement);
     // -------------------- 公告模块 End --------------------
 
     // --------------------  讨论模块 Start --------------------
     // 添加讨论
-    server.Post("/api/discuss/insert", doInsertDiscuss);
-
+    server.Post(API + "/discuss/insert", doInsertDiscuss);
     // 查询讨论的详细内容，并且将其浏览量加 1
-    server.Get("/api/discuss/info", doGetDiscuss);
-
+    server.Get(API + "/discuss/info", doGetDiscuss);
     // 更新讨论
-    server.Post("/api/discuss/update", doUpdateDiscuss);
-
+    server.Post(API + "/discuss/update", doUpdateDiscuss);
     // 删除讨论
-    server.Delete("/api/discuss/delete", doDeleteDiscuss);
-
+    server.Delete(API + "/discuss/delete", doDeleteDiscuss);
     // 分页查询讨论
-    server.Get("/api/discuss/list", doGetDiscussList);
-
+    server.Get(API + "/discuss/list", doGetDiscussList);
     // 分页查询讨论（管理员权限）
-    server.Get("/api/discuss/list/admin", doGetDiscussListByAdmin);
-
+    server.Get(API + "/discuss/list/admin", doGetDiscussListByAdmin);
     // 查询讨论的详细信息，主要是编辑时的查询
-    server.Get("/api/discuss/admininfo", doSelectDiscussByEdit);
+    server.Get(API + "/discuss/admininfo", doSelectDiscussByEdit);
     // --------------------  讨论模块 End --------------------
 
     // -------------------- 题解模块 Start --------------------
     // 添加题解
-    server.Post("/api/solution/insert", doInsertSolution);
-
+    server.Post(API + "/solution/insert", doInsertSolution);
     // 查询题解的详细内容，并且将其浏览量加 1
-    server.Get("/api/solution/info", doGetSolution);
-
+    server.Get(API + "/solution/info", doGetSolution);
     // 更新题解
-    server.Post("/api/solution/update", doUpdateSolution);
-
+    server.Post(API + "/solution/update", doUpdateSolution);
     // 删除题解
-    server.Delete("/api/solution/delete", doDeleteSolution);
-
+    server.Delete(API + "/solution/delete", doDeleteSolution);
     // 分页查询题解（公开题解）
-    server.Get("/api/solution/list", doGetSolutionList);
-
+    server.Get(API + "/solution/list", doGetSolutionList);
     // 分页查询题解（管理员权限）
-    server.Get("/api/solution/list/admin", doGetSolutionListByAdmin);
-
+    server.Get(API + "/solution/list/admin", doGetSolutionListByAdmin);
     // 查询题解的详细信息，主要是编辑时的查询
-    server.Get("/api/solution/admininfo", doSelectSolutionByEdit);
+    server.Get(API + "/solution/admininfo", doSelectSolutionByEdit);
     // -------------------- 题解模块 End --------------------
 
     // -------------------- 评论模块 Start --------------------
     // 管理员查询评论
-    server.Get("/api/comment/list/admin", doGetCommentListByAdmin);
-
+    server.Get(API + "/comment/list/admin", doGetCommentListByAdmin);
     // 获取评论
-    server.Get("/api/comment/info", doGetComment);
-
+    server.Get(API + "/comment/info", doGetComment);
     // 插入评论
-    server.Post("/api/comment/insert", doInsertComment);
-
+    server.Post(API + "/comment/insert", doInsertComment);
     // 删除评论
-    server.Delete("/api/comment/delete", doDeleteComment);
+    server.Delete(API + "/comment/delete", doDeleteComment);
     // -------------------- 评论模块 End --------------------
 
     // -------------------- 测评记录模块 Start --------------------
     // 返回状态记录的信息
-    server.Get("/api/status/record/list", doGetStatusRecordList);
-
+    server.Get(API + "/status/record/list", doGetStatusRecordList);
     // 查询一条详细测评记录
-    server.Get("/api/status/record", doGetStatusRecord);
+    server.Get(API + "/status/record", doGetStatusRecord);
     // -------------------- 测评记录模块 End --------------------
 
     // -------------------- 判题模块 Start --------------------
     // 返回判题信息
-    server.Post("/api/judge/code", doJudgeCode);
+    server.Post(API + "/judge/code", doJudgeCode);
     // -------------------- 判题模块 End --------------------
 
     // -------------------- 图片模块 Start --------------------
     // 获取图片
-    server.Get(R"(/api/image/(\d+))", doGetImage);
+    server.Get(API + R"(/image/(\d+))", doGetImage);
     // -------------------- 图片模块 End --------------------
 
     // 设置静态资源目录
@@ -1313,9 +1357,17 @@ void HttpServer::Run() {
     cout << "HTTP Server starting ..." << endl;
     cout << "Host: " << constants::server::HOST << endl;
     cout << "Port: " << constants::server::PORT << endl;
+    cout << "Thread Pool Size: " << constants::server::MAX_THREAD_COUNT << endl;
+    cout << "Max Request Body: " << constants::server::MAX_REQUEST_BODY_SIZE / 1024 / 1024 << " MB" << endl;
+    cout << "Request Timeout: " << constants::server::REQUEST_TIMEOUT_SECONDS << " s" << endl;
     cout << "========================================" << endl;
 
-    server.listen(constants::server::HOST, constants::server::PORT);
+    if (!server.listen(constants::server::HOST, constants::server::PORT)) {
+        cerr << "========================================" << endl;
+        cerr << "HTTP Server failed to start!" << endl;
+        cerr << "Please check if the port is already in use." << endl;
+        cerr << "========================================" << endl;
+    }
 }
 
 HttpServer::HttpServer() {
