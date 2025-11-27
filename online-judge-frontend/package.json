@@ -1,34 +1,53 @@
 {
-  "name": "online-judge",
+  "name": "online-judge-frontend",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
+    "lint:eslint": "eslint . --fix --cache",
+    "lint": "run-s lint:*",
+    "format": "prettier --write --experimental-cli src/",
+    "stylelint": "stylelint \"src/**/*.{vue,css,scss,sass,less,styl}\"",
+    "stylelint:fix": "stylelint \"src/**/*.{vue,css,scss,sass,less,styl}\" --fix"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.1.0",
-    "@kangc/v-md-editor": "^2.3.15",
-    "axios": "^1.3.4",
-    "echarts": "^5.4.1",
-    "element-plus": "^2.3.1",
-    "json-bigint": "^1.0.0",
-    "monaco-editor": "^0.33.0",
-    "nprogress": "^0.2.0",
-    "undraw-ui": "^0.8.2",
-    "vue": "^3.2.47",
-    "vue-router": "^4.1.6",
-    "vuex": "^4.1.0"
+    "pinia": "^3.0.4",
+    "vue": "^3.5.25",
+    "vue-router": "^4.6.3"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.0.0",
-    "naive-ui": "^2.34.3",
-    "sass": "^1.58.3",
-    "unplugin-auto-import": "^0.13.0",
-    "unplugin-element-plus": "^0.7.0",
-    "unplugin-vue-components": "^0.24.1",
-    "vite": "^4.1.4",
-    "vite-plugin-monaco-editor": "^1.0.10"
+    "@prettier/plugin-oxc": "^0.0.5",
+    "@tsconfig/node24": "^24.0.3",
+    "@types/node": "^24.10.1",
+    "@vitejs/plugin-vue": "^6.0.2",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.6.0",
+    "@vue/tsconfig": "^0.8.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-oxlint": "~1.29.0",
+    "eslint-plugin-vue": "~10.5.1",
+    "jiti": "^2.6.1",
+    "npm-run-all2": "^8.0.4",
+    "oxlint": "~1.29.0",
+    "postcss-html": "^1.8.0",
+    "prettier": "3.6.2",
+    "stylelint": "^16.26.0",
+    "stylelint-config-recess-order": "^7.4.0",
+    "stylelint-config-recommended-vue": "^1.6.1",
+    "stylelint-config-standard": "^39.0.1",
+    "stylelint-order": "^7.0.0",
+    "typescript": "~5.9.0",
+    "vite": "npm:rolldown-vite@latest",
+    "vite-plugin-vue-devtools": "^8.0.5",
+    "vue-tsc": "^3.1.5"
   }
 }

@@ -1,56 +1,35 @@
-@import './base.css';
+@import url("./base.css");
 
 #app {
-  max-width: 1500px;
-  margin: 0 auto;
-  /* padding: 2rem; */
-
-  font-weight: normal;
+    max-width: 1280px;
+    padding: 2rem;
+    margin: 0 auto;
+    font-weight: normal;
 }
-body{
-  overflow: auto !important;
-  align-items: center;
-  margin-left:auto;
-  margin-right:auto;
-  
-}
-
-/*--解决页面抖动问题--*/
-body {
-  width: 100vw;
-}
-
-html {
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-/* --------------- */
 
 a,
 .green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
+    padding: 3px;
+    color: hsl(160deg 100% 37% / 100%);
+    text-decoration: none;
+    transition: 0.4s;
 }
 
 @media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+    a:hover {
+        background-color: hsl(160deg 100% 37% / 20%);
+    }
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    /* place-items: center; */
-    flex-direction: column;
-  }
+@media (width >= 1024px) {
+    body {
+        display: flex;
+        place-items: center;
+    }
 
-  #app {
-    /* display: grid; */
-    grid-template-columns: 1fr 1fr;
-    /* padding: 0 2rem; */
-    /* top:0px; */
-    /* left:0px */
-  }
+    #app {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 0 2rem;
+    }
 }
