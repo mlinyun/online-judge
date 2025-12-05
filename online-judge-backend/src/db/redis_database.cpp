@@ -1,5 +1,7 @@
 #include "db/redis_database.h"
 
+#include <unordered_set>
+
 #include "constants/db.h"
 
 using namespace std;
@@ -14,7 +16,14 @@ ReDB *ReDB::GetInstance() {
 bool ReDB::SetToken(std::string token, std::string userid) {
     try {
         // 设置 token，有效期为 7 天（604800 秒）
-        redis_token->setex(token, 604800, userid);
+        redis_token->setex(token, 604800, userid);  // 键为 token，值为 userid
+
+        // 同时将 token 添加到用户的 token 集合中，方便后续通过 userid 删除所有 token
+        std::string user_tokens_key = "UserTokens:" + userid;
+        redis_token->sadd(user_tokens_key, token);
+        // 设置用户 token 集合的过期时间为 7 天
+        redis_token->expire(user_tokens_key, 604800);
+
         return true;
     } catch (const std::exception &e) {
         return false;
@@ -24,13 +33,40 @@ bool ReDB::SetToken(std::string token, std::string userid) {
 // 通过 Token 取出用户 ID
 std::string ReDB::GetUserIdByToken(std::string token) {
     try {
+        // 获取 token 对应的 userid
         auto res = redis_token->get(token);
-        if (res)
+        if (res) {
+            // 如果存在则返回 userid
             return *res;
-        else
+        } else {
+            // 不存在则返回 "0"
             return "0";
+        }
     } catch (const std::exception &e) {
         return "0";
+    }
+}
+
+// 删除某个用户的所有 Token 记录
+bool ReDB::DeleteTokensByUserId(std::string userid) {
+    try {
+        std::string user_tokens_key = "UserTokens:" + userid;
+
+        // 获取用户的所有 token
+        std::unordered_set<std::string> tokens;
+        redis_token->smembers(user_tokens_key, std::inserter(tokens, tokens.begin()));
+
+        // 删除所有 token
+        for (const auto &token : tokens) {
+            redis_token->del(token);
+        }
+
+        // 删除用户的 token 集合
+        redis_token->del(user_tokens_key);
+
+        return true;
+    } catch (const std::exception &e) {
+        return false;
     }
 }
 

@@ -21,18 +21,6 @@ private:
     mongocxx::uri uri{constants::db::MONGO_URI};  // 连接字符串
     mongocxx::pool pool{uri};                     // 连接池
 
-    atomic_int64_t m_problem_id;        // 题目 ID 的最大值
-    atomic_int64_t m_comment_id;        // 评论 ID 的最大值
-    atomic_int64_t m_status_record_id;  // 提交记录 ID 的最大值
-    atomic_int64_t m_article_id;        // 文章 ID 的最大值
-
-    /**
-     * 功能：获取指定集合的最大 ID
-     * 参数：name 集合名称
-     * 返回值：最大 ID
-     */
-    int64_t GetMaxId(string name);
-
     MoDB();
 
     ~MoDB();
@@ -44,58 +32,49 @@ public:
     // ------------------------------ 用户模块 Start ------------------------------
     /**
      * 功能：用户注册
-     * 传入：Json(NickName, Account, PassWord, PersonalProfile, School, Major)
-     * 传出：Json(Result, Reason)
+     * 权限：所有用户均可以注册
      */
-    Json::Value RegisterUser(Json::Value &registerjson);
+    Json::Value UserRegister(Json::Value &registerjson);
 
     /**
      * 功能：用户登录
-     * 传入：Json(Account, PassWord)
-     * 传出：Json(Result, Reason, Info(_id, NickName, Avatar, CommentLikes, Solves, Authority))
+     * 权限：所有用户均可以登录（被封禁的除外：未实现）
      */
-    Json::Value LoginUser(Json::Value &loginjson);
+    Json::Value UserLogin(Json::Value &loginjson);
 
     /**
      * 功能：查询用户信息
-     * 传入：Json(UserId)
-     * 传出：Json(Result, Reason, _id, Avatar, NickName, PersonalProfile, School, Major, JoinTime, Solves, ACNum,
-     * SubmitNum)
+     * 权限：只允许用户本人查询
      */
     Json::Value SelectUserInfo(Json::Value &queryjson);
 
     /**
      * 功能：查询用户信息（在设置页面修改用户时使用）
-     * 传入：Json(UserId)
-     * 传出：Json(_id, Avatar, NickName, PersonalProfile, School, Major)
+     * 权限：只允许用户本人查询
      */
     Json::Value SelectUserUpdateInfo(Json::Value &queryjson);
 
     /**
      * 功能：更新用户信息
-     * 传入：Json(UserId, Avatar, NickName, PersonalProfile, School, Major)
-     * 传出：Json(Result, Reason)
+     * 权限：只允许用户本人或者管理员修改
      */
     Json::Value UpdateUserInfo(Json::Value &updatejson);
 
     /**
      * 功能：删除用户
-     * 传入：Json(UserId)
-     * 传出：Json(Result, Reason)
+     * 权限：只允许管理员删除
      */
     Json::Value DeleteUser(Json::Value &deletejson);
 
     /**
      * 功能：用户排名查询
-     * 传入：Json(Page, PageSize)
-     * 传出：Json(ArrayInfo[_id, Rank, Avatar, NickName, PersonalProfile, SubmitNum, ACNum], TotalNum)
+     * 权限：所有用户均可查询
      */
     Json::Value SelectUserRank(Json::Value &queryjson);
 
     /**
-     * 功能：分页查询用户列表（管理员权限）
-     * 传入：Json(Page, PageSize)
-     * Json(Result, Reason, ArrayInfo[_id, NickName, PersonalProfile, School, Major, JoinTime], TotalNum)
+     * 功能：分页查询用户列表
+     * 权限：只允许管理员查询
      */
     Json::Value SelectUserSetInfo(Json::Value &queryjson);
 
@@ -105,6 +84,13 @@ public:
      * 传出：bool(如果题目第一次 AC 则返回 true，否则返回 false)
      */
     bool UpdateUserProblemInfo(Json::Value &updatejson);
+
+    /**
+     * 功能：通过 UserId 获取用户名 NickName
+     * 传入：string(UserId)
+     * 传出：string(NickName)
+     */
+    std::string GetNickNameByUserId(const std::string &userid);
     // ------------------------------ 用户模块 End ------------------------------
 
     // ------------------------------ 题目模块 Start ------------------------------
@@ -114,7 +100,7 @@ public:
      * Json(Result, Reason, _id, Title,Description, TimeLimit, MemoryLimit, JudgeNum, SubmitNum, ACNum, UserNickName,
      * Tags)
      */
-    Json::Value SelectProblem(Json::Value &queryjson);
+    Json::Value SelectProblemInfo(Json::Value &queryjson);
 
     /**
      * 功能：查询题目信息（管理员权限）
@@ -285,6 +271,13 @@ public:
      * 传出：bool
      */
     bool UpdateDiscussComments(Json::Value &updatejson);
+
+    /**
+     * 功能：获取讨论的作者 UserId
+     * 传入：讨论 ID
+     * 传出：作者 UserId，如果不存在返回空字符串
+     */
+    std::string GetDiscussAuthorId(int64_t discussId);
     // ------------------------------ 讨论模块 End ------------------------------
 
     // ------------------------------ 题解模块 Start ------------------------------
@@ -345,31 +338,22 @@ public:
      * 传出：bool
      */
     bool UpdateSolutionComments(Json::Value &updatejson);
+
+    /**
+     * 功能：获取题解的作者 UserId
+     * 传入：题解 ID
+     * 传出：作者 UserId，如果不存在返回空字符串
+     */
+    std::string GetSolutionAuthorId(int64_t solutionId);
     // ------------------------------ 题解模块 End ------------------------------
 
     // ------------------------------ 评论模块 Start ------------------------------
     /**
-     * 功能：管理员查询评论
-     * 传入：Json(Page, PageSize)
-     * 传出：Json(_id, ParentId, ParentType, Content, CreateTime, Child_Comments._id, Child_Comments.Content,
-     * Child_Comments.CreateTime)
+     * 功能：根据文章类型更新对应的评论数
+     * 传入：articleId 文章ID，articleType 文章类型（Discuss/Solution/Announcement），num 评论数变化量
+     * 传出：bool 更新是否成功
      */
-    Json::Value SelectCommentListByAdmin(Json::Value &queryjson);
-
-    /**
-     * 功能：查询父评论
-     * 传入：Json(ParentId, Skip, Limie, SonNum)
-     * 传出：Json(ParentId, Content, Likes, CreateTime, Child_Total, User(Avatar, NickName),
-     * Child_Comments(_id, Content, Likes, CreateTime, User(Avatar, NickName)))
-     */
-    Json::Value getFatherComment(Json::Value &queryjson);
-
-    /**
-     * 功能：获取子评论
-     * 传入：Json(ParentId, Skip, Limit)
-     * 传出：Json(Child_Total, Child_Comments(_id, Content, Likes, CreateTime, User(NickName, Avatar)))
-     */
-    Json::Value getSonComment(Json::Value &queryjson);
+    bool UpdateArticleComments(int64_t articleId, const std::string &articleType, int num);
 
     /**
      * 功能：插入父评论
@@ -384,6 +368,29 @@ public:
      * 传出：Json(_id, CreateTime)
      */
     Json::Value InsertSonComment(Json::Value &insertjson);
+
+    /**
+     * 功能：管理员查询评论
+     * 传入：Json(Page, PageSize)
+     * 传出：Json(_id, ParentId, ParentType, Content, CreateTime, Child_Comments._id, Child_Comments.Content,
+     * Child_Comments.CreateTime)
+     */
+    Json::Value SelectCommentListByAdmin(Json::Value &queryjson);
+
+    /**
+     * 功能：查询父评论
+     * 传入：Json(ParentId, Skip, Limie, SonNum)
+     * 传出：Json(ParentId, Content, Likes, CreateTime, Child_Total, User(Avatar, NickName),
+     * Child_Comments(_id, Content, Likes, CreateTime, User(Avatar, NickName)))
+     */
+    Json::Value GetFatherComment(Json::Value &queryjson);
+
+    /**
+     * 功能：获取子评论
+     * 传入：Json(ParentId, Skip, Limit)
+     * 传出：Json(Child_Total, Child_Comments(_id, Content, Likes, CreateTime, User(NickName, Avatar)))
+     */
+    Json::Value GetSonComment(Json::Value &queryjson);
 
     /**
      * 功能：删除某一篇文章（讨论，题解，公告）的所有文章，主要服务于删除文章
@@ -405,6 +412,13 @@ public:
      * 传出：Json(Result, Reason, DeleteNum)
      */
     Json::Value DeleteSonComment(Json::Value &deletejson);
+
+    /**
+     * 功能：获取评论的作者 UserId
+     * 传入：评论 ID
+     * 传出：作者 UserId，如果不存在返回空字符串
+     */
+    std::string GetCommentAuthorId(int64_t commentId);
     // ------------------------------ 评论模块 End ------------------------------
 
     // ------------------------------ 测评记录模块 Start ------------------------------
@@ -417,7 +431,7 @@ public:
 
     /**
      * 功能：更新测评记录
-     * 传入：Json(SubmitId, Status, RunTime, RunMemory, Length, ComplierInfo, TestInfo[(Status, StandardInput,
+     * 传入：Json(SubmitId, Status, RunTime, RunMemory, Length, CompilerInfo, TestInfo[(Status, StandardInput,
      * StandardOutput, PersonalOutput, RunTime, RunMemory)])
      * 传出：bool
      */
@@ -436,6 +450,13 @@ public:
      * 传出：全部记录，详情请看 MongoDB 集合表
      */
     Json::Value SelectStatusRecord(Json::Value &queryjson);
+
+    /**
+     * 功能：获取状态记录的作者 UserId
+     * 传入：状态记录 ID
+     * 传出：作者 UserId，如果不存在返回空字符串
+     */
+    std::string GetStatusRecordAuthorId(int64_t statusRecordId);
     // ------------------------------ 测评记录模块 End ------------------------------
 
     // ------------------------------ Token 鉴权实现 Start ------------------------------

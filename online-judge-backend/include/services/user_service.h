@@ -22,10 +22,10 @@ public:
     static UserService *GetInstance();
 
     // 用户注册
-    Json::Value RegisterUser(Json::Value &registerjson);
+    Json::Value UserRegister(Json::Value &registerjson);
 
-    // 用户登录
-    Json::Value LoginUser(Json::Value &loginjson);
+    // 用户登录（通过用户账号 + 密码进行登录）
+    Json::Value UserLogin(Json::Value &loginjson);
 
     // 查询用户信息
     Json::Value SelectUserInfo(Json::Value &queryjson);
@@ -49,23 +49,49 @@ public:
     bool UpdateUserProblemInfo(Json::Value &updatejson);
 
     // -------------------- Token 鉴权实现 Start --------------------
-    // 登录用户通过Token
+    // 登录用户（通过 Token 进行登录）
     Json::Value LoginUserByToken(Json::Value &loginjson);
 
     // 初始化用户权限
     bool InitUserAuthority();
 
+    /**
+     * 检查用户是否已登录
+     * @param json 包含 Token 字段的请求数据
+     * @return 如果已登录返回空 Json，否则返回统一错误响应
+     */
+    Json::Value CheckLogin(Json::Value &json);
+
+    /**
+     * 检查用户是否已登录（静态版本，直接通过 Token 检查）
+     * @param token 用户 Token
+     * @return 如果已登录返回空 Json，否则返回统一错误响应
+     */
+    Json::Value CheckLoginByToken(const std::string &token);
+
+    // 通过 Token 获取用户 ID
+    std::string GetUserIdByToken(const std::string &token);
+
+    // 通过 UserId 获取用户名 NickName
+    std::string GetNickNameByUserId(const std::string &userid);
+
     // 获取用户权限
     int GetUserAuthority(Json::Value &json);
 
-    // 权限是否是普通用户或以上
+    // 权限是否是普通用户
     bool IsOrdinaryUser(Json::Value &json);
 
-    // 权限是否是作者本人或以上
+    // 权限是否是作者本人
     bool IsAuthor(Json::Value &json);
 
-    // 权限是否是管理员或以上
+    // 权限是否是管理员
     bool IsAdministrator(Json::Value &json);
+
+    // 权限是否是普通用户或以上
+    bool IsOrdinaryUserOrAbove(Json::Value &json);
+
+    // 权限是否是作者本人或以上
+    bool IsAuthorOrAbove(Json::Value &json);
     // -------------------- Token 鉴权实现 End --------------------
 };
 

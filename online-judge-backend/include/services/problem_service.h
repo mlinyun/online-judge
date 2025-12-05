@@ -17,7 +17,7 @@ public:
     static ProblemService *GetInstance();
 
     // 查询题目信息（单条）
-    Json::Value SelectProblem(Json::Value &queryjson);
+    Json::Value SelectProblemInfo(Json::Value &queryjson);
 
     // 查询题目信息（管理员权限）
     Json::Value SelectProblemInfoByAdmin(Json::Value &queryjson);

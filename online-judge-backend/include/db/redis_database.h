@@ -30,6 +30,9 @@ public:
 
     // 通过 Token 取出用户 ID
     string GetUserIdByToken(string token);
+
+    // 删除某个用户的所有 Token 记录
+    bool DeleteTokensByUserId(string userid);
     // ------------------- Token End -------------------
 
     // ------------------- 题目 Start -------------------

@@ -6,7 +6,7 @@
  */
 namespace constants {
 namespace app {
-constexpr const char* VERSION = "1.0.0";
+constexpr const char* VERSION = "1.2.0";
 constexpr const char* APP_NAME = "Online Judge Backend";
 }  // namespace app
 }  // namespace constants

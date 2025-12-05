@@ -5,16 +5,7 @@
 
 #include <string>
 
-enum Status {
-    PJ,   // PJ "Pending & Judging"
-    CE,   // CE "Compile Error"
-    AC,   // AC "Accepted"
-    WA,   // WA "Wrong Answer"
-    RE,   // RE "Runtime Error"
-    TLE,  // TLE "Time Limit Exceeded"
-    MLE,  // MLE "Memory Limit Exceeded"
-    SE    // SE "System Error"
-};
+#include "constants/judge.h"
 
 // 判题机
 class Judger {
@@ -68,7 +59,7 @@ private:
 
     bool RunProgram(struct config *conf);  // 运行程序
 
-    bool JudgmentResult(struct result *res, std::string &index);  // 判断结果
+    void JudgmentResult(struct result *res, std::string &index);  // 判断结果
 
     Json::Value Done();  // 返回结果
 
@@ -79,17 +70,17 @@ private:
     std::string DATA_PATH;  // 存储数据的路径
     bool m_isspj;           // 是否有 SPJ 文件
 
-    std::string m_submitid;   // 运行 ID
-    std::string m_problemid;  // 题目 ID
-    int m_judgenum;           // 测试用例数目
-    std::string m_code;       // 代码
+    std::string m_statusrecordid;  // 运行 ID
+    std::string m_problemid;       // 题目 ID
+    int m_judgenum;                // 测试用例数目
+    std::string m_code;            // 代码
 
     int m_result;            // 运行结果
     std::string m_reason;    // 错误原因
     std::string m_command;   // 命令（中间变量）
     std::string m_language;  // 测评语言
 
-    std::string m_length;  // 文件长度
+    std::string m_length;  // 代码文件长度
 
     int m_timelimit;     // 时间限制
     long m_memorylimit;  // 空间限制

@@ -15,6 +15,8 @@ private:
 public:
     // 局部静态特性的方式实现单实例模式
     static StatusRecordService *GetInstance();
+    // 查询一条详细测评记录
+    Json::Value SelectStatusRecord(Json::Value &queryjson);
 
     // 分页查询测评记录
     Json::Value SelectStatusRecordList(Json::Value &queryjson);
@@ -25,8 +27,8 @@ public:
     // 更新测评信息返回测评结果
     bool UpdateStatusRecord(Json::Value &updatejson);
 
-    // 查询一条详细测评记录
-    Json::Value SelectStatusRecord(Json::Value &queryjson);
+    // 获取状态记录的作者 UserId
+    std::string GetStatusRecordAuthorId(int64_t statusRecordId);
 };
 
 #endif  // STATUS_RECORD_SERVICE_H
