@@ -64,6 +64,18 @@ public:
      * 权限：所有用户均可使用
      */
     Json::Value LoginUserByToken(Json::Value &loginjson);
+
+    /**
+     * 功能：用户修改密码
+     * 权限：只允许用户本人修改
+     */
+    Json::Value UpdateUserPassword(Json::Value &updatejson);
+
+    /**
+     * 功能：用户退出登录
+     * 权限：只允许已登录用户退出
+     */
+    Json::Value UserLogout(Json::Value &logoutjson);
     // ------------------------------ 用户模块 End ------------------------------
 
     // ------------------------------ 题目模块 Start ------------------------------

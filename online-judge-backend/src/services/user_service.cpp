@@ -89,6 +89,26 @@ bool UserService::UpdateUserProblemInfo(Json::Value &updatejson) {
     return MoDB::GetInstance()->UpdateUserProblemInfo(updatejson);
 }
 
+// 用户修改密码
+Json::Value UserService::UpdateUserPassword(Json::Value &updatejson) {
+    return MoDB::GetInstance()->UpdateUserPassword(updatejson);
+}
+
+// 用户退出登录
+Json::Value UserService::UserLogout(Json::Value &logoutjson) {
+    // 删除该用户的 Token 记录，实现退出登录
+    std::string userid = logoutjson["UserId"].asString();
+    bool result = ReDB::GetInstance()->DeleteTokensByUserId(userid);
+    if (!result) {
+        return response::Fail("用户退出登录失败！");
+    }
+    // 构造返回数据
+    Json::Value data;
+    data["Result"] = static_cast<bool>(result);
+    // 返回成功响应
+    return response::Success("用户已成功退出登录！", data);
+}
+
 // 通过 Token 获取用户 ID
 std::string UserService::GetUserIdByToken(const std::string &token) {
     return ReDB::GetInstance()->GetUserIdByToken(token);

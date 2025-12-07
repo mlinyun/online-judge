@@ -517,6 +517,51 @@ std::string MoDB::GetNickNameByUserId(const std::string &userid) {
         return "";
     }
 }
+
+/**
+ * 功能：用户修改密码
+ * 权限：只允许用户本人修改
+ * @name UpdateUserPassword
+ * @brief 更新指定用户的密码
+ * @param updatejson Json(UserId, OldPassWord, NewPassWord)
+ * @return Json(success, code, message, data(Result))
+ */
+Json::Value MoDB::UpdateUserPassword(Json::Value &updatejson) {
+    try {
+        // 获取用户 ID 和密码信息
+        int64_t userid = stoll(updatejson["UserId"].asString());
+        string oldpassword = updatejson["OldPassWord"].asString();
+        string newpassword = updatejson["NewPassWord"].asString();
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection usercoll = (*client)[DATABASE_NAME][COLLECTION_USERS];
+
+        // 检查旧密码是否正确
+        bsoncxx::builder::basic::document filter{};
+        filter.append(kvp("_id", userid));
+        filter.append(kvp("PassWord", oldpassword));
+        mongocxx::cursor cursor = usercoll.find(filter.view());
+        if (cursor.begin() == cursor.end()) {
+            return response::UserOldPasswordWrong();
+        }
+
+        // 构造更新文档
+        bsoncxx::builder::stream::document document{};
+        document << "$set" << open_document << "PassWord" << newpassword.data() << close_document;
+        // 执行更新操作，确保旧密码匹配
+        auto result = usercoll.update_one(make_document(kvp("_id", userid)), document.view());
+        if (!result || result->matched_count() == 0) {
+            return response::UserNotFound("未找到对应用户，密码修改失败！");
+        }
+        // 构建返回数据
+        Json::Value data;
+        data["Result"] = static_cast<bool>(result->modified_count());
+        return response::Success("密码修改成功！", data);
+    } catch (const std::exception &e) {
+        return response::InternalError("数据库异常：" + std::string(e.what()));
+    }
+}
 // ------------------------------ 用户模块 End ------------------------------
 
 // ------------------------------ 题目模块 Start ------------------------------

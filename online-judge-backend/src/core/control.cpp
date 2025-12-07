@@ -117,6 +117,42 @@ Json::Value Control::SelectUserSetInfo(Json::Value &queryjson) {
 Json::Value Control::LoginUserByToken(Json::Value &loginjson) {
     return UserService::GetInstance()->LoginUserByToken(loginjson);
 }
+
+/**
+ * 功能：用户修改密码
+ * 权限：只允许用户本人修改
+ */
+Json::Value Control::UpdateUserPassword(Json::Value &updatejson) {
+    // 先通过 Token 获取用户的 UserId
+    string token = updatejson["Token"].asString();
+    string userid = UserService::GetInstance()->GetUserIdByToken(token);
+    // 这里可以不用验证 userid 是否存在，因为在全局请求前处理已经调用 CheckLoginByToken 验证过 Token 了
+    // 这里调用通过 Token 获取到的 UserId 是一定存在的
+    updatejson["UserId"] = userid;
+    // 再判断是不是本人，如果不是本人，无权修改密码
+    bool is_author = UserService::GetInstance()->IsAuthor(updatejson);
+    if (!is_author) {
+        return response::Forbidden();
+    }
+    return UserService::GetInstance()->UpdateUserPassword(updatejson);
+}
+
+/**
+ * 功能：用户退出登录
+ * 权限：只允许已登录用户退出
+ */
+Json::Value Control::UserLogout(Json::Value &logoutjson) {
+    // 先通过 Token 获取用户的 UserId
+    string token = logoutjson["Token"].asString();
+    string userid = UserService::GetInstance()->GetUserIdByToken(token);
+    logoutjson["UserId"] = userid;
+    // 再判断是不是本人，如果不是本人，无权退出登录
+    bool is_author = UserService::GetInstance()->IsAuthor(logoutjson);
+    if (!is_author) {
+        return response::Forbidden();
+    }
+    return UserService::GetInstance()->UserLogout(logoutjson);
+}
 // ------------------------------ 用户模块 End ------------------------------
 
 // ------------------------------ 题目模块 Start ------------------------------

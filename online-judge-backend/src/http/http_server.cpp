@@ -265,6 +265,39 @@ void doGetUserInfoByToken(const httplib::Request &req, httplib::Response &res) {
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
     res.set_content(resbody, "application/json; charset=utf-8");
 }
+
+// 处理用户修改密码的请求
+void doUpdateUserPassword(const httplib::Request &req, httplib::Response &res) {
+    cout << "doUpdateUserPassword start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
+    // 解析传入的 Json
+    Json::Value updatejson;
+    Json::Reader reader;
+    reader.parse(req.body, updatejson);
+    updatejson["Token"] = token;
+    Json::Value resjson = control.UpdateUserPassword(updatejson);
+    cout << "doUpdateUserPassword end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
+    res.set_content(resbody, "application/json; charset=utf-8");
+}
+
+/**
+ * 处理用户退出登录的请求
+ */
+void doUserLogout(const httplib::Request &req, httplib::Response &res) {
+    cout << "doUserLogout start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
+    Json::Value logoutjson;
+    logoutjson["Token"] = token;
+    Json::Value resjson = control.UserLogout(logoutjson);
+    cout << "doUserLogout end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
+    res.set_content(resbody, "application/json; charset=utf-8");
+}
 // ------------------------------ 用户模块 End ------------------------------
 
 // ------------------------------ 题目模块 Start ------------------------------
@@ -1433,6 +1466,10 @@ void HttpServer::Run() {
     server.Get(API + "/admin/user/list", doGetUserSetInfo);
     // 用户登录通过 Token 鉴权（Token 鉴权实现）
     server.Get(API + "/user/auth", doGetUserInfoByToken);
+    // 用户修改密码
+    server.Post(API + "/user/updatepassword", doUpdateUserPassword);
+    // 用户退出登录
+    server.Post(API + "/user/logout", doUserLogout);
     // -------------------- 用户模块 End --------------------
 
     // -------------------- 题目模块 Start --------------------

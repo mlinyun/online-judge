@@ -221,6 +221,20 @@ inline Json::Value UserTokenInvalid(const std::string &message = "登录已过�
     return Fail(error_code::USER_TOKEN_INVALID, message);
 }
 
+/**
+ * 密码格式错误响应
+ */
+inline Json::Value UserPasswordInvalid(const std::string &message = "密码格式错误！") {
+    return Fail(error_code::USER_PASSWORD_INVALID, message);
+}
+
+/**
+ * 旧密码错误响应
+ */
+inline Json::Value UserOldPasswordWrong(const std::string &message = "旧密码错误！") {
+    return Fail(error_code::USER_OLD_PASSWORD_WRONG, message);
+}
+
 // -------------------- 题目模块专用响应 --------------------
 
 /**

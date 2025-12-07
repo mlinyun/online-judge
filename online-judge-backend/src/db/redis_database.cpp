@@ -12,13 +12,23 @@ ReDB *ReDB::GetInstance() {
     return &redis_database;
 }
 
-// 存放 Token
+/**
+ * 功能：设置 Token 对应的用户 ID
+ * 
+ * 每次登录时，先删除该用户的所有旧 Token，再创建新 Token，这样确保同一用户同一时间只有一个有效 Token
+ * @param token Token 字符串
+ * @param userid 用户 ID 字符串
+ * @return 是否设置成功
+ */
 bool ReDB::SetToken(std::string token, std::string userid) {
     try {
-        // 设置 token，有效期为 7 天（604800 秒）
+        // 1. 先删除该用户的所有旧 Token
+        DeleteTokensByUserId(userid);
+
+        // 2. 设置新 token，有效期为 7 天（604800 秒）
         redis_token->setex(token, 604800, userid);  // 键为 token，值为 userid
 
-        // 同时将 token 添加到用户的 token 集合中，方便后续通过 userid 删除所有 token
+        // 3. 同时将 token 添加到用户的 token 集合中，方便后续通过 userid 删除所有 token
         std::string user_tokens_key = "UserTokens:" + userid;
         redis_token->sadd(user_tokens_key, token);
         // 设置用户 token 集合的过期时间为 7 天

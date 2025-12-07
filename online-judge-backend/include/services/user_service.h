@@ -48,6 +48,12 @@ public:
     // 更新用户题目信息（用于用户提交代码后更新题目完成情况）
     bool UpdateUserProblemInfo(Json::Value &updatejson);
 
+    // 用户修改密码
+    Json::Value UpdateUserPassword(Json::Value &updatejson);
+
+    // 用户退出登录
+    Json::Value UserLogout(Json::Value &logoutjson);
+
     // -------------------- Token 鉴权实现 Start --------------------
     // 登录用户（通过 Token 进行登录）
     Json::Value LoginUserByToken(Json::Value &loginjson);

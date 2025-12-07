@@ -20,7 +20,7 @@ enum Status {
 namespace constants {
 namespace judge {
 // 评测状态编号
-constexpr int STATUS_PENDING_JUDGING = 0;      // 等待与判题中 "PJ"
+constexpr int STATUS_PENDING_JUDGING = 0;        // 等待与判题中 "PJ"
 constexpr int STATUS_COMPILE_ERROR = 1;          // 编译错误 "CENum"
 constexpr int STATUS_ACCEPTED = 2;               // 成功 "ACNum"
 constexpr int STATUS_WRONG_ANSWER = 3;           // 错误答案 "WANum"

@@ -91,6 +91,12 @@ public:
      * 传出：string(NickName)
      */
     std::string GetNickNameByUserId(const std::string &userid);
+
+    /**
+     * 功能：用户修改密码
+     * 权限：只允许用户本人修改
+     */
+    Json::Value UpdateUserPassword(Json::Value &updatejson);
     // ------------------------------ 用户模块 End ------------------------------
 
     // ------------------------------ 题目模块 Start ------------------------------
