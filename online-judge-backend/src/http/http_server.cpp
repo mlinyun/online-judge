@@ -1267,8 +1267,8 @@ const std::set<std::string> PUBLIC_API_WHITELIST = {
     API + "/announcement/list",  // 公告列表（公开）
 
     // 讨论模块
-    API + "/discuss/info",  // 查看讨论详情（公开）
-    API + "/discuss/list",  // 讨论列表（公开）
+    API + "/discussion/info",  // 查看讨论详情（公开）
+    API + "/discussion/list",  // 讨论列表（公开）
 
     // 题解模块
     API + "/solution/info",  // 查看题解详情（公开）
@@ -1455,7 +1455,7 @@ void HttpServer::Run() {
     // 查询用户信息
     server.Get(API + "/user/info", doGetUserInfo);
     // 查询用户信息（在设置页面修改用户时使用）
-    server.Get(API + "/user/updateinfo", doGetUserUpdateInfo);
+    server.Get(API + "/user/select/info", doGetUserUpdateInfo);
     // 更新用户信息
     server.Post(API + "/user/update", doUpdateUserInfo);
     // 删除用户（管理员权限）
@@ -1467,7 +1467,7 @@ void HttpServer::Run() {
     // 用户登录通过 Token 鉴权（Token 鉴权实现）
     server.Get(API + "/user/auth", doGetUserInfoByToken);
     // 用户修改密码
-    server.Post(API + "/user/updatepassword", doUpdateUserPassword);
+    server.Put(API + "/user/password", doUpdateUserPassword);
     // 用户退出登录
     server.Post(API + "/user/logout", doUserLogout);
     // -------------------- 用户模块 End --------------------
@@ -1511,19 +1511,19 @@ void HttpServer::Run() {
 
     // --------------------  讨论模块 Start --------------------
     // 添加讨论
-    server.Post(API + "/discuss/insert", doInsertDiscuss);
+    server.Post(API + "/discussion/insert", doInsertDiscuss);
     // 查询讨论的详细内容，并且将其浏览量加 1
-    server.Get(API + "/discuss/info", doGetDiscuss);
+    server.Get(API + "/discussion/info", doGetDiscuss);
     // 查询讨论的详细信息，主要是编辑时的查询
-    server.Get(API + "/discuss/selectinfo", doSelectDiscussByEdit);
+    server.Get(API + "/discussion/select/info", doSelectDiscussByEdit);
     // 更新讨论
-    server.Post(API + "/discuss/update", doUpdateDiscuss);
+    server.Post(API + "/discussion/update", doUpdateDiscuss);
     // 删除讨论
-    server.Delete(API + "/discuss/delete", doDeleteDiscuss);
+    server.Delete(API + "/discussion/delete", doDeleteDiscuss);
     // 分页查询讨论
-    server.Get(API + "/discuss/list", doGetDiscussList);
+    server.Get(API + "/discussion/list", doGetDiscussList);
     // 分页查询讨论（管理员权限）
-    server.Get(API + "/admin/discuss/list", doGetDiscussListByAdmin);
+    server.Get(API + "/admin/discussion/list", doGetDiscussListByAdmin);
     // --------------------  讨论模块 End --------------------
 
     // -------------------- 题解模块 Start --------------------
@@ -1532,7 +1532,7 @@ void HttpServer::Run() {
     // 查询题解的详细内容，并且将其浏览量加 1
     server.Get(API + "/solution/info", doGetSolution);
     // 查询题解的详细信息，主要是编辑时的查询
-    server.Get(API + "/solution/selectinfo", doSelectSolutionByEdit);
+    server.Get(API + "/solution/select/info", doSelectSolutionByEdit);
     // 更新题解
     server.Post(API + "/solution/update", doUpdateSolution);
     // 删除题解

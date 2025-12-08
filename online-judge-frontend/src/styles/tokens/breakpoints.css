@@ -1,0 +1,364 @@
+/**
+ * Online Judge 响应式断点系统
+ * 基于 Tailwind CSS 断点规范
+ */
+
+:root {
+    /* ============================================
+   * 断点值 (Breakpoint Values)
+   * ============================================ */
+
+    --oj-breakpoint-sm: 640px; /* 小屏手机 landscape */
+    --oj-breakpoint-md: 768px; /* 平板 portrait */
+    --oj-breakpoint-lg: 1024px; /* 平板 landscape / 小笔记本 */
+    --oj-breakpoint-xl: 1280px; /* 桌面显示器 */
+    --oj-breakpoint-2xl: 1536px; /* 大屏显示器 */
+
+    /* ============================================
+   * 容器最大宽度 (Container Max Widths)
+   * ============================================ */
+
+    --oj-container-sm: 640px;
+    --oj-container-md: 768px;
+    --oj-container-lg: 1024px;
+    --oj-container-xl: 1280px;
+    --oj-container-2xl: 1536px;
+}
+
+/* ============================================
+ * 响应式布局工具类 (Responsive Utilities)
+ * ============================================ */
+
+/* 容器类 */
+.oj-container {
+    width: 100%;
+    padding-right: var(--oj-spacing-4);
+    padding-left: var(--oj-spacing-4);
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (width >= 640px) {
+    .oj-container {
+        max-width: var(--oj-container-sm);
+        padding-right: var(--oj-spacing-6);
+        padding-left: var(--oj-spacing-6);
+    }
+}
+
+@media (width >= 768px) {
+    .oj-container {
+        max-width: var(--oj-container-md);
+    }
+}
+
+@media (width >= 1024px) {
+    .oj-container {
+        max-width: var(--oj-container-lg);
+        padding-right: var(--oj-spacing-8);
+        padding-left: var(--oj-spacing-8);
+    }
+}
+
+@media (width >= 1280px) {
+    .oj-container {
+        max-width: var(--oj-container-xl);
+    }
+}
+
+@media (width >= 1536px) {
+    .oj-container {
+        max-width: var(--oj-container-2xl);
+    }
+}
+
+/* 主内容容器 (对齐 @online-judge-ui 的 max-w-7xl) */
+.oj-main-container {
+    width: 100%;
+    max-width: var(--oj-content-max-width);
+    padding-right: var(--oj-spacing-4);
+    padding-left: var(--oj-spacing-4);
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (width >= 640px) {
+    .oj-main-container {
+        padding-right: var(--oj-spacing-6);
+        padding-left: var(--oj-spacing-6);
+    }
+}
+
+@media (width >= 1024px) {
+    .oj-main-container {
+        padding-right: var(--oj-spacing-8);
+        padding-left: var(--oj-spacing-8);
+    }
+}
+
+/* ============================================
+ * 响应式显示/隐藏工具类
+ * ============================================ */
+
+/* 默认隐藏，在指定断点及以上显示 */
+.oj-hidden {
+    display: none !important;
+}
+
+.oj-block {
+    display: block !important;
+}
+
+.oj-flex {
+    display: flex !important;
+}
+
+.oj-grid {
+    display: grid !important;
+}
+
+/* sm 及以上显示 */
+@media (width >= 640px) {
+    .sm\:oj-hidden {
+        display: none !important;
+    }
+
+    .sm\:oj-block {
+        display: block !important;
+    }
+
+    .sm\:oj-flex {
+        display: flex !important;
+    }
+
+    .sm\:oj-grid {
+        display: grid !important;
+    }
+}
+
+/* md 及以上显示 */
+@media (width >= 768px) {
+    .md\:oj-hidden {
+        display: none !important;
+    }
+
+    .md\:oj-block {
+        display: block !important;
+    }
+
+    .md\:oj-flex {
+        display: flex !important;
+    }
+
+    .md\:oj-grid {
+        display: grid !important;
+    }
+}
+
+/* lg 及以上显示 */
+@media (width >= 1024px) {
+    .lg\:oj-hidden {
+        display: none !important;
+    }
+
+    .lg\:oj-block {
+        display: block !important;
+    }
+
+    .lg\:oj-flex {
+        display: flex !important;
+    }
+
+    .lg\:oj-grid {
+        display: grid !important;
+    }
+}
+
+/* xl 及以上显示 */
+@media (width >= 1280px) {
+    .xl\:oj-hidden {
+        display: none !important;
+    }
+
+    .xl\:oj-block {
+        display: block !important;
+    }
+
+    .xl\:oj-flex {
+        display: flex !important;
+    }
+
+    .xl\:oj-grid {
+        display: grid !important;
+    }
+}
+
+/* ============================================
+ * 响应式栅格系统
+ * ============================================ */
+
+.oj-grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.oj-grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.oj-grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.oj-grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (width >= 640px) {
+    .sm\:oj-grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .sm\:oj-grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sm\:oj-grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .sm\:oj-grid-cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (width >= 768px) {
+    .md\:oj-grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .md\:oj-grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .md\:oj-grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .md\:oj-grid-cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (width >= 1024px) {
+    .lg\:oj-grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .lg\:oj-grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lg\:oj-grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .lg\:oj-grid-cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* ============================================
+ * 响应式 Flex 布局
+ * ============================================ */
+
+.oj-flex-col {
+    flex-direction: column;
+}
+
+.oj-flex-row {
+    flex-direction: row;
+}
+
+@media (width >= 768px) {
+    .md\:oj-flex-row {
+        flex-direction: row;
+    }
+
+    .md\:oj-flex-col {
+        flex-direction: column;
+    }
+}
+
+@media (width >= 1024px) {
+    .lg\:oj-flex-row {
+        flex-direction: row;
+    }
+
+    .lg\:oj-flex-col {
+        flex-direction: column;
+    }
+}
+
+/* ============================================
+ * 响应式宽度
+ * ============================================ */
+
+.oj-w-full {
+    width: 100%;
+}
+
+.oj-w-1\/2 {
+    width: 50%;
+}
+
+.oj-w-1\/3 {
+    width: 33.333333%;
+}
+
+.oj-w-2\/3 {
+    width: 66.666667%;
+}
+
+@media (width >= 768px) {
+    .md\:oj-w-full {
+        width: 100%;
+    }
+
+    .md\:oj-w-1\/2 {
+        width: 50%;
+    }
+
+    .md\:oj-w-1\/3 {
+        width: 33.333333%;
+    }
+
+    .md\:oj-w-2\/3 {
+        width: 66.666667%;
+    }
+
+    .md\:oj-w-auto {
+        width: auto;
+    }
+}
+
+@media (width >= 1024px) {
+    .lg\:oj-w-full {
+        width: 100%;
+    }
+
+    .lg\:oj-w-1\/2 {
+        width: 50%;
+    }
+
+    .lg\:oj-w-1\/3 {
+        width: 33.333333%;
+    }
+
+    .lg\:oj-w-2\/3 {
+        width: 66.666667%;
+    }
+
+    .lg\:oj-w-auto {
+        width: auto;
+    }
+}

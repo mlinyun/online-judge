@@ -1,0 +1,184 @@
+/**
+ * Element Plus 主题变量覆盖
+ * 将 Element Plus 默认主题对齐到 Online Judge Cyber 风格
+ */
+
+:root {
+    /* ============================================
+   * Element Plus 主色覆盖
+   * ============================================ */
+
+    /* Primary - 使用 Cyan 青色 */
+    --el-color-primary: var(--oj-color-primary);
+    --el-color-primary-light-3: #22d3ee;
+    --el-color-primary-light-5: #67e8f9;
+    --el-color-primary-light-7: #a5f3fc;
+    --el-color-primary-light-8: #cffafe;
+    --el-color-primary-light-9: #ecfeff;
+    --el-color-primary-dark-2: var(--oj-color-primary-dark);
+
+    /* Success - 绿色 */
+    --el-color-success: var(--oj-color-success);
+    --el-color-success-light-3: #34d399;
+    --el-color-success-light-5: #6ee7b7;
+    --el-color-success-light-7: #a7f3d0;
+    --el-color-success-light-8: #d1fae5;
+    --el-color-success-light-9: #ecfdf5;
+    --el-color-success-dark-2: var(--oj-color-success-dark);
+
+    /* Warning - 橙色 */
+    --el-color-warning: var(--oj-color-warning);
+    --el-color-warning-light-3: #fbbf24;
+    --el-color-warning-light-5: #fcd34d;
+    --el-color-warning-light-7: #fde68a;
+    --el-color-warning-light-8: #fef3c7;
+    --el-color-warning-light-9: #fffbeb;
+    --el-color-warning-dark-2: var(--oj-color-warning-dark);
+
+    /* Danger - 红色 */
+    --el-color-danger: var(--oj-color-danger);
+    --el-color-danger-light-3: #f87171;
+    --el-color-danger-light-5: #fca5a5;
+    --el-color-danger-light-7: #fecaca;
+    --el-color-danger-light-8: #fee2e2;
+    --el-color-danger-light-9: #fef2f2;
+    --el-color-danger-dark-2: var(--oj-color-danger-dark);
+
+    /* Info - 蓝色 */
+    --el-color-info: var(--oj-color-info);
+    --el-color-info-light-3: #60a5fa;
+    --el-color-info-light-5: #93c5fd;
+    --el-color-info-light-7: #bfdbfe;
+    --el-color-info-light-8: #dbeafe;
+    --el-color-info-light-9: #eff6ff;
+    --el-color-info-dark-2: var(--oj-color-info-dark);
+
+    /* ============================================
+   * Element Plus 字体覆盖
+   * ============================================ */
+
+    --el-font-family: var(--oj-font-family-sans);
+    --el-font-size-extra-large: var(--oj-font-size-xl);
+    --el-font-size-large: var(--oj-font-size-lg);
+    --el-font-size-medium: var(--oj-font-size-base);
+    --el-font-size-base: var(--oj-font-size-sm);
+    --el-font-size-small: var(--oj-font-size-xs);
+    --el-font-size-extra-small: 0.625rem;
+
+    /* ============================================
+   * Element Plus 圆角覆盖
+   * ============================================ */
+
+    --el-border-radius-base: var(--oj-radius-lg);
+    --el-border-radius-small: var(--oj-radius-md);
+    --el-border-radius-round: var(--oj-radius-full);
+    --el-border-radius-circle: 100%;
+
+    /* ============================================
+   * Element Plus 过渡动画
+   * ============================================ */
+
+    --el-transition-duration: 0.3s;
+    --el-transition-duration-fast: 0.2s;
+}
+
+/* ============================================
+ * 深色主题 Element Plus 覆盖 (默认)
+ * ============================================ */
+
+:root,
+html.dark {
+    /* 背景色 */
+    --el-bg-color: var(--oj-bg-light);
+    --el-bg-color-page: var(--oj-bg-base);
+    --el-bg-color-overlay: var(--oj-bg-light);
+
+    /* 文本色 */
+    --el-text-color-primary: var(--oj-text-primary);
+    --el-text-color-regular: var(--oj-text-secondary);
+    --el-text-color-secondary: var(--oj-text-muted);
+    --el-text-color-placeholder: var(--oj-text-disabled);
+    --el-text-color-disabled: var(--oj-text-disabled);
+
+    /* 边框色 */
+    --el-border-color: var(--oj-slate-700);
+    --el-border-color-light: var(--oj-slate-600);
+    --el-border-color-lighter: var(--oj-slate-700);
+    --el-border-color-extra-light: var(--oj-slate-800);
+    --el-border-color-dark: var(--oj-slate-600);
+    --el-border-color-darker: var(--oj-slate-500);
+
+    /* 填充色 */
+    --el-fill-color: var(--oj-bg-elevated);
+    --el-fill-color-light: var(--oj-bg-light);
+    --el-fill-color-lighter: var(--oj-slate-800);
+    --el-fill-color-extra-light: var(--oj-slate-900);
+    --el-fill-color-dark: var(--oj-slate-600);
+    --el-fill-color-darker: var(--oj-slate-500);
+    --el-fill-color-blank: transparent;
+
+    /* 遮罩色 */
+    --el-mask-color: rgb(0 0 0 / 60%);
+    --el-mask-color-extra-light: rgb(0 0 0 / 30%);
+
+    /* 阴影 */
+    --el-box-shadow: var(--oj-shadow-md);
+    --el-box-shadow-light: var(--oj-shadow-sm);
+    --el-box-shadow-lighter: 0 1px 4px rgb(0 0 0 / 20%);
+    --el-box-shadow-dark: var(--oj-shadow-lg);
+
+    /* 禁用状态 */
+    --el-disabled-bg-color: var(--oj-slate-800);
+    --el-disabled-text-color: var(--oj-text-disabled);
+    --el-disabled-border-color: var(--oj-slate-700);
+}
+
+/* ============================================
+ * 浅色主题 Element Plus 覆盖
+ * ============================================ */
+
+html.light {
+    /* 背景色 */
+    --el-bg-color: #fff;
+    --el-bg-color-page: var(--oj-bg-light-base);
+    --el-bg-color-overlay: #fff;
+
+    /* 文本色 */
+    --el-text-color-primary: var(--oj-text-light-primary);
+    --el-text-color-regular: var(--oj-text-light-secondary);
+    --el-text-color-secondary: var(--oj-text-light-muted);
+    --el-text-color-placeholder: var(--oj-text-light-disabled);
+    --el-text-color-disabled: var(--oj-text-light-disabled);
+
+    /* 边框色 */
+    --el-border-color: #dcdfe6;
+    --el-border-color-light: #e4e7ed;
+    --el-border-color-lighter: #ebeef5;
+    --el-border-color-extra-light: #f2f6fc;
+    --el-border-color-dark: #d4d7de;
+    --el-border-color-darker: #cdd0d6;
+
+    /* 填充色 */
+    --el-fill-color: #f0f2f5;
+    --el-fill-color-light: #f5f7fa;
+    --el-fill-color-lighter: #fafafa;
+    --el-fill-color-extra-light: #fafcff;
+    --el-fill-color-dark: #ebedf0;
+    --el-fill-color-darker: #e6e8eb;
+    --el-fill-color-blank: #fff;
+
+    /* 遮罩色 */
+    --el-mask-color: rgb(0 0 0 / 50%);
+    --el-mask-color-extra-light: rgb(0 0 0 / 20%);
+
+    /* 阴影 */
+    --el-box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    --el-box-shadow-light: 0 2px 8px 0 rgb(0 0 0 / 6%);
+    --el-box-shadow-lighter: 0 1px 4px rgb(0 0 0 / 4%);
+    --el-box-shadow-dark: 0 4px 16px 0 rgb(0 0 0 / 14%);
+
+    /* 禁用状态 */
+    --el-disabled-bg-color: #f5f7fa;
+    --el-disabled-text-color: #a8abb2;
+    --el-disabled-border-color: #e4e7ed;
+}

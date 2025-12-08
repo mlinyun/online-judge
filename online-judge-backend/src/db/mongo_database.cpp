@@ -338,10 +338,12 @@ Json::Value MoDB::DeleteUser(Json::Value &deletejson) {
  */
 Json::Value MoDB::SelectUserRank(Json::Value &queryjson) {
     try {
+        // 获取分页查询参数
         int page = stoi(queryjson["Page"].asString());
         int pagesize = stoi(queryjson["PageSize"].asString());
         int skip = (page - 1) * pagesize;
 
+        // 获取数据库连接
         auto client = pool.acquire();
         mongocxx::collection usercoll = (*client)[DATABASE_NAME][COLLECTION_USERS];
         bsoncxx::builder::stream::document document{};
@@ -350,7 +352,7 @@ Json::Value MoDB::SelectUserRank(Json::Value &queryjson) {
         Json::Value list(Json::arrayValue);
         auto total = static_cast<int>(usercoll.count_documents({}));
 
-        // ACNum 值越大，越靠前；若 ACNum 相同，则 SubmitNum 越小排名越高
+        // ACNum 值越大，越靠前；若 ACNum 相同，则 SubmitNum 越小排名越高，如果 ACNum 和 SubmitNum 都相同，则按 _id 排序
         document << "ACNum" << -1 << "SubmitNum" << 1;
 
         pipe.sort(document.view());
@@ -366,7 +368,7 @@ Json::Value MoDB::SelectUserRank(Json::Value &queryjson) {
             reader.parse(bsoncxx::to_json(doc), jsonvalue);
             list.append(jsonvalue);
         }
-        // 添加Rank排名
+        // 添加 Rank 排名
         int currank = (page - 1) * pagesize + 1;
         for (int i = 0; i < list.size(); i++) {
             list[i]["Rank"] = currank++;

@@ -1,0 +1,159 @@
+/**
+ * Online Judge 主题系统
+ * 支持深色 (dark) 和浅色 (light) 主题切换
+ * 默认使用深色主题以匹配 Cyber 风格
+ */
+
+/* ============================================
+ * 深色主题 (默认)
+ * ============================================ */
+
+:root,
+html.dark {
+    color-scheme: dark;
+
+    /* 页面背景 */
+    --oj-page-bg: var(--oj-bg-base);
+    --oj-page-bg-image: var(--oj-gradient-hero);
+
+    /* 内容区背景 */
+    --oj-content-bg: var(--oj-bg-dark);
+    --oj-content-bg-soft: var(--oj-bg-light);
+    --oj-content-bg-elevated: var(--oj-bg-elevated);
+
+    /* 文本色 */
+    --oj-text-color: var(--oj-text-primary);
+    --oj-text-color-secondary: var(--oj-text-secondary);
+    --oj-text-color-muted: var(--oj-text-muted);
+    --oj-text-color-disabled: var(--oj-text-disabled);
+
+    /* 边框 */
+    --oj-border-color: var(--oj-border-base);
+    --oj-border-color-solid: var(--oj-slate-700);
+
+    /* 卡片/面板 */
+    --oj-card-bg: var(--oj-glass-bg);
+    --oj-card-border: var(--oj-glass-border);
+
+    /* 表格 */
+    --oj-table-header-bg: rgb(30 41 59 / 80%);
+    --oj-table-row-bg: rgb(30 41 59 / 20%);
+    --oj-table-row-hover-bg: rgb(51 65 85 / 30%);
+    --oj-table-border: rgb(51 65 85 / 50%);
+
+    /* 输入框 */
+    --oj-input-bg: rgb(30 41 59 / 50%);
+    --oj-input-border: var(--oj-slate-600);
+    --oj-input-text: var(--oj-text-secondary);
+    --oj-input-placeholder: var(--oj-text-muted);
+    --oj-input-focus-border: var(--oj-color-primary);
+
+    /* 按钮 */
+    --oj-button-primary-bg: var(--oj-color-primary);
+    --oj-button-primary-hover-bg: #0891b2;
+    --oj-button-secondary-bg: var(--oj-slate-700);
+    --oj-button-secondary-hover-bg: var(--oj-slate-600);
+
+    /* 链接 */
+    --oj-link-color: var(--oj-color-primary);
+    --oj-link-hover-color: var(--oj-color-primary-light);
+
+    /* 滚动条 */
+    --oj-scrollbar-track: var(--oj-bg-dark);
+    --oj-scrollbar-thumb: var(--oj-slate-700);
+    --oj-scrollbar-thumb-hover: var(--oj-slate-600);
+
+    /* 代码编辑器 */
+    --oj-editor-bg: #1e1e1e;
+    --oj-editor-line-number: var(--oj-text-muted);
+}
+
+/* ============================================
+ * 浅色主题
+ * ============================================ */
+
+html.light {
+    color-scheme: light;
+
+    /* 页面背景 */
+    --oj-page-bg: var(--oj-bg-light-base);
+    --oj-page-bg-image: linear-gradient(180deg, rgb(6 182 212 / 5%) 0%, transparent 30%);
+
+    /* 内容区背景 */
+    --oj-content-bg: #fff;
+    --oj-content-bg-soft: var(--oj-bg-light-soft);
+    --oj-content-bg-elevated: #fff;
+
+    /* 文本色 */
+    --oj-text-color: var(--oj-text-light-primary);
+    --oj-text-color-secondary: var(--oj-text-light-secondary);
+    --oj-text-color-muted: var(--oj-text-light-muted);
+    --oj-text-color-disabled: var(--oj-text-light-disabled);
+
+    /* 边框 */
+    --oj-border-color: rgb(0 0 0 / 8%);
+    --oj-border-color-solid: #e2e8f0;
+
+    /* 卡片/面板 */
+    --oj-card-bg: #fff;
+    --oj-card-border: #e2e8f0;
+
+    /* 表格 */
+    --oj-table-header-bg: #f8fafc;
+    --oj-table-row-bg: #fff;
+    --oj-table-row-hover-bg: #f1f5f9;
+    --oj-table-border: #e2e8f0;
+
+    /* 输入框 */
+    --oj-input-bg: #fff;
+    --oj-input-border: #d1d5db;
+    --oj-input-text: var(--oj-text-light-primary);
+    --oj-input-placeholder: var(--oj-text-light-muted);
+    --oj-input-focus-border: var(--oj-color-primary);
+
+    /* 按钮 */
+    --oj-button-primary-bg: var(--oj-color-primary);
+    --oj-button-primary-hover-bg: #0891b2;
+    --oj-button-secondary-bg: #f1f5f9;
+    --oj-button-secondary-hover-bg: #e2e8f0;
+
+    /* 链接 */
+    --oj-link-color: var(--oj-color-primary-dark);
+    --oj-link-hover-color: var(--oj-color-primary);
+
+    /* 滚动条 */
+    --oj-scrollbar-track: #f1f5f9;
+    --oj-scrollbar-thumb: #cbd5e1;
+    --oj-scrollbar-thumb-hover: #94a3b8;
+
+    /* 代码编辑器 */
+    --oj-editor-bg: #fafafa;
+    --oj-editor-line-number: #94a3b8;
+}
+
+/* ============================================
+ * 主题过渡动画
+ * ============================================ */
+
+html {
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+html *,
+html *::before,
+html *::after {
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+/* 禁用特定元素的过渡 (避免闪烁) */
+html img,
+html video,
+html iframe,
+html canvas {
+    transition: none;
+}

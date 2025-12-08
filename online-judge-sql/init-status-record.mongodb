@@ -5,8 +5,8 @@ use("online_judge");
 db.status_records.insertMany([
   {
     '_id': 1,
-    'ProblemId': 1,
-    'UserId': 0,
+    'ProblemId': 964432918195867648n,
+    'UserId': 962620231560335360n,
     'UserNickName': 'xxx',
     'ProblemTitle': 'A+B Problem',
     'Status': 2,
@@ -27,7 +27,7 @@ int main()
 
     return 0;
 }`,
-    'ComplierInfo': '',
+    'CompilerInfo': '',
     'TestInfo': [
       {
         'Status': 2,
@@ -60,6 +60,410 @@ int main()
         'PersonalOutput': '2000000',
         'RunTime': '0MS',
         'RunMemory': '3MB'
+      }
+    ]
+  },
+  {
+    '_id': 2,
+    'ProblemId': 964432918195867648n,
+    'UserId': 962620231560335360n,
+    'UserNickName': 'coder_alice',
+    'ProblemTitle': 'A+B Problem',
+    'Status': 2,
+    'RunTime': '5MS',
+    'RunMemory': '3MB',
+    'Length': '120B',
+    'Language': 'Java',
+    'SubmitTime': '2023-04-06 09:15:30',
+    'Code': `import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int a = sc.nextInt();
+        int b = sc.nextInt();
+        System.out.println(a + b);
+    }
+}`,
+    'CompilerInfo': '',
+    'TestInfo': [
+      {
+        'Status': 2,
+        'StandardInput': '5 7',
+        'StandardOutput': '12',
+        'PersonalOutput': '12',
+        'RunTime': '5MS',
+        'RunMemory': '3MB'
+      },
+      {
+        'Status': 2,
+        'StandardInput': '-10 20',
+        'StandardOutput': '10',
+        'PersonalOutput': '10',
+        'RunTime': '5MS',
+        'RunMemory': '3MB'
+      }
+    ]
+  },
+  {
+    '_id': 3,
+    'ProblemId': 2,
+    'UserId': 962652293591863296n,
+    'UserNickName': 'python_master',
+    'ProblemTitle': '最大公约数',
+    'Status': 3,
+    'RunTime': '10MS',
+    'RunMemory': '5MB',
+    'Length': '85B',
+    'Language': 'Python',
+    'SubmitTime': '2023-04-06 14:23:10',
+    'Code': `def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+a, b = map(int, input().split())
+print(gcd(a, b))`,
+    'CompilerInfo': '',
+    'TestInfo': [
+      {
+        'Status': 3,
+        'StandardInput': '12 18',
+        'StandardOutput': '6',
+        'PersonalOutput': '6',
+        'RunTime': '8MS',
+        'RunMemory': '4MB'
+      },
+      {
+        'Status': 1,
+        'StandardInput': '0 5',
+        'StandardOutput': '5',
+        'PersonalOutput': '0',
+        'RunTime': '10MS',
+        'RunMemory': '5MB'
+      }
+    ]
+  },
+  {
+    '_id': 4,
+    'ProblemId': 3,
+    'UserId': 962620231560335360n,
+    'UserNickName': 'cpp_pro',
+    'ProblemTitle': '斐波那契数列',
+    'Status': 2,
+    'RunTime': '15MS',
+    'RunMemory': '4MB',
+    'Length': '180B',
+    'Language': 'C++',
+    'SubmitTime': '2023-04-07 10:45:22',
+    'Code': `#include <iostream>
+using namespace std;
+
+int fib(int n) {
+    if (n <= 1) return n;
+    int a = 0, b = 1;
+    for (int i = 2; i <= n; i++) {
+        int temp = a + b;
+        a = b;
+        b = temp;
+    }
+    return b;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    cout << fib(n) << endl;
+    return 0;
+}`,
+    'CompilerInfo': '',
+    'TestInfo': [
+      {
+        'Status': 2,
+        'StandardInput': '5',
+        'StandardOutput': '5',
+        'PersonalOutput': '5',
+        'RunTime': '12MS',
+        'RunMemory': '4MB'
+      },
+      {
+        'Status': 2,
+        'StandardInput': '10',
+        'StandardOutput': '55',
+        'PersonalOutput': '55',
+        'RunTime': '15MS',
+        'RunMemory': '4MB'
+      }
+    ]
+  },
+  {
+    '_id': 5,
+    'ProblemId': 1,
+    'UserId': 962652293591863296n,
+    'UserNickName': 'newbie_learner',
+    'ProblemTitle': 'A+B Problem',
+    'Status': 1,
+    'RunTime': '2MS',
+    'RunMemory': '3MB',
+    'Length': '95B',
+    'Language': 'C',
+    'SubmitTime': '2023-04-08 16:30:45',
+    'Code': `#include <stdio.h>
+
+int main() {
+    int a, b;
+    scanf("%d %d", &a, &b);
+    printf("%d", a - b);
+    return 0;
+}`,
+    'CompilerInfo': '',
+    'TestInfo': [
+      {
+        'Status': 1,
+        'StandardInput': '3 9',
+        'StandardOutput': '12',
+        'PersonalOutput': '-6',
+        'RunTime': '2MS',
+        'RunMemory': '3MB'
+      }
+    ]
+  },
+  {
+    '_id': 6,
+    'ProblemId': 4,
+    'UserId': 962653240556654592n,
+    'UserNickName': 'js_wizard',
+    'ProblemTitle': '字符串反转',
+    'Status': 2,
+    'RunTime': '25MS',
+    'RunMemory': '6MB',
+    'Length': '110B',
+    'Language': 'JavaScript',
+    'SubmitTime': '2023-04-09 11:20:33',
+    'Code': `const readline = require('readline');
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.on('line', (line) => {
+    console.log(line.split('').reverse().join(''));
+});`,
+    'CompilerInfo': '',
+    'TestInfo': [
+      {
+        'Status': 2,
+        'StandardInput': 'hello',
+        'StandardOutput': 'olleh',
+        'PersonalOutput': 'olleh',
+        'RunTime': '22MS',
+        'RunMemory': '6MB'
+      },
+      {
+        'Status': 2,
+        'StandardInput': '12345',
+        'StandardOutput': '54321',
+        'PersonalOutput': '54321',
+        'RunTime': '25MS',
+        'RunMemory': '6MB'
+      }
+    ]
+  },
+  {
+    '_id': 7,
+    'ProblemId': 5,
+    'UserId': 962652659628773376n,
+    'UserNickName': 'algorithm_king',
+    'ProblemTitle': '快速排序',
+    'Status': 2,
+    'RunTime': '50MS',
+    'RunMemory': '8MB',
+    'Length': '350B',
+    'Language': 'C++',
+    'SubmitTime': '2023-04-10 15:10:20',
+    'Code': `#include <iostream>
+#include <vector>
+using namespace std;
+
+void quickSort(vector<int>& arr, int left, int right) {
+    if (left >= right) return;
+    int pivot = arr[left];
+    int i = left, j = right;
+    while (i < j) {
+        while (i < j && arr[j] >= pivot) j--;
+        arr[i] = arr[j];
+        while (i < j && arr[i] <= pivot) i++;
+        arr[j] = arr[i];
+    }
+    arr[i] = pivot;
+    quickSort(arr, left, i - 1);
+    quickSort(arr, i + 1, right);
+}
+
+int main() {
+    // 代码过长，省略具体实现
+    return 0;
+}`,
+    'CompilerInfo': '',
+    'TestInfo': [
+      {
+        'Status': 2,
+        'StandardInput': '5\n3 1 4 2 5',
+        'StandardOutput': '1 2 3 4 5',
+        'PersonalOutput': '1 2 3 4 5',
+        'RunTime': '45MS',
+        'RunMemory': '8MB'
+      }
+    ]
+  },
+  {
+    '_id': 8,
+    'ProblemId': 1,
+    'UserId': 962653469183971328n,
+    'UserNickName': 'rust_enthusiast',
+    'ProblemTitle': 'A+B Problem',
+    'Status': 4,
+    'RunTime': '0MS',
+    'RunMemory': '0MB',
+    'Length': '150B',
+    'Language': 'Rust',
+    'SubmitTime': '2023-04-11 08:40:15',
+    'Code': `use std::io;
+
+fn main() {
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).unwrap();
+    let nums: Vec<i32> = input.split_whitespace()
+        .map(|x| x.parse().unwrap())
+        .collect();
+    println!("{}", nums[0] + nums[1]);
+}`,
+    'CompilerInfo': 'Compilation error: missing crate',
+    'TestInfo': []
+  },
+  {
+    '_id': 9,
+    'ProblemId': 6,
+    'UserId': 962653469183971328n,
+    'UserNickName': 'go_gopher',
+    'ProblemTitle': '二分查找',
+    'Status': 2,
+    'RunTime': '8MS',
+    'RunMemory': '5MB',
+    'Length': '200B',
+    'Language': 'Go',
+    'SubmitTime': '2023-04-12 13:25:40',
+    'Code': `package main
+
+import "fmt"
+
+func binarySearch(arr []int, target int) int {
+    left, right := 0, len(arr)-1
+    for left <= right {
+        mid := left + (right-left)/2
+        if arr[mid] == target {
+            return mid
+        } else if arr[mid] < target {
+            left = mid + 1
+        } else {
+            right = mid - 1
+        }
+    }
+    return -1
+}`,
+    'CompilerInfo': '',
+    'TestInfo': [
+      {
+        'Status': 2,
+        'StandardInput': '5\n1 3 5 7 9\n5',
+        'StandardOutput': '2',
+        'PersonalOutput': '2',
+        'RunTime': '7MS',
+        'RunMemory': '5MB'
+      }
+    ]
+  },
+  {
+    '_id': 10,
+    'ProblemId': 7,
+    'UserId': 962653469183971328n,
+    'UserNickName': 'data_scientist',
+    'ProblemTitle': '矩阵乘法',
+    'Status': 3,
+    'RunTime': '100MS',
+    'RunMemory': '15MB',
+    'Length': '420B',
+    'Language': 'Python',
+    'SubmitTime': '2023-04-13 17:55:10',
+    'Code': `def matrix_multiply(A, B):
+    n = len(A)
+    m = len(A[0])
+    p = len(B[0])
+    C = [[0] * p for _ in range(n)]
+    
+    for i in range(n):
+        for j in range(p):
+            for k in range(m):
+                C[i][j] += A[i][k] * B[k][j]
+    return C
+
+# 读取输入并处理
+import sys
+data = sys.stdin.read().strip().split()
+# 省略具体输入解析代码`,
+    'CompilerInfo': '',
+    'TestInfo': [
+      {
+        'Status': 2,
+        'StandardInput': '2 2 2\n1 2\n3 4\n5 6\n7 8',
+        'StandardOutput': '19 22\n43 50',
+        'PersonalOutput': '19 22\n43 50',
+        'RunTime': '95MS',
+        'RunMemory': '14MB'
+      },
+      {
+        'Status': 3,
+        'StandardInput': '3 3 3\n1 2 3\n4 5 6\n7 8 9\n9 8 7\n6 5 4\n3 2 1',
+        'StandardOutput': '30 24 18\n84 69 54\n138 114 90',
+        'PersonalOutput': '30 24 18\n84 69 54\n138 114 90',
+        'RunTime': '100MS',
+        'RunMemory': '15MB'
+      }
+    ]
+  },
+  {
+    '_id': 11,
+    'ProblemId': 1,
+    'UserId': 962653469183971328n,
+    'UserNickName': 'kotlin_fan',
+    'ProblemTitle': 'A+B Problem',
+    'Status': 2,
+    'RunTime': '6MS',
+    'RunMemory': '4MB',
+    'Length': '110B',
+    'Language': 'Kotlin',
+    'SubmitTime': '2023-04-14 20:05:00',
+    'Code': `fun main() {
+    val (a, b) = readLine()!!.split(" ").map { it.toInt() }
+    println(a + b)
+}`,
+    'CompilerInfo': '',
+    'TestInfo': [
+      {
+        'Status': 2,
+        'StandardInput': '100 -50',
+        'StandardOutput': '50',
+        'PersonalOutput': '50',
+        'RunTime': '5MS',
+        'RunMemory': '4MB'
+      },
+      {
+        'Status': 2,
+        'StandardInput': '999 1',
+        'StandardOutput': '1000',
+        'PersonalOutput': '1000',
+        'RunTime': '6MS',
+        'RunMemory': '4MB'
       }
     ]
   }

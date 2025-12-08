@@ -1,0 +1,476 @@
+/**
+ * Online Judge 通用工具类
+ * 提供常用的样式工具类
+ */
+
+/* ============================================
+ * 毛玻璃面板 (Glass Panel)
+ * 对应 @online-judge-ui 的 .glass-panel
+ * ============================================ */
+
+.oj-glass-panel {
+    background: var(--oj-glass-bg);
+    border: 1px solid var(--oj-glass-border);
+    backdrop-filter: blur(var(--oj-glass-blur));
+}
+
+.oj-glass-panel-light {
+    background: var(--oj-glass-bg-light);
+    border: 1px solid var(--oj-glass-border);
+    backdrop-filter: blur(var(--oj-glass-blur));
+}
+
+.oj-glass-panel-dark {
+    background: var(--oj-glass-bg-dark);
+    border: 1px solid var(--oj-glass-border);
+    backdrop-filter: blur(var(--oj-glass-blur));
+}
+
+/* ============================================
+ * 卡片样式
+ * ============================================ */
+
+.oj-card {
+    padding: var(--oj-card-padding);
+    background: var(--oj-card-bg);
+    border: 1px solid var(--oj-card-border);
+    border-radius: var(--oj-radius-xl);
+}
+
+.oj-card-sm {
+    padding: var(--oj-card-padding-sm);
+}
+
+.oj-card-hover {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.oj-card-hover:hover {
+    border-color: var(--oj-color-primary-soft);
+    box-shadow: var(--oj-shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+ * 按钮样式
+ * ============================================ */
+
+.oj-btn {
+    display: inline-flex;
+    gap: var(--oj-spacing-2);
+    align-items: center;
+    justify-content: center;
+    padding: var(--oj-button-padding-y-md) var(--oj-button-padding-x-md);
+    font-size: var(--oj-font-size-sm);
+    font-weight: var(--oj-font-weight-medium);
+    line-height: var(--oj-line-height-normal);
+    color: var(--oj-text-inverse);
+    cursor: pointer;
+    border: none;
+    border-radius: var(--oj-radius-lg);
+    transition: all 0.2s ease;
+}
+
+.oj-btn-primary {
+    background-color: var(--oj-button-primary-bg);
+    box-shadow: var(--oj-shadow-neon);
+}
+
+.oj-btn-primary:hover {
+    background-color: var(--oj-button-primary-hover-bg);
+}
+
+.oj-btn-secondary {
+    background-color: var(--oj-button-secondary-bg);
+    border: 1px solid var(--oj-slate-600);
+}
+
+.oj-btn-secondary:hover {
+    background-color: var(--oj-button-secondary-hover-bg);
+}
+
+.oj-btn-outline {
+    color: var(--oj-color-primary);
+    background-color: transparent;
+    border: 1px solid var(--oj-color-primary);
+}
+
+.oj-btn-outline:hover {
+    color: var(--oj-text-inverse);
+    background-color: var(--oj-color-primary-hover);
+}
+
+.oj-btn-success {
+    background-color: var(--oj-color-success);
+    box-shadow: var(--oj-shadow-neon-success);
+}
+
+.oj-btn-success:hover {
+    background-color: var(--oj-color-success-dark);
+}
+
+/* 按钮尺寸 */
+.oj-btn-sm {
+    padding: var(--oj-button-padding-y-sm) var(--oj-button-padding-x-sm);
+    font-size: var(--oj-font-size-xs);
+}
+
+.oj-btn-lg {
+    padding: var(--oj-button-padding-y-lg) var(--oj-button-padding-x-lg);
+    font-size: var(--oj-font-size-base);
+}
+
+/* ============================================
+ * 标签/徽章样式
+ * ============================================ */
+
+.oj-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--oj-tag-padding-y) var(--oj-tag-padding-x);
+    font-size: var(--oj-font-size-xs);
+    font-weight: var(--oj-font-weight-medium);
+    line-height: 1;
+    border-radius: var(--oj-radius-base);
+}
+
+.oj-tag-default {
+    color: var(--oj-text-secondary);
+    background-color: var(--oj-slate-700);
+    border: 1px solid var(--oj-slate-600);
+}
+
+.oj-tag-primary {
+    color: var(--oj-color-primary);
+    background-color: var(--oj-color-primary-soft);
+    border: 1px solid var(--oj-color-primary);
+}
+
+.oj-tag-success {
+    color: var(--oj-color-success);
+    background-color: var(--oj-color-success-soft);
+    border: 1px solid var(--oj-color-success-border);
+}
+
+.oj-tag-warning {
+    color: var(--oj-color-warning);
+    background-color: var(--oj-color-warning-soft);
+    border: 1px solid var(--oj-color-warning-border);
+}
+
+.oj-tag-danger {
+    color: var(--oj-color-danger);
+    background-color: var(--oj-color-danger-soft);
+    border: 1px solid var(--oj-color-danger-border);
+}
+
+/* 难度标签 */
+.oj-difficulty-easy {
+    color: var(--oj-difficulty-easy);
+    background-color: var(--oj-difficulty-easy-bg);
+    border: 1px solid var(--oj-difficulty-easy-border);
+}
+
+.oj-difficulty-medium {
+    color: var(--oj-difficulty-medium);
+    background-color: var(--oj-difficulty-medium-bg);
+    border: 1px solid var(--oj-difficulty-medium-border);
+}
+
+.oj-difficulty-hard {
+    color: var(--oj-difficulty-hard);
+    background-color: var(--oj-difficulty-hard-bg);
+    border: 1px solid var(--oj-difficulty-hard-border);
+}
+
+/* ============================================
+ * 输入框样式
+ * ============================================ */
+
+.oj-input {
+    width: 100%;
+    padding: var(--oj-input-padding-y) var(--oj-input-padding-x);
+    font-size: var(--oj-font-size-sm);
+    color: var(--oj-input-text);
+    background-color: var(--oj-input-bg);
+    border: 1px solid var(--oj-input-border);
+    border-radius: var(--oj-radius-lg);
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.oj-input:focus {
+    outline: none;
+    border-color: var(--oj-input-focus-border);
+    box-shadow: 0 0 0 3px var(--oj-color-primary-soft);
+}
+
+.oj-input::placeholder {
+    color: var(--oj-input-placeholder);
+}
+
+/* ============================================
+ * 导航链接样式
+ * ============================================ */
+
+.oj-nav-link {
+    position: relative;
+    padding: var(--oj-spacing-2) var(--oj-spacing-3);
+    font-size: var(--oj-font-size-sm);
+    font-weight: var(--oj-font-weight-medium);
+    color: var(--oj-text-secondary);
+    transition: color 0.2s ease;
+}
+
+.oj-nav-link:hover {
+    color: var(--oj-text-inverse);
+}
+
+.oj-nav-link.active {
+    color: var(--oj-color-primary);
+}
+
+.oj-nav-link::after {
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    content: "";
+    background-color: var(--oj-color-primary);
+    transition: width 0.3s ease;
+}
+
+.oj-nav-link:hover::after,
+.oj-nav-link.active::after {
+    width: 100%;
+}
+
+/* ============================================
+ * 侧边栏链接样式
+ * ============================================ */
+
+.oj-sidebar-link {
+    display: flex;
+    gap: var(--oj-spacing-3);
+    align-items: center;
+    padding: var(--oj-spacing-3) var(--oj-spacing-4);
+    font-size: var(--oj-font-size-sm);
+    color: var(--oj-text-secondary);
+    border-radius: var(--oj-radius-lg);
+    transition: all 0.2s ease;
+}
+
+.oj-sidebar-link:hover {
+    color: var(--oj-color-primary);
+    background-color: var(--oj-color-primary-soft);
+}
+
+.oj-sidebar-link.active {
+    color: var(--oj-color-primary);
+    background-color: var(--oj-color-primary-soft);
+    border-left: 3px solid var(--oj-color-primary);
+}
+
+/* ============================================
+ * 文本工具类
+ * ============================================ */
+
+.oj-text-primary {
+    color: var(--oj-text-color) !important;
+}
+
+.oj-text-secondary {
+    color: var(--oj-text-color-secondary) !important;
+}
+
+.oj-text-muted {
+    color: var(--oj-text-color-muted) !important;
+}
+
+.oj-text-accent {
+    color: var(--oj-color-primary) !important;
+}
+
+.oj-text-success {
+    color: var(--oj-color-success) !important;
+}
+
+.oj-text-warning {
+    color: var(--oj-color-warning) !important;
+}
+
+.oj-text-danger {
+    color: var(--oj-color-danger) !important;
+}
+
+/* ============================================
+ * 渐变文本
+ * ============================================ */
+
+.oj-text-gradient {
+    color: transparent;
+    background: var(--oj-gradient-primary);
+    background-clip: text;
+}
+
+/* ============================================
+ * 间距工具类
+ * ============================================ */
+
+.oj-mt-0 {
+    margin-top: 0 !important;
+}
+
+.oj-mt-2 {
+    margin-top: var(--oj-spacing-2) !important;
+}
+
+.oj-mt-4 {
+    margin-top: var(--oj-spacing-4) !important;
+}
+
+.oj-mt-6 {
+    margin-top: var(--oj-spacing-6) !important;
+}
+
+.oj-mt-8 {
+    margin-top: var(--oj-spacing-8) !important;
+}
+
+.oj-mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.oj-mb-2 {
+    margin-bottom: var(--oj-spacing-2) !important;
+}
+
+.oj-mb-4 {
+    margin-bottom: var(--oj-spacing-4) !important;
+}
+
+.oj-mb-6 {
+    margin-bottom: var(--oj-spacing-6) !important;
+}
+
+.oj-mb-8 {
+    margin-bottom: var(--oj-spacing-8) !important;
+}
+
+.oj-p-0 {
+    padding: 0 !important;
+}
+
+.oj-p-2 {
+    padding: var(--oj-spacing-2) !important;
+}
+
+.oj-p-4 {
+    padding: var(--oj-spacing-4) !important;
+}
+
+.oj-p-6 {
+    padding: var(--oj-spacing-6) !important;
+}
+
+.oj-p-8 {
+    padding: var(--oj-spacing-8) !important;
+}
+
+/* ============================================
+ * 布局工具类
+ * ============================================ */
+
+.oj-flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oj-flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.oj-flex-start {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.oj-flex-end {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.oj-flex-grow {
+    flex-grow: 1;
+}
+
+.oj-flex-shrink-0 {
+    flex-shrink: 0;
+}
+
+/* ============================================
+ * 动画类
+ * ============================================ */
+
+.oj-animate-pulse {
+    animation: oj-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes oj-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.oj-animate-spin {
+    animation: oj-spin 1s linear infinite;
+}
+
+@keyframes oj-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+ * 截断文本
+ * ============================================ */
+
+.oj-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.oj-line-clamp-2 {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.oj-line-clamp-3 {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}

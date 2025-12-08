@@ -3,7 +3,7 @@ use("online_judge");
 
 db.users.insertMany([
     {
-        "_id": 1,
+        "_id": 962620231560335360n,
         "Avatar": "http://127.0.0.1:8081/api/image/1",
         "NickName": "凌云",
         "Account": "LingYunAdmin",
@@ -14,12 +14,12 @@ db.users.insertMany([
         "JoinTime": "2021-09-01 18:00:00",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 10,
-        "ACNum": 10,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 5
     },
     {
-        "_id": 2,
+        "_id": 962638523394035712n,
         "Avatar": "http://127.0.0.1:8081/api/image/2",
         "NickName": "小李",
         "Account": "XiaoLi",
@@ -30,12 +30,12 @@ db.users.insertMany([
         "JoinTime": "2022-08-01 17:30:00",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 7,
-        "ACNum": 5,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 3,
+        "_id": 962652293591863296n,
         "Avatar": "http://127.0.0.1:8081/api/image/3",
         "NickName": "小张",
         "Account": "XiaoZhang",
@@ -46,12 +46,12 @@ db.users.insertMany([
         "JoinTime": "2022-11-01 16:00:00",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 1,
-        "ACNum": 1,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 4,
+        "_id": 962652659628773376n,
         "Avatar": "http://127.0.0.1:8081/api/image/4",
         "NickName": "小王",
         "Account": "XiaoWang",
@@ -62,12 +62,12 @@ db.users.insertMany([
         "JoinTime": "2023-08-22 14:00:00",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 4,
-        "ACNum": 3,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 5,
+        "_id": 962653240556654592n,
         "Avatar": "http://127.0.0.1:8081/api/image/5",
         "NickName": "小刘",
         "Account": "XiaoLiu",
@@ -78,12 +78,12 @@ db.users.insertMany([
         "JoinTime": "2023-06-20 10:50:30",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 15,
-        "ACNum": 10,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 6,
+        "_id": 962653469183971328n,
         "Avatar": "http://127.0.0.1:8081/api/image/1",
         "NickName": "小周",
         "Account": "XiaoZhou",
@@ -94,12 +94,12 @@ db.users.insertMany([
         "JoinTime": "2023-02-10 09:20:00",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 6,
-        "ACNum": 4,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 7,
+        "_id": 962679526389846016n,
         "Avatar": "http://127.0.0.1:8081/api/image/2",
         "NickName": "小陈",
         "Account": "XiaoChen",
@@ -110,12 +110,12 @@ db.users.insertMany([
         "JoinTime": "2023-01-15 12:35:00",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 9,
-        "ACNum": 6,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 8,
+        "_id": 962679601518219264n,
         "Avatar": "http://127.0.0.1:8081/api/image/3",
         "NickName": "小赵",
         "Account": "XiaoZhao",
@@ -126,12 +126,12 @@ db.users.insertMany([
         "JoinTime": "2023-03-18 11:10:20",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 12,
-        "ACNum": 7,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 9,
+        "_id": 962679655511494656n,
         "Avatar": "http://127.0.0.1:8081/api/image/4",
         "NickName": "小孙",
         "Account": "XiaoSun",
@@ -142,12 +142,12 @@ db.users.insertMany([
         "JoinTime": "2022-09-26 10:00:00",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 5,
-        "ACNum": 3,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 10,
+        "_id": 962679731923324928n,
         "Avatar": "http://127.0.0.1:8081/api/image/5",
         "NickName": "小胡",
         "Account": "XiaoHu",
@@ -158,12 +158,12 @@ db.users.insertMany([
         "JoinTime": "2023-04-01 15:40:30",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 8,
-        "ACNum": 5,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 11,
+        "_id": 962679789502730240n,
         "Avatar": "http://127.0.0.1:8081/api/image/1",
         "NickName": "小吴",
         "Account": "XiaoWu",
@@ -174,12 +174,12 @@ db.users.insertMany([
         "JoinTime": "2023-05-21 13:20:12",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 11,
-        "ACNum": 7,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 12,
+        "_id": 962953156491350016n,
         "Avatar": "http://127.0.0.1:8081/api/image/2",
         "NickName": "小彭",
         "Account": "XiaoPeng",
@@ -190,12 +190,12 @@ db.users.insertMany([
         "JoinTime": "2023-03-30 08:15:00",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 13,
-        "ACNum": 8,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 13,
+        "_id": 963033613102878720n,
         "Avatar": "http://127.0.0.1:8081/api/image/3",
         "NickName": "小杨",
         "Account": "XiaoYang",
@@ -206,12 +206,12 @@ db.users.insertMany([
         "JoinTime": "2023-02-25 19:25:45",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 14,
-        "ACNum": 9,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 14,
+        "_id": 963033805197807616n,
         "Avatar": "http://127.0.0.1:8081/api/image/4",
         "NickName": "小高",
         "Account": "XiaoGao",
@@ -222,12 +222,12 @@ db.users.insertMany([
         "JoinTime": "2023-07-01 16:20:10",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 16,
-        "ACNum": 10,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     },
     {
-        "_id": 15,
+        "_id": 963059455119986688n,
         "Avatar": "http://127.0.0.1:8081/api/image/5",
         "NickName": "小邓",
         "Account": "XiaoDeng",
@@ -238,8 +238,8 @@ db.users.insertMany([
         "JoinTime": "2023-09-15 18:30:00",
         "CommentLikes": [],
         "Solves": [],
-        "SubmitNum": 9,
-        "ACNum": 6,
+        "SubmitNum": 0,
+        "ACNum": 0,
         "Authority": 3
     }
 ]);
