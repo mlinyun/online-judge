@@ -51,7 +51,7 @@ const themeOptions = [
     justify-content: center;
     width: 36px;
     height: 36px;
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     cursor: pointer;
     background: transparent;
     border: none;
@@ -71,5 +71,10 @@ const themeOptions = [
 :deep(.el-dropdown-menu__item.is-active) {
     color: var(--oj-color-primary);
     background: rgb(var(--oj-color-primary-rgb) / 10%);
+}
+
+:deep(.el-dropdown-menu__item:not(.is-active):focus, .el-dropdown-menu__item:not(.is-active):hover) {
+    color: var(--oj-color-primary);
+    background-color: rgb(var(--oj-color-primary-rgb) / 10%);
 }
 </style>

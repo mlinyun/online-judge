@@ -63,7 +63,7 @@ const links = [
 
 <style scoped>
 .app-footer {
-    padding: var(--oj-spacing-8) 0 var(--oj-spacing-6);
+    padding: var(--oj-spacing-4) 0 var(--oj-spacing-4);
     margin-top: auto;
     background: var(--oj-bg-secondary);
     border-top: 1px solid var(--oj-border-color);
@@ -88,7 +88,7 @@ const links = [
 @media (width >=768px) {
     .footer-content {
         flex-direction: row;
-        align-items: flex-start;
+        align-items: center;
     }
 }
 
@@ -122,7 +122,7 @@ const links = [
 .brand-desc {
     max-width: 300px;
     font-size: var(--oj-font-size-sm);
-    color: var(--oj-text-muted);
+    color: var(--oj-text-color-muted);
 }
 
 /* 链接 */
@@ -141,7 +141,7 @@ const links = [
 
 .footer-link {
     font-size: var(--oj-font-size-sm);
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     text-decoration: none;
     transition: color 0.2s;
 }
@@ -153,7 +153,7 @@ const links = [
 /* 分隔线 */
 .footer-divider {
     height: 1px;
-    margin: var(--oj-spacing-6) 0;
+    margin: var(--oj-spacing-4) 0;
     background: var(--oj-border-color);
 }
 

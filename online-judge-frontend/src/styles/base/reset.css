@@ -26,7 +26,7 @@ html {
 
 body {
     min-height: 100vh;
-    font-family: var(--oj-font-family-sans);
+    font-family: var(--oj-font-family-sans), sans-serif;
     font-size: var(--oj-font-size-base);
     font-weight: var(--oj-font-weight-normal);
     line-height: var(--oj-line-height-body);
@@ -62,7 +62,7 @@ h5,
 h6 {
     font-weight: var(--oj-font-weight-bold);
     line-height: var(--oj-line-height-heading);
-    color: var(--oj-text-inverse);
+    color: var(--oj-text-color);
 }
 
 h1 {
@@ -103,7 +103,8 @@ samp {
 code {
     padding: var(--oj-spacing-0-5) var(--oj-spacing-1);
     font-size: var(--oj-font-size-sm);
-    background-color: var(--oj-slate-800);
+    background-color: var(--oj-content-bg-soft);
+    color: var(--oj-text-color);
     border-radius: var(--oj-radius-md);
 }
 
@@ -112,8 +113,9 @@ pre {
     overflow-x: auto;
     font-size: var(--oj-font-size-sm);
     line-height: var(--oj-line-height-code);
-    background-color: var(--oj-slate-800);
-    border: 1px solid var(--oj-slate-700);
+    color: var(--oj-text-color);
+    background-color: var(--oj-content-bg-soft);
+    border: 1px solid var(--oj-border-color-solid);
     border-radius: var(--oj-radius-lg);
 }
 

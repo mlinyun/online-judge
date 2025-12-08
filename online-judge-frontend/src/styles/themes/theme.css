@@ -77,7 +77,9 @@ html.light {
 
     /* 页面背景 */
     --oj-page-bg: var(--oj-bg-light-base);
-    --oj-page-bg-image: linear-gradient(180deg, rgb(6 182 212 / 5%) 0%, transparent 30%);
+    --oj-page-bg-image:
+        radial-gradient(at 0% 0%, rgb(6 182 212 / 8%) 0%, transparent 50%),
+        radial-gradient(at 100% 100%, rgb(217 70 239 / 8%) 0%, transparent 50%);
 
     /* 内容区背景 */
     --oj-content-bg: #fff;
@@ -106,9 +108,9 @@ html.light {
 
     /* 输入框 */
     --oj-input-bg: #fff;
-    --oj-input-border: #d1d5db;
+    --oj-input-border: #cbd5e1;
     --oj-input-text: var(--oj-text-light-primary);
-    --oj-input-placeholder: var(--oj-text-light-muted);
+    --oj-input-placeholder: #94a3b8;
     --oj-input-focus-border: var(--oj-color-primary);
 
     /* 按钮 */
@@ -123,12 +125,25 @@ html.light {
 
     /* 滚动条 */
     --oj-scrollbar-track: #f1f5f9;
-    --oj-scrollbar-thumb: #cbd5e1;
-    --oj-scrollbar-thumb-hover: #94a3b8;
+    --oj-scrollbar-thumb: #94a3b8;
+    --oj-scrollbar-thumb-hover: #64748b;
 
     /* 代码编辑器 */
     --oj-editor-bg: #fafafa;
-    --oj-editor-line-number: #94a3b8;
+    --oj-editor-line-number: #64748b;
+
+    /* 毛玻璃效果 (适配浅色) */
+    --oj-glass-bg: rgb(255 255 255 / 80%);
+    --oj-glass-bg-light: rgb(255 255 255 / 60%);
+    --oj-glass-bg-dark: rgb(255 255 255 / 95%);
+    --oj-glass-border: rgb(0 0 0 / 8%);
+    --oj-glass-blur: 12px;
+
+    /* 交互状态色 (浅色主题) */
+    --oj-bg-hover: rgb(241 245 249 / 80%);
+    --oj-bg-active: rgb(226 232 240 / 90%);
+    --oj-bg-tertiary: rgb(248 250 252 / 50%);
+    --oj-bg-secondary: var(--oj-bg-light-soft);
 }
 
 /* ============================================

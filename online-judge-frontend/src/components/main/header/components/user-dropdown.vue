@@ -145,7 +145,7 @@ const handleLogout = async () => {
     font-size: var(--oj-font-size-sm);
     font-weight: 500;
     margin: 0 var(--oj-spacing-2);
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     transition: color 0.2s;
 }
 
@@ -167,6 +167,11 @@ const handleLogout = async () => {
     display: flex;
     gap: var(--oj-spacing-2);
     align-items: center;
+}
+
+:deep(.el-dropdown-menu__item:not(.is-active):focus, .el-dropdown-menu__item:not(.is-active):hover) {
+    color: var(--oj-color-primary);
+    background-color: rgb(var(--oj-color-primary-rgb) / 10%);
 }
 
 .logout-icon {

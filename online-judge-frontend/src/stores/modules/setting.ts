@@ -10,27 +10,7 @@ import { defineStore } from "pinia";
 export const useSettingStore = defineStore(
     "settingStore",
     () => {
-        // 是否启用暗黑模式
-        const isDarkMode = ref<boolean>(false);
-
-        // 计算属性：获取暗黑模式状态
-        const getIsDarkMode = computed(() => isDarkMode.value);
-
-        /**
-         * 切换暗黑模式状态
-         */
-        const toggleDarkMode = () => {
-            isDarkMode.value = !isDarkMode.value;
-        };
-
-        return {
-            // 状态
-            isDarkMode,
-            // 计算属性
-            getIsDarkMode,
-            // 方法
-            toggleDarkMode,
-        };
+        return {};
     },
     {
         persist: { key: "setting", storage: localStorage },

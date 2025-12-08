@@ -207,7 +207,7 @@ const goToFrontend = () => {
 .brand-suffix {
     font-size: var(--oj-font-size-base);
     font-weight: 400;
-    color: var(--oj-text-muted);
+    color: var(--oj-text-color-muted);
 }
 
 .sidebar-toggle {
@@ -216,7 +216,7 @@ const goToFrontend = () => {
     justify-content: center;
     width: 24px;
     height: 24px;
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     cursor: pointer;
     border-radius: var(--oj-radius-sm);
     transition: all 0.2s;
@@ -261,7 +261,7 @@ const goToFrontend = () => {
     height: 48px;
     margin: 0 var(--oj-spacing-2) var(--oj-spacing-1);
     border-radius: var(--oj-radius-lg);
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
 }
 
 /* 折叠状态下调整菜单项样式以居中图标 */
@@ -302,7 +302,7 @@ const goToFrontend = () => {
     gap: var(--oj-spacing-3);
     align-items: center;
     padding: var(--oj-spacing-3) var(--oj-spacing-4);
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     cursor: pointer;
     border-radius: var(--oj-radius-lg);
     transition: all 0.2s;

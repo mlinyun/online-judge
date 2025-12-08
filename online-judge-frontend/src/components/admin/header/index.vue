@@ -87,7 +87,7 @@ const userInfo = computed(() => userStore.getUserInfo);
     justify-content: center;
     width: 36px;
     height: 36px;
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     cursor: pointer;
     background: transparent;
     border: none;

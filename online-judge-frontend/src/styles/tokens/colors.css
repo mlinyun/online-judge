@@ -112,9 +112,9 @@
 
     /* 浅色主题文本 */
     --oj-text-light-primary: #0f172a;
-    --oj-text-light-secondary: #475569;
-    --oj-text-light-muted: #94a3b8;
-    --oj-text-light-disabled: #cbd5e1;
+    --oj-text-light-secondary: #334155;
+    --oj-text-light-muted: #64748b;
+    --oj-text-light-disabled: #94a3b8;
 
     /* 反色文本 (用于彩色背景上) */
     --oj-text-inverse: #fff;

@@ -131,6 +131,9 @@ html.dark {
     --el-disabled-bg-color: var(--oj-slate-800);
     --el-disabled-text-color: var(--oj-text-disabled);
     --el-disabled-border-color: var(--oj-slate-700);
+
+    /* Hover 状态 - 修复深色模式下的白色背景问题 */
+    --el-bg-color-hover: var(--oj-color-primary-rgb);
 }
 
 /* ============================================
@@ -181,4 +184,7 @@ html.light {
     --el-disabled-bg-color: #f5f7fa;
     --el-disabled-text-color: #a8abb2;
     --el-disabled-border-color: #e4e7ed;
+
+    /* Hover 状态 - 浅色模式 */
+    --el-bg-color-hover: var(--oj-bg-hover); /* 使用主题的 hover 背景色 */
 }

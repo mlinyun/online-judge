@@ -85,7 +85,8 @@
 
 .oj-btn-secondary {
     background-color: var(--oj-button-secondary-bg);
-    border: 1px solid var(--oj-slate-600);
+    color: var(--oj-text-color);
+    border: 1px solid var(--oj-border-color-solid);
 }
 
 .oj-btn-secondary:hover {
@@ -138,9 +139,9 @@
 }
 
 .oj-tag-default {
-    color: var(--oj-text-secondary);
-    background-color: var(--oj-slate-700);
-    border: 1px solid var(--oj-slate-600);
+    color: var(--oj-text-color);
+    background-color: var(--oj-content-bg-soft);
+    border: 1px solid var(--oj-border-color-solid);
 }
 
 .oj-tag-primary {
@@ -222,12 +223,12 @@
     padding: var(--oj-spacing-2) var(--oj-spacing-3);
     font-size: var(--oj-font-size-sm);
     font-weight: var(--oj-font-weight-medium);
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     transition: color 0.2s ease;
 }
 
 .oj-nav-link:hover {
-    color: var(--oj-text-inverse);
+    color: var(--oj-text-color);
 }
 
 .oj-nav-link.active {
@@ -260,7 +261,7 @@
     align-items: center;
     padding: var(--oj-spacing-3) var(--oj-spacing-4);
     font-size: var(--oj-font-size-sm);
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     border-radius: var(--oj-radius-lg);
     transition: all 0.2s ease;
 }

@@ -346,22 +346,30 @@ Json::Value MoDB::SelectUserRank(Json::Value &queryjson) {
         // 获取数据库连接
         auto client = pool.acquire();
         mongocxx::collection usercoll = (*client)[DATABASE_NAME][COLLECTION_USERS];
-        bsoncxx::builder::stream::document document{};
-        mongocxx::pipeline pipe;
-        Json::Reader reader;
-        Json::Value list(Json::arrayValue);
+
+        // 获取总用户数
         auto total = static_cast<int>(usercoll.count_documents({}));
 
+        // 构造查询管道
+        bsoncxx::builder::stream::document document{};
         // ACNum 值越大，越靠前；若 ACNum 相同，则 SubmitNum 越小排名越高，如果 ACNum 和 SubmitNum 都相同，则按 _id 排序
-        document << "ACNum" << -1 << "SubmitNum" << 1;
-
+        document << "ACNum" << -1 << "SubmitNum" << 1 << "_id" << 1;
+        
+        // 构造聚合管道
+        mongocxx::pipeline pipe;
+        // 排序、跳过和限制
         pipe.sort(document.view());
         pipe.skip(skip);
         pipe.limit(pagesize);
         document.clear();
+
+        // 只返回需要的字段
         document << "Avatar" << 1 << "NickName" << 1 << "PersonalProfile" << 1 << "SubmitNum" << 1 << "ACNum" << 1;
         pipe.project(document.view());
 
+        Json::Reader reader;
+        Json::Value list(Json::arrayValue);
+        // 执行聚合查询
         mongocxx::cursor cursor = usercoll.aggregate(pipe);
         for (auto doc : cursor) {
             Json::Value jsonvalue;

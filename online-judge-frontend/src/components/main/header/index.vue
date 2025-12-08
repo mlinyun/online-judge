@@ -213,7 +213,7 @@ const toggleMobileMenu = () => {
     border-bottom: 2px solid transparent;
     font-size: var(--oj-font-size-base);
     font-weight: 500;
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     line-height: var(--oj-navbar-height);
     cursor: pointer;
     background: transparent !important;
@@ -306,7 +306,7 @@ const toggleMobileMenu = () => {
     border: none;
     border-radius: var(--oj-radius-md);
     background: var(--oj-bg-tertiary);
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -352,7 +352,7 @@ const toggleMobileMenu = () => {
     border-radius: var(--oj-radius-md);
     font-size: var(--oj-font-size-sm);
     font-weight: 500;
-    color: var(--oj-text-secondary);
+    color: var(--oj-text-color-secondary);
     cursor: pointer;
     background: transparent;
     overflow: hidden;
