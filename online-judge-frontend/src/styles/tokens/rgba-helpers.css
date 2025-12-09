@@ -1,0 +1,244 @@
+/**
+ * Online Judge RGBA 辅助变量
+ * 提供基于 RGB 的透明度 token，便于动态透明度计算
+ */
+
+:root {
+    /* --------------------------------------------
+     * 文本色 RGB 值 (Text Colors RGB)
+     * -------------------------------------------- */
+
+    /* 深色主题文本 RGB */
+    --oj-text-primary-rgb: 226 232 240; /* #e2e8f0 */
+    --oj-text-secondary-rgb: 148 163 184; /* #94a3b8 */
+    --oj-text-muted-rgb: 100 116 139; /* #64748b */
+    --oj-text-disabled-rgb: 71 85 105; /* #475569 */
+
+    /* 浅色主题文本 RGB */
+    --oj-text-light-primary-rgb: 15 23 42; /* #0f172a */
+    --oj-text-light-secondary-rgb: 51 65 85; /* #334155 */
+    --oj-text-light-muted-rgb: 100 116 139; /* #64748b */
+    --oj-text-light-disabled-rgb: 148 163 184; /* #94a3b8 */
+
+    /* --------------------------------------------
+     * 背景色 RGB 值 (Background Colors RGB)
+     * -------------------------------------------- */
+
+    /* 深色背景 RGB */
+    --oj-bg-base-rgb: 11 17 32; /* #0b1120 */
+    --oj-bg-dark-rgb: 15 23 42; /* #0f172a */
+    --oj-bg-light-rgb: 30 41 59; /* #1e293b */
+    --oj-bg-elevated-rgb: 51 65 85; /* #334155 */
+
+    /* 浅色背景 RGB */
+    --oj-bg-light-base-rgb: 248 250 252; /* #f8fafc */
+    --oj-bg-light-soft-rgb: 241 245 249; /* #f1f5f9 */
+    --oj-bg-light-mute-rgb: 226 232 240; /* #e2e8f0 */
+
+    /* 白色背景 RGB */
+    --oj-bg-white-rgb: 255 255 255; /* #ffffff */
+
+    /* --------------------------------------------
+     * Slate 系列 RGB 值
+     * -------------------------------------------- */
+
+    --oj-slate-500-rgb: 100 116 139; /* #64748b */
+    --oj-slate-600-rgb: 71 85 105; /* #475569 */
+    --oj-slate-700-rgb: 51 65 85; /* #334155 */
+    --oj-slate-800-rgb: 30 41 59; /* #1e293b */
+    --oj-slate-900-rgb: 15 23 42; /* #0f172a */
+
+    /* --------------------------------------------
+     * 透明度预设 (Opacity Presets)
+     * -------------------------------------------- */
+
+    --oj-opacity-0: 0;
+    --oj-opacity-5: 0.05;
+    --oj-opacity-10: 0.1;
+    --oj-opacity-20: 0.2;
+    --oj-opacity-30: 0.3;
+    --oj-opacity-40: 0.4;
+    --oj-opacity-50: 0.5;
+    --oj-opacity-60: 0.6;
+    --oj-opacity-70: 0.7;
+    --oj-opacity-80: 0.8;
+    --oj-opacity-90: 0.9;
+    --oj-opacity-95: 0.95;
+    --oj-opacity-100: 1;
+
+    /* --------------------------------------------
+     * 常用透明度组合 (Common Transparency Combinations)
+     * -------------------------------------------- */
+
+    /* 文本透明度变体 - 深色主题 */
+    --oj-text-primary-alpha-90: rgb(var(--oj-text-primary-rgb) / 90%);
+    --oj-text-primary-alpha-80: rgb(var(--oj-text-primary-rgb) / 80%);
+    --oj-text-secondary-alpha-80: rgb(var(--oj-text-secondary-rgb) / 80%);
+    --oj-text-secondary-alpha-60: rgb(var(--oj-text-secondary-rgb) / 60%);
+
+    /* 背景透明度变体 - 深色主题 */
+    --oj-bg-dark-alpha-95: rgb(var(--oj-bg-dark-rgb) / 95%);
+    --oj-bg-dark-alpha-80: rgb(var(--oj-bg-dark-rgb) / 80%);
+    --oj-bg-dark-alpha-50: rgb(var(--oj-bg-dark-rgb) / 50%);
+    --oj-bg-light-alpha-70: rgb(var(--oj-bg-light-rgb) / 70%);
+    --oj-bg-light-alpha-50: rgb(var(--oj-bg-light-rgb) / 50%);
+    --oj-bg-light-alpha-20: rgb(var(--oj-bg-light-rgb) / 20%);
+
+    /* Slate 透明度变体 */
+    --oj-slate-700-alpha-50: rgb(var(--oj-slate-700-rgb) / 50%);
+    --oj-slate-800-alpha-80: rgb(var(--oj-slate-800-rgb) / 80%);
+    --oj-slate-800-alpha-50: rgb(var(--oj-slate-800-rgb) / 50%);
+
+    /* 白色透明度变体 (用于边框、分隔线等) */
+    --oj-white-alpha-95: rgb(255 255 255 / 95%);
+    --oj-white-alpha-80: rgb(255 255 255 / 80%);
+    --oj-white-alpha-60: rgb(255 255 255 / 60%);
+    --oj-white-alpha-40: rgb(255 255 255 / 40%);
+    --oj-white-alpha-20: rgb(255 255 255 / 20%);
+    --oj-white-alpha-15: rgb(255 255 255 / 15%);
+    --oj-white-alpha-10: rgb(255 255 255 / 10%);
+    --oj-white-alpha-8: rgb(255 255 255 / 8%);
+    --oj-white-alpha-5: rgb(255 255 255 / 5%);
+
+    /* 黑色透明度变体 (用于浅色主题) */
+    --oj-black-alpha-95: rgb(0 0 0 / 95%);
+    --oj-black-alpha-80: rgb(0 0 0 / 80%);
+    --oj-black-alpha-60: rgb(0 0 0 / 60%);
+    --oj-black-alpha-40: rgb(0 0 0 / 40%);
+    --oj-black-alpha-30: rgb(0 0 0 / 30%);
+    --oj-black-alpha-20: rgb(0 0 0 / 20%);
+    --oj-black-alpha-10: rgb(0 0 0 / 10%);
+    --oj-black-alpha-8: rgb(0 0 0 / 8%);
+    --oj-black-alpha-5: rgb(0 0 0 / 5%);
+
+    /* --------------------------------------------
+     * 主题色透明度变体 (Theme Color Transparency)
+     * -------------------------------------------- */
+
+    /* Primary 青色透明度 */
+    --oj-primary-alpha-90: rgb(var(--oj-color-primary-rgb) / 90%);
+    --oj-primary-alpha-80: rgb(var(--oj-color-primary-rgb) / 80%);
+    --oj-primary-alpha-60: rgb(var(--oj-color-primary-rgb) / 60%);
+    --oj-primary-alpha-40: rgb(var(--oj-color-primary-rgb) / 40%);
+    --oj-primary-alpha-20: rgb(var(--oj-color-primary-rgb) / 20%);
+    --oj-primary-alpha-10: rgb(var(--oj-color-primary-rgb) / 10%);
+    --oj-primary-alpha-5: rgb(var(--oj-color-primary-rgb) / 5%);
+
+    /* Secondary 紫红色透明度 */
+    --oj-secondary-alpha-90: rgb(var(--oj-color-secondary-rgb) / 90%);
+    --oj-secondary-alpha-80: rgb(var(--oj-color-secondary-rgb) / 80%);
+    --oj-secondary-alpha-60: rgb(var(--oj-color-secondary-rgb) / 60%);
+    --oj-secondary-alpha-40: rgb(var(--oj-color-secondary-rgb) / 40%);
+    --oj-secondary-alpha-20: rgb(var(--oj-color-secondary-rgb) / 20%);
+    --oj-secondary-alpha-10: rgb(var(--oj-color-secondary-rgb) / 10%);
+    --oj-secondary-alpha-5: rgb(var(--oj-color-secondary-rgb) / 5%);
+
+    /* Success 绿色透明度 */
+    --oj-success-alpha-80: rgb(var(--oj-color-success-rgb) / 80%);
+    --oj-success-alpha-60: rgb(var(--oj-color-success-rgb) / 60%);
+    --oj-success-alpha-40: rgb(var(--oj-color-success-rgb) / 40%);
+    --oj-success-alpha-30: rgb(var(--oj-color-success-rgb) / 30%);
+    --oj-success-alpha-20: rgb(var(--oj-color-success-rgb) / 20%);
+    --oj-success-alpha-10: rgb(var(--oj-color-success-rgb) / 10%);
+
+    /* Warning 橙色透明度 */
+    --oj-warning-alpha-80: rgb(var(--oj-color-warning-rgb) / 80%);
+    --oj-warning-alpha-60: rgb(var(--oj-color-warning-rgb) / 60%);
+    --oj-warning-alpha-40: rgb(var(--oj-color-warning-rgb) / 40%);
+    --oj-warning-alpha-30: rgb(var(--oj-color-warning-rgb) / 30%);
+    --oj-warning-alpha-20: rgb(var(--oj-color-warning-rgb) / 20%);
+    --oj-warning-alpha-10: rgb(var(--oj-color-warning-rgb) / 10%);
+
+    /* Danger 红色透明度 */
+    --oj-danger-alpha-80: rgb(var(--oj-color-danger-rgb) / 80%);
+    --oj-danger-alpha-60: rgb(var(--oj-color-danger-rgb) / 60%);
+    --oj-danger-alpha-40: rgb(var(--oj-color-danger-rgb) / 40%);
+    --oj-danger-alpha-30: rgb(var(--oj-color-danger-rgb) / 30%);
+    --oj-danger-alpha-20: rgb(var(--oj-color-danger-rgb) / 20%);
+    --oj-danger-alpha-10: rgb(var(--oj-color-danger-rgb) / 10%);
+
+    /* Info 蓝色透明度 */
+    --oj-info-alpha-80: rgb(var(--oj-color-info-rgb) / 80%);
+    --oj-info-alpha-60: rgb(var(--oj-color-info-rgb) / 60%);
+    --oj-info-alpha-40: rgb(var(--oj-color-info-rgb) / 40%);
+    --oj-info-alpha-30: rgb(var(--oj-color-info-rgb) / 30%);
+    --oj-info-alpha-20: rgb(var(--oj-color-info-rgb) / 20%);
+    --oj-info-alpha-10: rgb(var(--oj-color-info-rgb) / 10%);
+}
+
+/* --------------------------------------------
+ * 工具类：透明度调整 (Opacity Utilities)
+ * -------------------------------------------- */
+.oj-opacity-0 {
+    opacity: var(--oj-opacity-0);
+}
+
+.oj-opacity-10 {
+    opacity: var(--oj-opacity-10);
+}
+
+.oj-opacity-20 {
+    opacity: var(--oj-opacity-20);
+}
+
+.oj-opacity-30 {
+    opacity: var(--oj-opacity-30);
+}
+
+.oj-opacity-40 {
+    opacity: var(--oj-opacity-40);
+}
+
+.oj-opacity-50 {
+    opacity: var(--oj-opacity-50);
+}
+
+.oj-opacity-60 {
+    opacity: var(--oj-opacity-60);
+}
+
+.oj-opacity-70 {
+    opacity: var(--oj-opacity-70);
+}
+
+.oj-opacity-80 {
+    opacity: var(--oj-opacity-80);
+}
+
+.oj-opacity-90 {
+    opacity: var(--oj-opacity-90);
+}
+
+.oj-opacity-100 {
+    opacity: var(--oj-opacity-100);
+}
+
+/* --------------------------------------------
+ * 悬停透明度 (Hover Opacity)
+ * -------------------------------------------- */
+.oj-hover-opacity-80:hover {
+    opacity: var(--oj-opacity-80);
+}
+
+.oj-hover-opacity-90:hover {
+    opacity: var(--oj-opacity-90);
+}
+
+.oj-hover-opacity-100:hover {
+    opacity: var(--oj-opacity-100);
+}
+
+/* --------------------------------------------
+ * 组透明度 (Group Hover Opacity)
+ * -------------------------------------------- */
+.oj-group:hover .oj-group-hover-opacity-80 {
+    opacity: var(--oj-opacity-80);
+}
+
+.oj-group:hover .oj-group-hover-opacity-90 {
+    opacity: var(--oj-opacity-90);
+}
+
+.oj-group:hover .oj-group-hover-opacity-100 {
+    opacity: var(--oj-opacity-100);
+}

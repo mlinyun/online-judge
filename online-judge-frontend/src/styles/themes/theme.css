@@ -4,10 +4,7 @@
  * 默认使用深色主题以匹配 Cyber 风格
  */
 
-/* ============================================
- * 深色主题 (默认)
- * ============================================ */
-
+/* -------------------- 深色主题 (默认) -------------------- */
 :root,
 html.dark {
     color-scheme: dark;
@@ -66,20 +63,32 @@ html.dark {
     /* 代码编辑器 */
     --oj-editor-bg: #1e1e1e;
     --oj-editor-line-number: var(--oj-text-muted);
+
+    /* 语义表面 (深色主题) */
+    --oj-surface-base: var(--oj-bg-light);
+    --oj-surface-elevated: var(--oj-bg-elevated);
+    --oj-surface-sunken: var(--oj-bg-dark);
+    --oj-surface-hover: rgb(51 65 85 / 50%);
+    --oj-surface-active: rgb(51 65 85 / 70%);
+    --oj-surface-selected: rgb(6 182 212 / 15%);
+    --oj-surface-focus: rgb(6 182 212 / 10%);
+    --oj-surface-border: var(--oj-border-base);
+    --oj-surface-border-hover: var(--oj-border-hover);
+    --oj-surface-border-focus: var(--oj-border-focus);
+    --oj-surface-border-active: var(--oj-color-primary);
+    --oj-surface-overlay: rgb(30 41 59 / 95%);
+    --oj-surface-overlay-light: rgb(30 41 59 / 80%);
+    --oj-surface-modal-backdrop: rgb(0 0 0 / 60%);
 }
 
-/* ============================================
- * 浅色主题
- * ============================================ */
-
+/* -------------------- 浅色主题-------------------- */
 html.light {
     color-scheme: light;
 
     /* 页面背景 */
     --oj-page-bg: var(--oj-bg-light-base);
-    --oj-page-bg-image:
-        radial-gradient(at 0% 0%, rgb(6 182 212 / 8%) 0%, transparent 50%),
-        radial-gradient(at 100% 100%, rgb(217 70 239 / 8%) 0%, transparent 50%);
+    --oj-page-bg-image: radial-gradient(at 0% 0%, rgb(6 182 212 / 8%) 0%, transparent 50%),
+    radial-gradient(at 100% 100%, rgb(217 70 239 / 8%) 0%, transparent 50%);
 
     /* 内容区背景 */
     --oj-content-bg: #fff;
@@ -144,25 +153,36 @@ html.light {
     --oj-bg-active: rgb(226 232 240 / 90%);
     --oj-bg-tertiary: rgb(248 250 252 / 50%);
     --oj-bg-secondary: var(--oj-bg-light-soft);
+
+    /* 语义表面 (浅色主题) */
+    --oj-surface-base: #fff;
+    --oj-surface-elevated: #fff;
+    --oj-surface-sunken: var(--oj-bg-light-soft);
+    --oj-surface-hover: rgb(241 245 249 / 80%);
+    --oj-surface-active: rgb(226 232 240 / 90%);
+    --oj-surface-selected: rgb(6 182 212 / 10%);
+    --oj-surface-focus: rgb(6 182 212 / 5%);
+    --oj-surface-border: rgb(0 0 0 / 8%);
+    --oj-surface-border-hover: rgb(0 0 0 / 15%);
+    --oj-surface-border-focus: var(--oj-color-primary);
+    --oj-surface-border-active: var(--oj-color-primary);
+    --oj-surface-overlay: rgb(255 255 255 / 95%);
+    --oj-surface-overlay-light: rgb(255 255 255 / 80%);
+    --oj-surface-modal-backdrop: rgb(0 0 0 / 50%);
 }
 
-/* ============================================
- * 主题过渡动画
- * ============================================ */
-
+/* -------------------- 主题过渡动画 -------------------- */
 html {
-    transition:
-        background-color 0.3s ease,
-        color 0.3s ease;
+    transition: background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 html *,
 html *::before,
 html *::after {
-    transition:
-        background-color 0.3s ease,
-        border-color 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 /* 禁用特定元素的过渡 (避免闪烁) */

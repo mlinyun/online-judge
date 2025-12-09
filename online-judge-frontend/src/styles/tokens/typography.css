@@ -4,25 +4,22 @@
  */
 
 :root {
-    /* ============================================
-   * 字体族 (Font Families)
-   * ============================================ */
+    /* --------------------------------------------
+     * 字体族 (Font Families)
+     * -------------------------------------------- */
 
     /* 主要无衬线字体 (用于正文、UI) */
-    --oj-font-family-sans:
-        "Inter", -apple-system, blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", arial, "Noto Sans",
-        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-        "Segoe UI Symbol";
+    --oj-font-family-sans: "Inter", -apple-system, blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", arial, "Noto Sans",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
 
     /* 等宽字体 (用于代码、ID 显示) */
-    --oj-font-family-mono:
-        "JetBrains Mono", "Fira Code", "Source Code Pro", menlo, monaco, consolas, "Liberation Mono", "Courier New",
-        monospace;
+    --oj-font-family-mono: "JetBrains Mono", "Fira Code", "Source Code Pro", menlo, monaco, consolas, "Liberation Mono", "Courier New",
+    monospace;
 
-    /* ============================================
-   * 字号 (Font Sizes)
-   * ============================================ */
-
+    /* --------------------------------------------
+     * 字号 (Font Sizes)
+     * -------------------------------------------- */
     --oj-font-size-xs: 0.75rem; /* 12px - 辅助文本、标签 */
     --oj-font-size-sm: 0.875rem; /* 14px - 次要文本、按钮 */
     --oj-font-size-base: 1rem; /* 16px - 正文基准 */
@@ -34,10 +31,9 @@
     --oj-font-size-5xl: 3rem; /* 48px - 特大标题 (Hero) */
     --oj-font-size-6xl: 3.75rem; /* 60px - 巨型标题 */
 
-    /* ============================================
-   * 字重 (Font Weights)
-   * ============================================ */
-
+    /* --------------------------------------------
+     * 字重 (Font Weights)
+     * -------------------------------------------- */
     --oj-font-weight-light: 300;
     --oj-font-weight-normal: 400;
     --oj-font-weight-medium: 500;
@@ -45,10 +41,9 @@
     --oj-font-weight-bold: 700;
     --oj-font-weight-extrabold: 800;
 
-    /* ============================================
-   * 行高 (Line Heights)
-   * ============================================ */
-
+    /* --------------------------------------------
+     * 行高 (Line Heights)
+     * -------------------------------------------- */
     --oj-line-height-none: 1;
     --oj-line-height-tight: 1.25;
     --oj-line-height-snug: 1.375;
@@ -61,10 +56,9 @@
     --oj-line-height-body: 1.6;
     --oj-line-height-code: 1.5;
 
-    /* ============================================
-   * 字间距 (Letter Spacing)
-   * ============================================ */
-
+    /* --------------------------------------------
+     * 字间距 (Letter Spacing)
+     * -------------------------------------------- */
     --oj-letter-spacing-tighter: -0.05em;
     --oj-letter-spacing-tight: -0.025em;
     --oj-letter-spacing-normal: 0;

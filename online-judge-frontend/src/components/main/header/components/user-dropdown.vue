@@ -142,9 +142,9 @@ const handleLogout = async () => {
 
 .user-name {
     display: none;
+    margin: 0 var(--oj-spacing-2);
     font-size: var(--oj-font-size-sm);
     font-weight: 500;
-    margin: 0 var(--oj-spacing-2);
     color: var(--oj-text-color-secondary);
     transition: color 0.2s;
 }

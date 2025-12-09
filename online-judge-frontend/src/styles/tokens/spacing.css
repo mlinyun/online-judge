@@ -4,323 +4,331 @@
  */
 
 :root {
-    /* ============================================
-   * 基础间距比例 (Spacing Scale)
-   * 基于 0.25rem (4px) 单位
-   * ============================================ */
-
-    --oj-spacing-0: 0;
+    /* --------------------------------------------
+     * 基础间距比例 (Spacing Scale)
+     * 基于 0.25rem (4px) 单位
+     * -------------------------------------------- */
 
     /* 0px */
-    --oj-spacing-px: 1px;
+    --oj-spacing-0: 0;
 
     /* 1px */
-    --oj-spacing-0-5: 0.125rem;
+    --oj-spacing-px: 1px;
 
     /* 2px */
-    --oj-spacing-1: 0.25rem;
+    --oj-spacing-0-5: 0.125rem;
 
     /* 4px */
-    --oj-spacing-1-5: 0.375rem;
+    --oj-spacing-1: 0.25rem;
 
     /* 6px */
+    --oj-spacing-1-5: 0.375rem;
+
+    /* 8px */
     --oj-spacing-2: 0.5rem;
 
-    /* 8px */
+    /* 10px */
     --oj-spacing-2-5: 0.625rem;
 
-    /* 10px */
+    /* 12px */
     --oj-spacing-3: 0.75rem;
 
-    /* 12px */
+    /* 14px */
     --oj-spacing-3-5: 0.875rem;
 
-    /* 14px */
+    /* 16px */
     --oj-spacing-4: 1rem;
 
-    /* 16px */
+    /* 20px */
     --oj-spacing-5: 1.25rem;
 
-    /* 20px */
+    /* 24px */
     --oj-spacing-6: 1.5rem;
 
-    /* 24px */
+    /* 28px */
     --oj-spacing-7: 1.75rem;
 
-    /* 28px */
+    /* 32px */
     --oj-spacing-8: 2rem;
 
-    /* 32px */
+    /* 36px */
     --oj-spacing-9: 2.25rem;
 
-    /* 36px */
+    /* 40px */
     --oj-spacing-10: 2.5rem;
 
-    /* 40px */
+    /* 44px */
     --oj-spacing-11: 2.75rem;
 
-    /* 44px */
+    /* 48px */
     --oj-spacing-12: 3rem;
 
-    /* 48px */
+    /* 56px */
     --oj-spacing-14: 3.5rem;
 
-    /* 56px */
+    /* 64px */
     --oj-spacing-16: 4rem;
 
-    /* 64px */
+    /* 80px */
     --oj-spacing-20: 5rem;
 
-    /* 80px */
+    /* 96px */
     --oj-spacing-24: 6rem;
 
-    /* 96px */
+    /* 112px */
     --oj-spacing-28: 7rem;
 
-    /* 112px */
+    /* 128px */
     --oj-spacing-32: 8rem;
 
-    /* 128px */
+    /* 144px */
     --oj-spacing-36: 9rem;
 
-    /* 144px */
+    /* 160px */
     --oj-spacing-40: 10rem;
 
-    /* 160px */
+    /* 192px */
     --oj-spacing-48: 12rem;
 
-    /* 192px */
+    /* 224px */
     --oj-spacing-56: 14rem;
 
-    /* 224px */
+    /* 256px */
     --oj-spacing-64: 16rem;
 
-    /* 256px */
+    /* 288px */
     --oj-spacing-72: 18rem;
 
-    /* 288px */
+    /* 320px */
     --oj-spacing-80: 20rem;
 
-    /* 320px */
+    /* 384px */
     --oj-spacing-96: 24rem;
 
-    /* 384px */
 
-    /* ============================================
-   * 语义化间距 (Semantic Spacing)
-   * ============================================ */
+    /* --------------------------------------------
+     * 语义化间距 (Semantic Spacing)
+     * -------------------------------------------- */
 
-    /* 组件内间距 (Padding) */
-    --oj-padding-xs: var(--oj-spacing-2);
+    /* ---------- 组件内间距 (Padding) ---------- */
 
     /* 8px - 小型组件 */
-    --oj-padding-sm: var(--oj-spacing-3);
+    --oj-padding-xs: var(--oj-spacing-2);
 
     /* 12px - 中小型组件 */
-    --oj-padding-md: var(--oj-spacing-4);
+    --oj-padding-sm: var(--oj-spacing-3);
 
     /* 16px - 标准组件 */
-    --oj-padding-lg: var(--oj-spacing-6);
+    --oj-padding-md: var(--oj-spacing-4);
 
     /* 24px - 大型组件 */
-    --oj-padding-xl: var(--oj-spacing-8);
+    --oj-padding-lg: var(--oj-spacing-6);
 
     /* 32px - 超大组件 */
+    --oj-padding-xl: var(--oj-spacing-8);
 
-    /* 组件间间距 (Gap) */
-    --oj-gap-xs: var(--oj-spacing-2);
+    /* ---------- 组件间间距 (Gap) ----------  */
 
     /* 8px */
+    --oj-gap-xs: var(--oj-spacing-2);
+
+    /* 12px */
     --oj-gap-sm: var(--oj-spacing-3);
 
-    /* 12px */
+    /* 16px */
     --oj-gap-md: var(--oj-spacing-4);
 
-    /* 16px */
+    /* 24px */
     --oj-gap-lg: var(--oj-spacing-6);
 
-    /* 24px */
+    /* 32px */
     --oj-gap-xl: var(--oj-spacing-8);
 
-    /* 32px */
+    /* ---------- 区块间距 (Section Gap) ---------- */
 
-    /* 区块间距 (Section Gap) */
+    /* 32px */
     --oj-section-gap-sm: var(--oj-spacing-8);
 
-    /* 32px */
+    /* 48px */
     --oj-section-gap-md: var(--oj-spacing-12);
 
-    /* 48px */
+    /* 64px */
     --oj-section-gap-lg: var(--oj-spacing-16);
 
-    /* 64px */
+    /* 96px */
     --oj-section-gap-xl: var(--oj-spacing-24);
 
-    /* 96px */
+    /* --------------------------------------------
+     * 布局特定间距 (Layout Specific)
+     * -------------------------------------------- */
 
-    /* ============================================
-   * 布局特定间距 (Layout Specific)
-   * ============================================ */
-
-    /* 导航栏 */
-    --oj-navbar-height: var(--oj-spacing-16);
+    /* ---------- 导航栏 ----------  */
 
     /* 64px - h-16 */
-    --oj-navbar-height-sm: var(--oj-spacing-14);
+    --oj-navbar-height: var(--oj-spacing-16);
 
     /* 56px - h-14 紧凑导航 */
+    --oj-navbar-height-sm: var(--oj-spacing-14);
+
+    /* 16px */
     --oj-navbar-padding-x: var(--oj-spacing-4);
 
-    /* 16px */
 
-    /* 侧边栏 */
-    --oj-sidebar-width: var(--oj-spacing-64);
+    /* ---------- 侧边栏 ----------  */
 
     /* 256px - w-64 */
-    --oj-sidebar-width-collapsed: var(--oj-spacing-16);
+    --oj-sidebar-width: var(--oj-spacing-64);
 
     /* 64px */
-    --oj-sidebar-padding: var(--oj-spacing-3);
+    --oj-sidebar-width-collapsed: var(--oj-spacing-16);
 
     /* 12px */
+    --oj-sidebar-padding: var(--oj-spacing-3);
 
-    /* 内容区域 */
-    --oj-content-max-width: 80rem;
+    /* ---------- 内容区域 ----------  */
 
     /* 1280px - max-w-7xl */
+    --oj-content-max-width: 80rem;
+
+    /* 16px */
     --oj-content-padding-x: var(--oj-spacing-4);
 
-    /* 16px */
+    /* ---------- 卡片 ----------  */
 
-    /* 卡片 */
+    /* 24px */
     --oj-card-padding: var(--oj-spacing-6);
 
-    /* 24px */
+    /* 16px */
     --oj-card-padding-sm: var(--oj-spacing-4);
 
-    /* 16px */
+    /* 24px */
     --oj-card-gap: var(--oj-spacing-6);
 
-    /* 24px */
 
-    /* 表格 */
-    --oj-table-cell-padding-x: var(--oj-spacing-6);
+    /* ---------- 表格 ----------  */
 
     /* 24px - px-6 */
+    --oj-table-cell-padding-x: var(--oj-spacing-6);
+
+    /* 16px - py-4 */
     --oj-table-cell-padding-y: var(--oj-spacing-4);
+
+    /* 24px - px-6 */
+    --oj-table-header-padding-x: var(--oj-spacing-6);
 
     /* 16px - py-4 */
     --oj-table-header-padding-y: var(--oj-spacing-4);
 
-    /* 表单 */
+    /* ---------- 表单 ----------  */
+
+    /* 16px */
     --oj-form-item-gap: var(--oj-spacing-4);
 
-    /* 16px */
+    /* 8px */
     --oj-form-label-gap: var(--oj-spacing-2);
 
-    /* 8px */
+    /* 12px */
     --oj-input-padding-x: var(--oj-spacing-3);
 
-    /* 12px */
+    /* 10px */
     --oj-input-padding-y: var(--oj-spacing-2-5);
 
-    /* 10px */
+    /* ---------- 按钮 ----------  */
 
-    /* 按钮 */
+    /* 16px */
     --oj-button-padding-x-sm: var(--oj-spacing-4);
 
-    /* 16px */
+    /* 20px */
     --oj-button-padding-x-md: var(--oj-spacing-5);
 
-    /* 20px */
+    /* 32px */
     --oj-button-padding-x-lg: var(--oj-spacing-8);
 
-    /* 32px */
+    /* 6px */
     --oj-button-padding-y-sm: var(--oj-spacing-1-5);
 
-    /* 6px */
+    /* 10px */
     --oj-button-padding-y-md: var(--oj-spacing-2-5);
 
-    /* 10px */
+    /* 12px */
     --oj-button-padding-y-lg: var(--oj-spacing-3);
 
-    /* 12px */
-
-    /* 标签/徽章 */
-    --oj-tag-padding-x: var(--oj-spacing-2-5);
+    /* ---------- 标签/徽章 ----------  */
 
     /* 10px */
+    --oj-tag-padding-x: var(--oj-spacing-2-5);
+
+    /* 2px */
     --oj-tag-padding-y: var(--oj-spacing-0-5);
 
-    /* 2px */
+    /* ---------- 模态框 ----------  */
 
-    /* 模态框 */
+    /* 24px */
     --oj-modal-padding: var(--oj-spacing-6);
 
-    /* 24px */
+    /* --------------------------------------------
+     * 圆角 (Border Radius)
+     * -------------------------------------------- */
 
-    /* ============================================
-   * 圆角 (Border Radius)
-   * ============================================ */
-
+    /* 0px */
     --oj-radius-none: 0;
-    --oj-radius-sm: 0.125rem;
 
     /* 2px */
-    --oj-radius-base: 0.25rem;
+    --oj-radius-sm: 0.125rem;
 
     /* 4px */
-    --oj-radius-md: 0.375rem;
+    --oj-radius-base: 0.25rem;
 
     /* 6px */
-    --oj-radius-lg: 0.5rem;
+    --oj-radius-md: 0.375rem;
 
     /* 8px */
-    --oj-radius-xl: 0.75rem;
+    --oj-radius-lg: 0.5rem;
 
     /* 12px */
-    --oj-radius-2xl: 1rem;
+    --oj-radius-xl: 0.75rem;
 
     /* 16px */
-    --oj-radius-3xl: 1.5rem;
+    --oj-radius-2xl: 1rem;
 
     /* 24px */
-    --oj-radius-full: 9999px;
+    --oj-radius-3xl: 1.5rem;
 
     /* 圆形 */
+    --oj-radius-full: 9999px;
 
-    /* ============================================
-   * Z-Index 层级系统
-   * ============================================ */
 
-    --oj-z-dropdown: 1000;
+    /* --------------------------------------------
+     * Z-Index 层级系统
+     * -------------------------------------------- */
 
     /* 下拉菜单 */
-    --oj-z-sticky: 1020;
+    --oj-z-dropdown: 1000;
 
     /* 粘性元素 */
-    --oj-z-header: 1030;
+    --oj-z-sticky: 1020;
 
     /* 顶部工具栏 */
-    --oj-z-sidebar: 1035;
+    --oj-z-header: 1030;
 
     /* 侧边栏 */
-    --oj-z-navbar: 1040;
+    --oj-z-sidebar: 1035;
 
     /* 导航栏 */
-    --oj-z-modal-backdrop: 1050;
+    --oj-z-navbar: 1040;
 
     /* 模态框背景 */
-    --oj-z-modal: 1055;
+    --oj-z-modal-backdrop: 1050;
 
     /* 模态框 */
-    --oj-z-popover: 1060;
+    --oj-z-modal: 1055;
 
     /* 弹出框 */
-    --oj-z-tooltip: 1070;
+    --oj-z-popover: 1060;
 
     /* 工具提示 */
-    --oj-z-toast: 1080;
+    --oj-z-tooltip: 1070;
 
     /* 消息提示 */
+    --oj-z-toast: 1080;
 }

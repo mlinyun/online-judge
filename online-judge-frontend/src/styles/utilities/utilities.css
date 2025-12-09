@@ -3,11 +3,10 @@
  * 提供常用的样式工具类
  */
 
-/* ============================================
+/* --------------------------------------------
  * 毛玻璃面板 (Glass Panel)
  * 对应 @online-judge-ui 的 .glass-panel
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-glass-panel {
     background: var(--oj-glass-bg);
     border: 1px solid var(--oj-glass-border);
@@ -26,10 +25,9 @@
     backdrop-filter: blur(var(--oj-glass-blur));
 }
 
-/* ============================================
+/* --------------------------------------------
  * 卡片样式
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-card {
     padding: var(--oj-card-padding);
     background: var(--oj-card-bg);
@@ -42,10 +40,9 @@
 }
 
 .oj-card-hover {
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
+    transition: transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .oj-card-hover:hover {
@@ -54,10 +51,9 @@
     transform: translateY(-2px);
 }
 
-/* ============================================
+/* --------------------------------------------
  * 按钮样式
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-btn {
     display: inline-flex;
     gap: var(--oj-spacing-2);
@@ -84,8 +80,8 @@
 }
 
 .oj-btn-secondary {
-    background-color: var(--oj-button-secondary-bg);
     color: var(--oj-text-color);
+    background-color: var(--oj-button-secondary-bg);
     border: 1px solid var(--oj-border-color-solid);
 }
 
@@ -124,10 +120,9 @@
     font-size: var(--oj-font-size-base);
 }
 
-/* ============================================
+/* --------------------------------------------
  * 标签/徽章样式
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-tag {
     display: inline-flex;
     align-items: center;
@@ -187,10 +182,9 @@
     border: 1px solid var(--oj-difficulty-hard-border);
 }
 
-/* ============================================
+/* --------------------------------------------
  * 输入框样式
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-input {
     width: 100%;
     padding: var(--oj-input-padding-y) var(--oj-input-padding-x);
@@ -199,9 +193,8 @@
     background-color: var(--oj-input-bg);
     border: 1px solid var(--oj-input-border);
     border-radius: var(--oj-radius-lg);
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .oj-input:focus {
@@ -214,10 +207,9 @@
     color: var(--oj-input-placeholder);
 }
 
-/* ============================================
+/* --------------------------------------------
  * 导航链接样式
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-nav-link {
     position: relative;
     padding: var(--oj-spacing-2) var(--oj-spacing-3);
@@ -251,10 +243,9 @@
     width: 100%;
 }
 
-/* ============================================
+/* --------------------------------------------
  * 侧边栏链接样式
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-sidebar-link {
     display: flex;
     gap: var(--oj-spacing-3);
@@ -268,19 +259,18 @@
 
 .oj-sidebar-link:hover {
     color: var(--oj-color-primary);
-    background-color: var(--oj-color-primary-soft);
+    background-color: var(--oj-surface-hover);
 }
 
 .oj-sidebar-link.active {
     color: var(--oj-color-primary);
-    background-color: var(--oj-color-primary-soft);
+    background-color: var(--oj-surface-selected);
     border-left: 3px solid var(--oj-color-primary);
 }
 
-/* ============================================
+/* --------------------------------------------
  * 文本工具类
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-text-primary {
     color: var(--oj-text-color) !important;
 }
@@ -309,20 +299,18 @@
     color: var(--oj-color-danger) !important;
 }
 
-/* ============================================
+/* --------------------------------------------
  * 渐变文本
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-text-gradient {
     color: transparent;
     background: var(--oj-gradient-primary);
     background-clip: text;
 }
 
-/* ============================================
+/* --------------------------------------------
  * 间距工具类
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-mt-0 {
     margin-top: 0 !important;
 }
@@ -383,10 +371,9 @@
     padding: var(--oj-spacing-8) !important;
 }
 
-/* ============================================
+/* --------------------------------------------
  * 布局工具类
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-flex-center {
     display: flex;
     align-items: center;
@@ -419,10 +406,9 @@
     flex-shrink: 0;
 }
 
-/* ============================================
+/* --------------------------------------------
  * 动画类
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-animate-pulse {
     animation: oj-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -452,10 +438,9 @@
     }
 }
 
-/* ============================================
+/* --------------------------------------------
  * 截断文本
- * ============================================ */
-
+ * -------------------------------------------- */
 .oj-truncate {
     overflow: hidden;
     text-overflow: ellipsis;

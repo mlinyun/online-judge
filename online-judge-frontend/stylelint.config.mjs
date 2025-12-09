@@ -16,19 +16,6 @@ export default {
                 message: "Expected class selector to match the project's class naming conventions",
             },
         ],
-        "order/properties-order": null, // 禁用属性顺序检查，允许更灵活的样式组织
-        "selector-pseudo-class-no-unknown": [
-            true,
-            {
-                ignorePseudoClasses: ["deep"], // 允许 :deep() 伪类选择器
-            },
-        ],
-        "selector-pseudo-element-no-unknown": [
-            true,
-            {
-                ignorePseudoElements: ["v-deep"], // 允许 ::v-deep() 伪元素选择器
-            },
-        ],
     },
-    ignoreFiles: ["**/dist/**", "**/node_modules/**", "**/*.js", "**/*.ts"],
+    ignoreFiles: ["**/dist/**", "**/node_modules/**", "**/*.js", "**/*.ts", "**/*d.ts"],
 };

@@ -5,3 +5,7 @@
 **/problemdata/*/
 online-judge-backend/bin/
 online-judge-backend/CMakeUserPresets.json
+online-judge-frontend/node_modules/
+online-judge-frontend/src/types/import/auto-imports.d.ts
+online-judge-frontend/src/types/import/components.d.ts
+online-judge-frontend/.eslintrc-auto-import.json

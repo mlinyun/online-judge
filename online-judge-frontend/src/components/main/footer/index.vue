@@ -174,12 +174,12 @@ const links = [
 
 .copyright {
     font-size: var(--oj-font-size-sm);
-    color: var(--oj-text-muted);
+    color: var(--oj-text-color-muted);
 }
 
 .powered-by {
     font-size: var(--oj-font-size-xs);
-    color: var(--oj-text-muted);
+    color: var(--oj-text-color-muted);
 }
 
 .tech-link {

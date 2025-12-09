@@ -5,65 +5,78 @@
  */
 
 :root {
-    /* ============================================
-   * 背景色 (Background Colors)
-   * ============================================ */
+    /* --------------------------------------------
+     * 背景色 (Background Colors)
+     * -------------------------------------------- */
 
-    /* 深色背景系列 (Dark Backgrounds) */
-    --oj-bg-base: #0b1120;
+    /* ---------- 深色背景系列 (Dark Backgrounds) ---------- */
 
     /* 页面最深背景 */
-    --oj-bg-dark: #0f172a;
+    --oj-bg-base: #0b1120;
 
     /* cyber-dark 主深色背景 */
-    --oj-bg-light: #1e293b;
+    --oj-bg-dark: #0f172a;
 
     /* cyber-light 次级深色背景 */
-    --oj-bg-elevated: #334155;
+    --oj-bg-light: #1e293b;
 
     /* 悬浮元素背景 */
+    --oj-bg-elevated: #334155;
 
-    /* 浅色背景系列 (Light Backgrounds) - 用于浅色主题 */
+
+    /* ---------- 浅色背景系列 (Light Backgrounds) - 用于浅色主题 ---------- */
+
+    /* 页面最浅背景 */
     --oj-bg-light-base: #f8fafc;
+
+    /* cyber-bg-light 轻柔背景 */
     --oj-bg-light-soft: #f1f5f9;
+
+    /* cyber-bg-mute 柔和背景 */
     --oj-bg-light-mute: #e2e8f0;
 
-    /* ============================================
-   * 主题色 (Theme Colors)
-   * ============================================ */
+    /** 悬浮元素背景 */
+    --oj-bg-light-elevated: #cbd5e1;
 
-    /* 主强调色 - Cyan 青色 */
-    --oj-color-primary: #06b6d4;
+    /* --------------------------------------------
+     * 主题色 (Theme Colors)
+     * -------------------------------------------- */
+
+    /* ---------- 主强调色 - Cyan 青色 ---------- */
 
     /* cyber-accent 主色 */
-    --oj-color-primary-light: #22d3ee;
+    --oj-color-primary: #06b6d4;
 
     /* 主色亮版 */
-    --oj-color-primary-dark: #0891b2;
+    --oj-color-primary-light: #22d3ee;
 
     /* 主色暗版 */
-    --oj-color-primary-soft: rgb(6 182 212 / 10%);
+    --oj-color-primary-dark: #0891b2;
 
     /* 主色透明背景 */
-    --oj-color-primary-hover: rgb(6 182 212 / 20%);
+    --oj-color-primary-soft: rgb(6 182 212 / 10%);
 
     /* 主色悬停背景 */
+    --oj-color-primary-hover: rgb(6 182 212 / 20%);
 
-    /* 次强调色 - Fuchsia 紫红色 */
-    --oj-color-secondary: #d946ef;
+
+    /* ---------- 次强调色 - Fuchsia 紫红色 ---------- */
 
     /* cyber-secondary 次色 */
-    --oj-color-secondary-light: #e879f9;
+    --oj-color-secondary: #d946ef;
 
     /* 次色亮版 */
-    --oj-color-secondary-dark: #c026d3;
+    --oj-color-secondary-light: #e879f9;
 
     /* 次色暗版 */
+    --oj-color-secondary-dark: #c026d3;
+
+    /* 次色透明背景 */
     --oj-color-secondary-soft: rgb(217 70 239 / 10%);
 
-    /* ============================================
-   * 语义色 (Semantic Colors)
-   * ============================================ */
+    /* --------------------------------------------
+     * 语义色 (Semantic Colors)
+     * -------------------------------------------- */
 
     /* 成功 - Green */
     --oj-color-success: #10b981;
@@ -92,25 +105,25 @@
     --oj-color-info-dark: #2563eb;
     --oj-color-info-soft: rgb(59 130 246 / 10%);
 
-    /* ============================================
-   * 文本色 (Text Colors)
-   * ============================================ */
+    /* --------------------------------------------
+     * 文本色 (Text Colors)
+     * -------------------------------------------- */
 
-    /* 深色主题文本 */
-    --oj-text-primary: #e2e8f0;
+    /* ---------- 深色主题文本 ---------- */
 
     /* cyber-text 主要文本 */
-    --oj-text-secondary: #94a3b8;
+    --oj-text-primary: #e2e8f0;
 
     /* cyber-muted 次要文本 */
-    --oj-text-muted: #64748b;
+    --oj-text-secondary: #94a3b8;
 
     /* 静音文本 */
-    --oj-text-disabled: #475569;
+    --oj-text-muted: #64748b;
 
     /* 禁用文本 */
+    --oj-text-disabled: #475569;
 
-    /* 浅色主题文本 */
+    /* ---------- 浅色主题文本 ---------- */
     --oj-text-light-primary: #0f172a;
     --oj-text-light-secondary: #334155;
     --oj-text-light-muted: #64748b;
@@ -120,25 +133,24 @@
     --oj-text-inverse: #fff;
     --oj-text-inverse-secondary: rgb(255 255 255 / 80%);
 
-    /* ============================================
-   * 边框色 (Border Colors)
-   * ============================================ */
-
-    --oj-border-base: rgb(255 255 255 / 8%);
+    /* --------------------------------------------
+     * 边框色 (Border Colors)
+     * -------------------------------------------- */
 
     /* 基础边框 */
-    --oj-border-light: rgb(255 255 255 / 10%);
+    --oj-border-base: rgb(255 255 255 / 8%);
 
     /* 浅边框 */
-    --oj-border-dark: #334155;
+    --oj-border-light: rgb(255 255 255 / 10%);
 
     /* 深边框 */
-    --oj-border-hover: rgb(255 255 255 / 15%);
+    --oj-border-dark: #334155;
 
     /* 悬停边框 */
-    --oj-border-focus: var(--oj-color-primary);
+    --oj-border-hover: rgb(255 255 255 / 15%);
 
     /* 聚焦边框 */
+    --oj-border-focus: var(--oj-color-primary);
 
     /* Slate 系列边框 (用于组件) */
     --oj-slate-500: #64748b;
@@ -147,32 +159,30 @@
     --oj-slate-800: #1e293b;
     --oj-slate-900: #0f172a;
 
-    /* ============================================
-   * 毛玻璃效果 (Glass Effect)
-   * ============================================ */
-
+    /* --------------------------------------------
+     * 毛玻璃效果 (Glass Effect)
+     * -------------------------------------------- */
     --oj-glass-bg: rgb(30 41 59 / 70%);
     --oj-glass-bg-light: rgb(30 41 59 / 50%);
     --oj-glass-bg-dark: rgb(30 41 59 / 95%);
     --oj-glass-border: rgb(255 255 255 / 8%);
     --oj-glass-blur: 12px;
 
-    /* ============================================
-   * 交互状态色 (Interactive State Colors)
-   * ============================================ */
-
-    --oj-bg-hover: rgb(51 65 85 / 50%);
+    /* --------------------------------------------
+     * 交互状态色 (Interactive State Colors)
+     * -------------------------------------------- */
 
     /* 悬停背景 */
-    --oj-bg-active: rgb(51 65 85 / 70%);
+    --oj-bg-hover: rgb(51 65 85 / 50%);
 
     /* 激活背景 */
-    --oj-bg-tertiary: rgb(30 41 59 / 50%);
-
-    /* 三级背景 */
-    --oj-bg-secondary: var(--oj-bg-dark);
+    --oj-bg-active: rgb(51 65 85 / 70%);
 
     /* 二级背景 */
+    --oj-bg-secondary: var(--oj-bg-dark);
+
+    /* 三级背景 */
+    --oj-bg-tertiary: rgb(30 41 59 / 50%);
 
     /* RGB 值 (用于 rgba 计算) */
     --oj-color-primary-rgb: 6 182 212;
@@ -182,9 +192,36 @@
     --oj-color-warning-rgb: 245 158 11;
     --oj-color-info-rgb: 59 130 246;
 
-    /* ============================================
-   * 题目难度色 (Problem Difficulty Colors)
-   * ============================================ */
+    /* --------------------------------------------
+     * 语义化表面色 (Semantic Surface Colors)
+     * 用于统一组件背景、边框等交互状态
+     * -------------------------------------------- */
+
+    /* 基础表面 */
+    --oj-surface-base: var(--oj-bg-light);
+    --oj-surface-elevated: var(--oj-bg-elevated);
+    --oj-surface-sunken: var(--oj-bg-dark);
+
+    /* 交互状态表面 */
+    --oj-surface-hover: rgb(51 65 85 / 50%);
+    --oj-surface-active: rgb(51 65 85 / 70%);
+    --oj-surface-selected: rgb(6 182 212 / 15%);
+    --oj-surface-focus: rgb(6 182 212 / 10%);
+
+    /* 边框状态 */
+    --oj-surface-border: var(--oj-border-base);
+    --oj-surface-border-hover: var(--oj-border-hover);
+    --oj-surface-border-focus: var(--oj-border-focus);
+    --oj-surface-border-active: var(--oj-color-primary);
+
+    /* 覆盖层表面 */
+    --oj-surface-overlay: rgb(30 41 59 / 95%);
+    --oj-surface-overlay-light: rgb(30 41 59 / 80%);
+    --oj-surface-modal-backdrop: rgb(0 0 0 / 60%);
+
+    /* --------------------------------------------
+     * 题目难度色 (Problem Difficulty Colors)
+     * -------------------------------------------- */
 
     /* 简单 - 绿色 */
     --oj-difficulty-easy: #10b981;
@@ -201,51 +238,47 @@
     --oj-difficulty-hard-bg: rgb(239 68 68 / 10%);
     --oj-difficulty-hard-border: rgb(239 68 68 / 30%);
 
-    /* ============================================
-   * 提交状态色 (Submission Status Colors)
-   * ============================================ */
-
-    --oj-status-accepted: #10b981;
+    /* --------------------------------------------
+     * 提交状态色 (Submission Status Colors)
+     * -------------------------------------------- */
 
     /* AC - 通过 */
-    --oj-status-wrong: #ef4444;
+    --oj-status-accepted: #10b981;
 
     /* WA - 答案错误 */
-    --oj-status-tle: #f59e0b;
+    --oj-status-wrong: #ef4444;
 
     /* TLE - 超时 */
-    --oj-status-mle: #f59e0b;
+    --oj-status-tle: #f59e0b;
 
     /* MLE - 内存超限 */
-    --oj-status-re: #a855f7;
+    --oj-status-mle: #f59e0b;
 
     /* RE - 运行错误 */
-    --oj-status-ce: #06b6d4;
+    --oj-status-re: #a855f7;
 
     /* CE - 编译错误 */
-    --oj-status-pending: #64748b;
+    --oj-status-ce: #06b6d4;
 
     /* 等待中 */
-    --oj-status-running: #3b82f6;
+    --oj-status-pending: #64748b;
 
     /* 运行中 */
+    --oj-status-running: #3b82f6;
 
-    /* ============================================
-   * 渐变色 (Gradients)
-   * ============================================ */
-
+    /* --------------------------------------------
+     * 渐变色 (Gradients)
+     * -------------------------------------------- */
     --oj-gradient-primary: linear-gradient(135deg, #06b6d4 0%, #d946ef 100%);
     --oj-gradient-background: linear-gradient(180deg, rgb(6 182 212 / 15%) 0%, transparent 50%);
-    --oj-gradient-hero:
-        radial-gradient(at 0% 0%, rgb(6 182 212 / 15%) 0%, transparent 50%),
-        radial-gradient(at 100% 100%, rgb(217 70 239 / 15%) 0%, transparent 50%);
+    --oj-gradient-hero: radial-gradient(at 0% 0%, rgb(6 182 212 / 15%) 0%, transparent 50%),
+    radial-gradient(at 100% 100%, rgb(217 70 239 / 15%) 0%, transparent 50%);
     --oj-gradient-card-hover: linear-gradient(135deg, rgb(6 182 212 / 5%) 0%, rgb(217 70 239 / 5%) 100%);
     --oj-gradient-profile-banner: linear-gradient(90deg, rgb(6 182 212 / 20%) 0%, rgb(217 70 239 / 20%) 100%);
 
-    /* ============================================
-   * 阴影 (Shadows)
-   * ============================================ */
-
+    /* --------------------------------------------
+     * 阴影 (Shadows)
+     * -------------------------------------------- */
     --oj-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
     --oj-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
     --oj-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);

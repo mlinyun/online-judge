@@ -3,10 +3,9 @@
  * 将 Element Plus 默认主题对齐到 Online Judge Cyber 风格
  */
 
+/* -------------------- 全局 Element Plus 变量覆盖 -------------------- */
 :root {
-    /* ============================================
-   * Element Plus 主色覆盖
-   * ============================================ */
+    /* ---------- Element Plus 主色覆盖 ---------- */
 
     /* Primary - 使用 Cyan 青色 */
     --el-color-primary: var(--oj-color-primary);
@@ -53,10 +52,7 @@
     --el-color-info-light-9: #eff6ff;
     --el-color-info-dark-2: var(--oj-color-info-dark);
 
-    /* ============================================
-   * Element Plus 字体覆盖
-   * ============================================ */
-
+    /* ---------- Element Plus 字体覆盖 ---------- */
     --el-font-family: var(--oj-font-family-sans);
     --el-font-size-extra-large: var(--oj-font-size-xl);
     --el-font-size-large: var(--oj-font-size-lg);
@@ -65,27 +61,18 @@
     --el-font-size-small: var(--oj-font-size-xs);
     --el-font-size-extra-small: 0.625rem;
 
-    /* ============================================
-   * Element Plus 圆角覆盖
-   * ============================================ */
-
+    /* ---------- Element Plus 圆角覆盖 ---------- */
     --el-border-radius-base: var(--oj-radius-lg);
     --el-border-radius-small: var(--oj-radius-md);
     --el-border-radius-round: var(--oj-radius-full);
     --el-border-radius-circle: 100%;
 
-    /* ============================================
-   * Element Plus 过渡动画
-   * ============================================ */
-
+    /* ---------- Element Plus 过渡动画 ---------- */
     --el-transition-duration: 0.3s;
     --el-transition-duration-fast: 0.2s;
 }
 
-/* ============================================
- * 深色主题 Element Plus 覆盖 (默认)
- * ============================================ */
-
+/* -------------------- 深色主题 Element Plus 覆盖 (默认) -------------------- */
 :root,
 html.dark {
     /* 背景色 */
@@ -132,14 +119,23 @@ html.dark {
     --el-disabled-text-color: var(--oj-text-disabled);
     --el-disabled-border-color: var(--oj-slate-700);
 
-    /* Hover 状态 - 修复深色模式下的白色背景问题 */
-    --el-bg-color-hover: var(--oj-color-primary-rgb);
+    /* Hover/Active 状态 - 使用语义表面色 */
+    --el-fill-color-hover: var(--oj-surface-hover);
+    --el-fill-color-pressed: var(--oj-surface-active);
+    --el-bg-color-hover: var(--oj-surface-hover);
+    --el-bg-color-overlay-hover: var(--oj-surface-hover);
+
+    /* 选择器/下拉菜单状态 */
+    /* stylelint-disable custom-property-pattern -- Element Plus 官方变量名使用 camelCase */
+    --el-dropdown-menuItem-hover-fill: var(--oj-surface-hover);
+    --el-dropdown-menuItem-hover-color: var(--oj-text-color);
+    /* stylelint-enable custom-property-pattern */
+    --el-select-dropdown-item-hover-bg: var(--oj-surface-hover);
+    --el-menu-item-hover-fill: var(--oj-surface-hover);
+    --el-menu-item-active-bg: var(--oj-surface-selected);
 }
 
-/* ============================================
- * 浅色主题 Element Plus 覆盖
- * ============================================ */
-
+/* -------------------- 浅色主题 Element Plus 覆盖 -------------------- */
 html.light {
     /* 背景色 */
     --el-bg-color: #fff;
@@ -185,6 +181,18 @@ html.light {
     --el-disabled-text-color: #a8abb2;
     --el-disabled-border-color: #e4e7ed;
 
-    /* Hover 状态 - 浅色模式 */
-    --el-bg-color-hover: var(--oj-bg-hover); /* 使用主题的 hover 背景色 */
+    /* Hover/Active 状态 - 浅色模式 */
+    --el-fill-color-hover: var(--oj-surface-hover);
+    --el-fill-color-pressed: var(--oj-surface-active);
+    --el-bg-color-hover: var(--oj-surface-hover);
+    --el-bg-color-overlay-hover: var(--oj-surface-hover);
+
+    /* 选择器/下拉菜单状态 */
+    /* stylelint-disable custom-property-pattern -- Element Plus 官方变量名使用 camelCase */
+    --el-dropdown-menuItem-hover-fill: var(--oj-surface-hover);
+    --el-dropdown-menuItem-hover-color: var(--oj-text-color);
+    /* stylelint-enable custom-property-pattern */
+    --el-select-dropdown-item-hover-bg: var(--oj-surface-hover);
+    --el-menu-item-hover-fill: var(--oj-surface-hover);
+    --el-menu-item-active-bg: var(--oj-surface-selected);
 }

@@ -120,8 +120,8 @@ const toggleMobileMenu = () => {
     left: 0;
     z-index: var(--oj-z-navbar);
     height: var(--oj-navbar-height);
-    border-bottom: 1px solid var(--oj-glass-border);
     background: var(--oj-glass-bg);
+    border-bottom: 1px solid var(--oj-glass-border);
     backdrop-filter: blur(12px);
     animation: oj-navbar-appear 0.5s ease-out;
 }
@@ -144,10 +144,10 @@ const toggleMobileMenu = () => {
     justify-content: space-between;
     max-width: var(--oj-container-xl);
     height: 100%;
-    margin-right: auto;
-    margin-left: auto;
     padding-right: var(--oj-spacing-4);
     padding-left: var(--oj-spacing-4);
+    margin-right: auto;
+    margin-left: auto;
 }
 
 /* ============================================
@@ -157,8 +157,8 @@ const toggleMobileMenu = () => {
 .oj-navbar-brand {
     display: flex;
     flex-shrink: 0;
-    align-items: center;
     gap: var(--oj-spacing-3);
+    align-items: center;
     cursor: pointer;
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -194,8 +194,8 @@ const toggleMobileMenu = () => {
     display: none;
     flex: 1;
     margin-left: var(--oj-spacing-10);
-    border-bottom: none;
     background: transparent;
+    border-bottom: none;
 }
 
 @media (width >=768px) {
@@ -210,13 +210,13 @@ const toggleMobileMenu = () => {
     position: relative;
     height: var(--oj-navbar-height);
     padding: 0 var(--oj-spacing-3);
-    border-bottom: 2px solid transparent;
     font-size: var(--oj-font-size-base);
     font-weight: 500;
-    color: var(--oj-text-color-secondary);
     line-height: var(--oj-navbar-height);
+    color: var(--oj-text-color-secondary);
     cursor: pointer;
     background: transparent !important;
+    border-bottom: 2px solid transparent;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -251,16 +251,16 @@ const toggleMobileMenu = () => {
 
 /* 菜单项激活效果 */
 .oj-navbar-menu :deep(.el-menu-item.is-active) {
-    border-bottom-color: var(--oj-color-primary) !important;
     color: var(--oj-color-primary) !important;
     background: transparent !important;
+    border-bottom-color: var(--oj-color-primary) !important;
 }
 
 .oj-navbar-menu :deep(.el-menu-item.is-active)::after {
     position: absolute;
+    right: 0;
     bottom: -1px;
     left: 0;
-    right: 0;
     height: 2px;
     content: "";
     background: linear-gradient(90deg, var(--oj-color-primary), var(--oj-color-primary-light));
@@ -289,8 +289,8 @@ const toggleMobileMenu = () => {
 
 .oj-navbar-actions {
     display: flex;
-    align-items: center;
     gap: var(--oj-spacing-3);
+    align-items: center;
 }
 
 /* ============================================
@@ -303,17 +303,17 @@ const toggleMobileMenu = () => {
     justify-content: center;
     width: 40px;
     height: 40px;
-    border: none;
-    border-radius: var(--oj-radius-md);
-    background: var(--oj-bg-tertiary);
     color: var(--oj-text-color-secondary);
     cursor: pointer;
+    background: var(--oj-bg-tertiary);
+    border: none;
+    border-radius: var(--oj-radius-md);
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .oj-mobile-menu-btn:hover {
-    background: var(--oj-bg-hover);
     color: var(--oj-color-primary);
+    background: var(--oj-bg-hover);
     transform: rotate(90deg);
 }
 
@@ -332,8 +332,8 @@ const toggleMobileMenu = () => {
     flex-direction: column;
     gap: var(--oj-spacing-1);
     padding: var(--oj-spacing-4);
-    border-bottom: 1px solid var(--oj-glass-border);
     background: var(--oj-glass-bg);
+    border-bottom: 1px solid var(--oj-glass-border);
     backdrop-filter: blur(12px);
 }
 
@@ -346,31 +346,31 @@ const toggleMobileMenu = () => {
 .oj-mobile-nav-link {
     position: relative;
     display: flex;
-    align-items: center;
     gap: var(--oj-spacing-2);
+    align-items: center;
     padding: var(--oj-spacing-3) var(--oj-spacing-4);
-    border-radius: var(--oj-radius-md);
+    overflow: hidden;
     font-size: var(--oj-font-size-sm);
     font-weight: 500;
     color: var(--oj-text-color-secondary);
     cursor: pointer;
     background: transparent;
-    overflow: hidden;
+    border-radius: var(--oj-radius-md);
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* 移动端菜单项悬停效果 */
 .oj-mobile-nav-link:hover {
-    background: var(--oj-bg-hover);
     color: var(--oj-color-primary);
+    background: var(--oj-bg-hover);
     transform: translateX(4px);
 }
 
 .oj-mobile-nav-link:hover::before {
     position: absolute;
     top: 0;
-    left: 0;
     bottom: 0;
+    left: 0;
     width: 2px;
     content: "";
     background: linear-gradient(180deg, var(--oj-color-primary), var(--oj-color-primary-light));
@@ -391,15 +391,15 @@ const toggleMobileMenu = () => {
 
 /* 移动端菜单项激活效果 */
 .oj-mobile-nav-link.active {
-    background: rgb(var(--oj-color-primary-rgb) / 10%);
     color: var(--oj-color-primary);
+    background: rgb(var(--oj-color-primary-rgb) / 10%);
 }
 
 .oj-mobile-nav-link.active::before {
     position: absolute;
     top: 0;
-    left: 0;
     bottom: 0;
+    left: 0;
     width: 2px;
     content: "";
     background: linear-gradient(180deg, var(--oj-color-primary), var(--oj-color-primary-light));

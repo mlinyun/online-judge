@@ -2,19 +2,12 @@
 /**
  * 管理后台 - 头部组件
  */
-import { ThemeToggle } from "@/components/main";
 import { useRoute } from "vue-router";
-import { useUserStore } from "@/stores/modules/user";
+import { ThemeToggle, UserDropdown } from "@/components/main";
 
 defineOptions({ name: "AdminHeader" });
 
 const route = useRoute();
-
-// 用户状态管理
-const userStore = useUserStore();
-
-// 从用户状态管理获取用户信息
-const userInfo = computed(() => userStore.getUserInfo);
 </script>
 
 <template>
@@ -28,7 +21,7 @@ const userInfo = computed(() => userStore.getUserInfo);
         <div class="header-right">
             <!-- 通知按钮 -->
             <el-button class="header-btn">
-                <el-badge :value="3" :max="99">
+                <el-badge :value="2" :max="99">
                     <el-icon :size="18">
                         <i-ep-bell />
                     </el-icon>
@@ -38,11 +31,8 @@ const userInfo = computed(() => userStore.getUserInfo);
             <!-- 主题切换 -->
             <ThemeToggle />
 
-            <!-- 用户信息 -->
-            <div class="admin-user">
-                <el-avatar :src="userInfo.Avatar" :alt="userInfo.NickName" class="user-avatar" />
-                <span class="user-name">{{ userInfo.NickName }}</span>
-            </div>
+            <!-- 用户下拉菜单 -->
+            <UserDropdown />
         </div>
     </header>
 </template>
@@ -104,18 +94,5 @@ const userInfo = computed(() => userStore.getUserInfo);
     display: flex;
     gap: var(--oj-spacing-3);
     align-items: center;
-}
-
-.user-avatar {
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--oj-color-primary);
-    border-radius: var(--oj-radius-full);
-}
-
-.user-name {
-    font-size: var(--oj-font-size-sm);
-    font-weight: 500;
-    color: var(--oj-text-color);
 }
 </style>

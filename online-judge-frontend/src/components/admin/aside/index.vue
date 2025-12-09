@@ -237,8 +237,8 @@ const goToFrontend = () => {
 .sidebar-menu {
     flex: 1;
     overflow-y: auto;
-    border-right: none !important;
     background: transparent !important;
+    border-right: none !important;
 }
 
 /* 折叠状态下隐藏分组标题 */
@@ -260,17 +260,17 @@ const goToFrontend = () => {
 .sidebar-menu :deep(.el-menu-item) {
     height: 48px;
     margin: 0 var(--oj-spacing-2) var(--oj-spacing-1);
-    border-radius: var(--oj-radius-lg);
     color: var(--oj-text-color-secondary);
+    border-radius: var(--oj-radius-lg);
 }
 
 /* 折叠状态下调整菜单项样式以居中图标 */
 .sidebar-menu.el-menu--collapse :deep(.el-menu-item) {
-    margin: var(--oj-spacing-5) 0;
-    padding: 0;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: var(--oj-spacing-5) 0;
 }
 
 .sidebar-menu :deep(.el-menu-item:hover) {
@@ -279,16 +279,16 @@ const goToFrontend = () => {
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active) {
+    font-weight: 500;
     color: var(--oj-color-primary);
     background: rgb(var(--oj-color-primary-rgb) / 10%);
-    font-weight: 500;
 }
 
 .sidebar-menu :deep(.el-icon) {
-    font-size: 18px;
     width: 24px;
-    text-align: center;
+    font-size: 18px;
     vertical-align: middle;
+    text-align: center;
 }
 
 /* 底部返回前台 */
@@ -308,15 +308,15 @@ const goToFrontend = () => {
     transition: all 0.2s;
 }
 
+.sidebar-footer-btn:hover {
+    color: var(--oj-color-danger);
+    background: rgb(var(--oj-color-danger-rgb) / 10%);
+}
+
 /* 折叠状态下调整底部按钮样式以居中图标 */
 .admin-sidebar[style*="width: 64px"] .sidebar-footer-btn {
     justify-content: center;
     padding: var(--oj-spacing-3) 0;
-}
-
-.sidebar-footer-btn:hover {
-    color: var(--oj-color-danger);
-    background: rgb(var(--oj-color-danger-rgb) / 10%);
 }
 
 .nav-icon {
