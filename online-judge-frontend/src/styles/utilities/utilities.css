@@ -40,9 +40,10 @@
 }
 
 .oj-card-hover {
-    transition: transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .oj-card-hover:hover {
@@ -193,8 +194,9 @@
     background-color: var(--oj-input-bg);
     border: 1px solid var(--oj-input-border);
     border-radius: var(--oj-radius-lg);
-    transition: border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .oj-input:focus {

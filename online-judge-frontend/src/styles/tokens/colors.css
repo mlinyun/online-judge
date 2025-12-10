@@ -23,7 +23,6 @@
     /* 悬浮元素背景 */
     --oj-bg-elevated: #334155;
 
-
     /* ---------- 浅色背景系列 (Light Backgrounds) - 用于浅色主题 ---------- */
 
     /* 页面最浅背景 */
@@ -58,7 +57,6 @@
 
     /* 主色悬停背景 */
     --oj-color-primary-hover: rgb(6 182 212 / 20%);
-
 
     /* ---------- 次强调色 - Fuchsia 紫红色 ---------- */
 
@@ -271,8 +269,9 @@
      * -------------------------------------------- */
     --oj-gradient-primary: linear-gradient(135deg, #06b6d4 0%, #d946ef 100%);
     --oj-gradient-background: linear-gradient(180deg, rgb(6 182 212 / 15%) 0%, transparent 50%);
-    --oj-gradient-hero: radial-gradient(at 0% 0%, rgb(6 182 212 / 15%) 0%, transparent 50%),
-    radial-gradient(at 100% 100%, rgb(217 70 239 / 15%) 0%, transparent 50%);
+    --oj-gradient-hero:
+        radial-gradient(at 0% 0%, rgb(6 182 212 / 15%) 0%, transparent 50%),
+        radial-gradient(at 100% 100%, rgb(217 70 239 / 15%) 0%, transparent 50%);
     --oj-gradient-card-hover: linear-gradient(135deg, rgb(6 182 212 / 5%) 0%, rgb(217 70 239 / 5%) 100%);
     --oj-gradient-profile-banner: linear-gradient(90deg, rgb(6 182 212 / 20%) 0%, rgb(217 70 239 / 20%) 100%);
 

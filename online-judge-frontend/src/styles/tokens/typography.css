@@ -9,13 +9,15 @@
      * -------------------------------------------- */
 
     /* 主要无衬线字体 (用于正文、UI) */
-    --oj-font-family-sans: "Inter", -apple-system, blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", arial, "Noto Sans",
-    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
+    --oj-font-family-sans:
+        "Inter", -apple-system, blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", arial, "Noto Sans",
+        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol";
 
     /* 等宽字体 (用于代码、ID 显示) */
-    --oj-font-family-mono: "JetBrains Mono", "Fira Code", "Source Code Pro", menlo, monaco, consolas, "Liberation Mono", "Courier New",
-    monospace;
+    --oj-font-family-mono:
+        "JetBrains Mono", "Fira Code", "Source Code Pro", menlo, monaco, consolas, "Liberation Mono", "Courier New",
+        monospace;
 
     /* --------------------------------------------
      * 字号 (Font Sizes)

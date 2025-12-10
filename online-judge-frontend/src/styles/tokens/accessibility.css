@@ -138,8 +138,7 @@
  * 高对比度模式 (High Contrast Mode)
  * 当用户开启高对比度时应用
  * -------------------------------------------- */
-@media (prefers-contrast: more),
-(prefers-contrast: custom) {
+@media (prefers-contrast: more), (prefers-contrast: custom) {
     :root {
         --oj-text-color: var(--oj-a11y-text-high-contrast);
         --oj-text-color-secondary: var(--oj-a11y-text-medium-contrast);

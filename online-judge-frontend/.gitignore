@@ -35,8 +35,5 @@ coverage
 # Vitest
 __screenshots__/
 !/.eslintrc-auto-import.json
-
-
-# 自动生成的文件
-src/types/import/auto-imports.d.ts
-src/types/import/components.d.ts
+!/src/types/import/auto-imports.d.ts
+!/src/types/import/components.d.ts
