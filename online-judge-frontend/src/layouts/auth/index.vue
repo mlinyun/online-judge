@@ -114,7 +114,7 @@ const goHome = () => {
 .brand-text {
     font-family: var(--oj-font-family-mono), monospace;
     font-size: var(--oj-font-size-2xl);
-    font-weight: 700;
+    font-weight: var(--oj-font-weight-bold);
     color: var(--oj-text-color);
     letter-spacing: 0.05em;
 }
@@ -129,21 +129,24 @@ const goHome = () => {
     flex: 1;
     align-items: center;
     justify-content: center;
-    padding: var(--oj-spacing-4);
+    padding: 0 var(--oj-spacing-4);
 }
 
 .auth-card {
     width: 100%;
-    padding: var(--oj-spacing-8);
-    background: var(--oj-glass-bg);
-    border: 1px solid var(--oj-glass-border);
-    border-radius: var(--oj-radius-xl);
-    backdrop-filter: blur(12px);
+    max-width: 1200px;
+    padding: 0;
+    background: transparent;
+    border: none;
 }
 
-@media (width >=640px) {
+@media (width >= 768px) {
     .auth-card {
-        padding: var(--oj-spacing-10);
+        background: var(--oj-glass-bg);
+        border: 1px solid var(--oj-glass-border);
+        border-radius: var(--oj-radius-xl);
+        backdrop-filter: blur(12px);
+        padding: var(--oj-padding-xl);
     }
 }
 

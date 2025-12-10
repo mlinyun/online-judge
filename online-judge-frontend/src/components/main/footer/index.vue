@@ -16,10 +16,6 @@ const links = [
     { name: "隐私政策", href: "/privacy" },
     { name: "服务条款", href: "/terms" },
 ];
-
-// const socialLinks = [
-//     { name: "GitHub", icon: "fa-github", href: "https://github.com" },
-// ];
 </script>
 
 <template>
@@ -29,7 +25,9 @@ const links = [
                 <!-- Logo 和描述 -->
                 <div class="footer-brand">
                     <div class="brand-logo">
-                        <span class="brand-text"> LY<span class="brand-accent">OJ</span> </span>
+                        <span class="brand-text">
+                            LY<span class="brand-accent">OJ</span> Platform &copy; {{ currentYear }}
+                        </span>
                     </div>
                     <p class="brand-desc">新一代在线评测系统，助力编程学习与竞赛训练</p>
                 </div>
@@ -47,7 +45,7 @@ const links = [
 
             <!-- 版权信息 -->
             <div class="footer-bottom">
-                <p class="copyright">© {{ currentYear }} LYOJ. All rights reserved.</p>
+                <p class="copyright">&copy; {{ currentYear }} LYOJ. All rights reserved.</p>
                 <p class="powered-by">
                     Powered by
                     <a href="https://vuejs.org" target="_blank" rel="noopener" class="tech-link">Vue 3</a>
@@ -110,7 +108,6 @@ const links = [
 .brand-text {
     font-family: var(--oj-font-family-mono), monospace;
     font-size: var(--oj-font-size-xl);
-    font-weight: 700;
     color: var(--oj-text-color);
     letter-spacing: 0.05em;
 }

@@ -153,14 +153,6 @@
 }
 
 /* --------------------------------------------
- * 焦点样式增强 (Enhanced Focus Styles)
- * -------------------------------------------- */
-:focus-visible {
-    outline: var(--oj-a11y-focus-ring-width) var(--oj-a11y-focus-ring-style) var(--oj-a11y-focus-ring-color) !important;
-    outline-offset: var(--oj-a11y-focus-ring-offset) !important;
-}
-
-/* --------------------------------------------
  * 屏幕阅读器辅助类 (Screen Reader Utilities)
  * -------------------------------------------- */
 .oj-a11y-sr-only {
