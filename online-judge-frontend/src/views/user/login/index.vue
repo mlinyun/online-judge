@@ -222,7 +222,7 @@ const goToRegister = () => {
 .login-container {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: var(--oj-gap-xl);
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
@@ -232,12 +232,12 @@ const goToRegister = () => {
 .info-section {
     display: none;
     flex-direction: column;
-    justify-content: center;
     gap: var(--oj-section-gap-md);
+    justify-content: center;
     padding: var(--oj-padding-xl);
+    color: white;
     background: linear-gradient(135deg, var(--oj-color-primary) 0%, var(--oj-color-secondary) 100%);
     border-radius: var(--oj-radius-xl);
-    color: white;
 }
 
 .brand-section {
@@ -256,13 +256,14 @@ const goToRegister = () => {
     100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-10px);
     }
 }
 
 .brand-title {
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.5rem;
     font-size: 2rem;
     font-weight: 700;
     line-height: 1.2;
@@ -270,35 +271,35 @@ const goToRegister = () => {
 
 .brand-subtitle {
     margin: 0;
-    font-size: 0.875rem;
-    opacity: 0.9;
+    font-size: var(--oj-font-size-sm);
     letter-spacing: 0.05em;
+    opacity: 0.9;
 }
 
 .features-list {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--oj-gap-lg);
 }
 
 .feature-item {
     display: flex;
+    gap: var(--oj-gap-md);
     align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.1);
+    padding: var(--oj-padding-md);
+    background: rgb(255 255 255 / 10%);
     border-radius: var(--oj-radius-lg);
     backdrop-filter: blur(10px);
     transition: all 0.3s;
 }
 
 .feature-item:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgb(255 255 255 / 15%);
     transform: translateX(5px);
 }
 
 .feature-item span {
-    font-size: 1rem;
+    font-size: var(--oj-font-size-base);
 }
 
 /* 右侧表单区域 */
@@ -306,7 +307,7 @@ const goToRegister = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: var(--oj-padding-md);
 }
 
 .form-container {
@@ -320,23 +321,23 @@ const goToRegister = () => {
 }
 
 .form-header h2 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.875rem;
+    margin: 0 0 0.5rem;
+    font-size: var(--oj-font-size-3xl);
     font-weight: 700;
-    color: var(--oj-text-primary);
+    color: var(--oj-text-color);
 }
 
 .form-header p {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--oj-font-size-sm);
     color: var(--oj-text-secondary);
 }
 
 /* 表单标题装饰 */
 .form-title-section {
     display: flex;
+    gap: var(--oj-gap-md);
     align-items: center;
-    gap: 1rem;
     margin-bottom: 2rem;
 }
 
@@ -347,7 +348,7 @@ const goToRegister = () => {
 }
 
 .title-text {
-    font-size: 0.75rem;
+    font-size: var(--oj-font-size-xs);
     font-weight: 600;
     color: var(--oj-color-primary);
     text-transform: uppercase;
@@ -358,7 +359,7 @@ const goToRegister = () => {
 .input-fields-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--oj-gap-lg);
     margin-bottom: 1.5rem;
 }
 
@@ -383,8 +384,8 @@ const goToRegister = () => {
 }
 
 .forgot-password-link {
+    font-size: var(--oj-font-size-sm);
     color: var(--oj-color-primary) !important;
-    font-size: 0.875rem;
 }
 
 /* 提交按钮 */
@@ -397,7 +398,7 @@ const goToRegister = () => {
     width: 100%;
     height: 48px;
     overflow: hidden;
-    font-size: 1rem;
+    font-size: var(--oj-font-size-base);
     font-weight: 600;
     background: var(--oj-color-primary) !important;
     border: none !important;
@@ -405,14 +406,14 @@ const goToRegister = () => {
 }
 
 .cyber-submit-btn:hover {
+    box-shadow: 0 8px 20px rgb(var(--oj-color-primary-rgb), 0.4);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(var(--oj-color-primary-rgb), 0.4);
 }
 
 .btn-glow {
     position: absolute;
     inset: 0;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(45deg, transparent, rgb(255 255 255 / 10%), transparent);
     transform: translateX(-100%);
     transition: transform 0.6s;
 }
@@ -423,11 +424,11 @@ const goToRegister = () => {
 
 .btn-text {
     position: relative;
+    z-index: 1;
     display: flex;
+    gap: var(--oj-gap-xs);
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    z-index: 1;
 }
 
 .btn-icon {
@@ -441,8 +442,8 @@ const goToRegister = () => {
 .btn-circuit-pattern {
     position: absolute;
     inset: 0;
-    opacity: 0.1;
     pointer-events: none;
+    opacity: 0.1;
 }
 
 .circuit-line {
@@ -475,8 +476,8 @@ const goToRegister = () => {
 .form-divider {
     position: relative;
     display: flex;
+    gap: var(--oj-gap-md);
     align-items: center;
-    gap: 1rem;
     margin-bottom: 1.5rem;
 }
 
@@ -488,7 +489,7 @@ const goToRegister = () => {
 
 .divider-text {
     position: relative;
-    font-size: 0.875rem;
+    font-size: var(--oj-font-size-sm);
     color: var(--oj-text-secondary);
 }
 
@@ -507,6 +508,7 @@ const goToRegister = () => {
     100% {
         opacity: 0;
     }
+
     50% {
         opacity: 0.2;
     }
@@ -516,23 +518,23 @@ const goToRegister = () => {
 .register-link-container {
     position: relative;
     display: flex;
+    gap: var(--oj-gap-xs);
     align-items: center;
     justify-content: center;
-    gap: var(--oj-gap-xs);
     padding: var(--oj-padding-sm);
-    border-radius: var(--oj-radius-lg);
     background: var(--oj-glass-bg);
     border: 1px solid var(--oj-glass-border);
+    border-radius: var(--oj-radius-lg);
 }
 
 .link-backdrop {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, var(--oj-color-primary), var(--oj-color-secondary));
-    opacity: 0;
-    border-radius: var(--oj-radius-lg);
-    transition: opacity 0.3s;
     pointer-events: none;
+    background: linear-gradient(135deg, var(--oj-color-primary), var(--oj-color-secondary));
+    border-radius: var(--oj-radius-lg);
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
 .register-link-container:hover .link-backdrop {
@@ -546,8 +548,8 @@ const goToRegister = () => {
 
 .register-link-btn {
     position: relative;
-    color: var(--oj-color-primary) !important;
     font-weight: 600;
+    color: var(--oj-color-primary) !important;
 }
 
 .link-glow {
@@ -565,7 +567,7 @@ const goToRegister = () => {
 }
 
 /* 桌面端布局 */
-@media (min-width: 768px) {
+@media (width >= 768px) {
     .login-container {
         grid-template-columns: 5fr 7fr;
         gap: 0;
@@ -581,17 +583,17 @@ const goToRegister = () => {
 }
 
 /* 移动端优化 */
-@media (max-width: 767px) {
+@media (width <= 767px) {
     .form-container {
         max-width: 100%;
     }
 
     .form-header h2 {
-        font-size: 1.5rem;
+        font-size: var(--oj-font-size-2xl);
     }
 
     .brand-title {
-        font-size: 1.5rem;
+        font-size: var(--oj-font-size-2xl);
     }
 }
 
@@ -609,7 +611,7 @@ const goToRegister = () => {
 }
 
 :deep(.el-input__inner) {
-    color: var(--oj-text-primary);
+    color: var(--oj-text-color);
 }
 
 :deep(.el-input__inner::placeholder) {
@@ -617,7 +619,7 @@ const goToRegister = () => {
 }
 
 :deep(.el-checkbox__label) {
-    font-size: 0.875rem;
+    font-size: var(--oj-font-size-sm);
     color: var(--oj-text-secondary);
 }
 </style>

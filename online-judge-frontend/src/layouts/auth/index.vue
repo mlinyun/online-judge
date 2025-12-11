@@ -142,11 +142,11 @@ const goHome = () => {
 
 @media (width >= 768px) {
     .auth-card {
+        padding: var(--oj-padding-xl);
         background: var(--oj-glass-bg);
         border: 1px solid var(--oj-glass-border);
         border-radius: var(--oj-radius-xl);
         backdrop-filter: blur(12px);
-        padding: var(--oj-padding-xl);
     }
 }
 
