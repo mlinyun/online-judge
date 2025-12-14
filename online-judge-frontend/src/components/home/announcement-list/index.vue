@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
+import { ChatDotSquare, View, ChatRound, Bell, ArrowRight, Calendar } from "@element-plus/icons-vue";
 import { selectAnnouncementList } from "@/api/announcement";
 import type { Api } from "@/types/api/api";
 
@@ -38,24 +39,27 @@ const fetchAnnouncements = async () => {
     }
 };
 
-// 格式化日期
-const formatDate = (dateString: string) => {
+// 格式化日期时间（完整日期 + 完整时间）
+const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("zh-CN", {
+    return date.toLocaleString("zh-CN", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
     });
 };
 
 // 导航到公告详情
 const navigateToAnnouncement = (announcementId: Api.Announcement.AnnouncementId) => {
-    router.push(`announcement/detail/${announcementId}`);
+    router.push({ name: "announcement-detail", params: { id: announcementId } });
 };
 
 // 查看所有公告
 const viewAllAnnouncements = () => {
-    router.push("/announcement-list");
+    router.push("/announcement/list");
 };
 
 // 计算是否有数据
@@ -71,59 +75,98 @@ onMounted(() => {
     <div class="announcement-section">
         <div class="announcement-header">
             <h2 class="announcement-title">
-                <span class="icon-bullhorn"></span>
+                <el-icon class="announcement-title-icon">
+                    <Bell />
+                </el-icon>
                 最新公告
             </h2>
-            <button class="view-all-btn" @click="viewAllAnnouncements">
+            <el-button class="view-all-btn" link type="primary" @click="viewAllAnnouncements">
                 查看全部
-                <span class="icon-angle-right"></span>
-            </button>
+                <el-icon class="view-all-icon">
+                    <ArrowRight />
+                </el-icon>
+            </el-button>
         </div>
 
         <!-- 加载状态 -->
         <div v-if="loading" class="announcement-loading">
-            <div class="loading-spinner"></div>
-            <p>加载中...</p>
+            <el-skeleton :rows="4" animated />
         </div>
 
         <!-- 错误状态 -->
         <div v-else-if="error" class="announcement-error">
-            <p>加载失败，请稍后重试</p>
-            <button class="retry-btn" @click="fetchAnnouncements">重试</button>
-            <p>{{ error }}</p>
+            <el-result icon="error" title="加载失败" sub-title="请稍后重试">
+                <template #extra>
+                    <el-button type="primary" @click="fetchAnnouncements">重试</el-button>
+                </template>
+            </el-result>
         </div>
 
         <!-- 空状态 -->
         <div v-else-if="!hasData" class="announcement-empty">
-            <p>暂无公告</p>
+            <el-empty description="暂无公告" />
         </div>
 
         <!-- 公告列表 -->
         <div v-else class="announcement-list">
-            <div
+            <el-card
                 v-for="announcement in announcements"
                 :key="announcement._id"
-                class="announcement-item"
-                @click="navigateToAnnouncement(announcement._id)"
+                class="announcement-card"
+                shadow="never"
             >
-                <div class="announcement-content">
-                    <h3 class="announcement-item-title">{{ announcement.Title }}</h3>
-                    <p class="announcement-preview">暂无内容预览</p>
+                <div
+                    class="announcement-card-inner"
+                    role="button"
+                    tabindex="0"
+                    @click="navigateToAnnouncement(announcement._id)"
+                    @keydown.enter="navigateToAnnouncement(announcement._id)"
+                >
+                    <el-row :gutter="12" align="middle">
+                        <el-col :span="3" class="announcement-leading">
+                            <el-icon size="32" class="announcement-leading-icon">
+                                <ChatDotSquare />
+                            </el-icon>
+                        </el-col>
+                        <el-col :span="15" class="announcement-main">
+                            <el-row :gutter="12" class="announcement-top" align="middle">
+                                <el-col :span="24" class="announcement-title-col">
+                                    <div class="announcement-item-title" :title="announcement.Title">
+                                        {{ announcement.Title }}
+                                    </div>
+                                </el-col>
+                            </el-row>
+
+                            <el-row class="announcement-bottom" align="middle">
+                                <el-col :span="24">
+                                    <div class="announcement-date">
+                                        <el-icon class="date-icon">
+                                            <Calendar />
+                                        </el-icon>
+                                        <span>{{ formatDateTime(announcement.CreateTime) }}</span>
+                                    </div>
+                                </el-col>
+                            </el-row>
+                        </el-col>
+                        <el-col :span="6" class="announcement-stats-col">
+                            <div class="announcement-stats">
+                                <span class="stat-item">
+                                    <el-icon class="stat-icon">
+                                        <View />
+                                    </el-icon>
+                                    <span>{{ announcement.Views }}</span>
+                                </span>
+                                <span class="stat-item">
+                                    <el-icon class="stat-icon">
+                                        <ChatRound />
+                                    </el-icon>
+                                    <span>{{ announcement.Comments }}</span>
+                                </span>
+                            </div>
+                        </el-col>
+                    </el-row>
                 </div>
-                <div class="announcement-meta">
-                    <span class="announcement-date">{{ formatDate(announcement.CreateTime) }}</span>
-                    <div class="announcement-stats">
-                        <span class="stat-item">
-                            <i class="icon-eye"></i>
-                            {{ announcement.Views }}
-                        </span>
-                        <span class="stat-item">
-                            <i class="icon-comment"></i>
-                            {{ announcement.Comments }}
-                        </span>
-                    </div>
-                </div>
-            </div>
+            </el-card>
         </div>
     </div>
 </template>
@@ -156,184 +199,133 @@ onMounted(() => {
     color: var(--oj-text-color);
 }
 
-.icon-bullhorn::before {
-    content: "📢";
+.announcement-title-icon {
+    color: var(--oj-color-primary);
 }
 
 .view-all-btn {
-    display: flex;
-    gap: var(--oj-spacing-1);
-    align-items: center;
     font-size: var(--oj-font-size-sm);
-    color: var(--oj-color-primary);
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    transition: color 0.3s ease;
 }
 
-.view-all-btn:hover {
-    color: var(--oj-text-color);
-}
-
-.icon-angle-right::before {
-    font-size: var(--oj-font-size-lg);
-    content: "›";
+.view-all-icon {
+    margin-left: var(--oj-spacing-1);
 }
 
 .announcement-list {
-    border-top: 1px solid var(--oj-glass-border);
+    display: grid;
+    gap: var(--oj-spacing-3);
+    padding: var(--oj-spacing-4);
 }
 
-.announcement-item {
-    padding: var(--oj-spacing-6);
+.announcement-card {
+    background: var(--oj-glass-bg-light);
+    border: 1px solid var(--oj-glass-border);
+    border-radius: var(--oj-radius-xl);
+}
+
+.announcement-card :deep(.el-card__body) {
+    padding: 0;
+}
+
+.announcement-card-inner {
+    padding: var(--oj-spacing-5);
     cursor: pointer;
-    border-bottom: 1px solid var(--oj-glass-border);
+    border-radius: var(--oj-radius-xl);
     transition: background-color 0.2s ease;
 }
 
-.announcement-item:last-child {
-    border-bottom: none;
-}
-
-.announcement-item:hover {
+.announcement-card-inner:hover {
     background-color: var(--oj-surface-hover);
 }
 
-.announcement-content {
-    flex: 1;
-    margin-bottom: var(--oj-spacing-3);
+.announcement-card-inner:focus-visible {
+    outline: 2px solid var(--oj-color-primary);
+    outline-offset: 2px;
 }
 
-.announcement-item-title {
-    margin-bottom: var(--oj-spacing-2);
-    font-size: var(--oj-font-size-lg);
-    font-weight: var(--oj-font-weight-semibold);
-    color: var(--oj-text-color);
-    transition: color 0.3s ease;
+.announcement-leading {
+    display: flex;
+    justify-content: center;
 }
 
-.announcement-item:hover .announcement-item-title {
+.announcement-leading-icon {
     color: var(--oj-color-primary);
 }
 
-.announcement-preview {
-    display: -webkit-box;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    font-size: var(--oj-font-size-sm);
-    line-height: var(--oj-line-height-relaxed);
-    color: var(--oj-text-secondary);
-    -webkit-box-orient: vertical;
+.announcement-leading-icon :deep(svg) {
+    width: 36px;
+    height: 36px;
 }
 
-.announcement-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--oj-spacing-2);
-    align-items: center;
-    justify-content: space-between;
+.announcement-item-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--oj-font-size-lg);
+    font-weight: var(--oj-font-weight-semibold);
+    color: var(--oj-text-color);
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.announcement-card-inner:hover .announcement-item-title {
+    color: var(--oj-color-primary);
 }
 
 .announcement-date {
+    display: inline-flex;
+    gap: var(--oj-spacing-1);
+    align-items: center;
     font-family: var(--oj-font-family-mono);
-    font-size: var(--oj-font-size-xs);
+    font-size: var(--oj-font-size-sm);
     color: var(--oj-text-muted);
+}
+
+.date-icon :deep(svg) {
+    width: 16px;
+    height: 16px;
 }
 
 .announcement-stats {
     display: flex;
-    gap: var(--oj-spacing-3);
-    align-items: center;
+    flex-direction: column;
+    gap: var(--oj-spacing-2);
+    align-items: flex-end;
+    justify-content: flex-end;
 }
 
 .stat-item {
-    display: flex;
+    display: inline-flex;
     gap: var(--oj-spacing-1);
     align-items: center;
     font-size: var(--oj-font-size-xs);
     color: var(--oj-text-muted);
 }
 
-.icon-eye::before {
-    content: "👁️";
-}
-
-.icon-comment::before {
-    content: "💬";
+.stat-icon :deep(svg) {
+    width: 16px;
+    height: 16px;
 }
 
 /* Loading state */
 .announcement-loading {
-    padding: var(--oj-spacing-16) var(--oj-spacing-6);
+    padding: var(--oj-spacing-8) var(--oj-spacing-6);
     color: var(--oj-text-secondary);
-    text-align: center;
-}
-
-.loading-spinner {
-    width: 40px;
-    height: 40px;
-    margin: 0 auto var(--oj-spacing-4);
-    border: 3px solid var(--oj-glass-border);
-    border-top-color: var(--oj-color-primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
 }
 
 /* Error state */
 .announcement-error {
-    padding: var(--oj-spacing-16) var(--oj-spacing-6);
-    color: var(--oj-text-secondary);
-    text-align: center;
-}
-
-.retry-btn {
-    padding: var(--oj-spacing-2) var(--oj-spacing-4);
-    margin-top: var(--oj-spacing-4);
-    color: var(--oj-text-inverse);
-    cursor: pointer;
-    background-color: var(--oj-color-primary);
-    border: none;
-    border-radius: var(--oj-radius-md);
-    transition: all 0.3s ease;
-}
-
-.retry-btn:hover {
-    background-color: var(--oj-color-primary-dark);
-    transform: translateY(-1px);
+    padding: var(--oj-spacing-8) var(--oj-spacing-6);
 }
 
 /* Empty state */
 .announcement-empty {
-    padding: var(--oj-spacing-16) var(--oj-spacing-6);
-    color: var(--oj-text-secondary);
-    text-align: center;
+    padding: var(--oj-spacing-8) var(--oj-spacing-6);
 }
 
-@media (width >= 768px) {
-    .announcement-item {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-    }
-
-    .announcement-content {
-        margin-right: var(--oj-spacing-4);
-        margin-bottom: 0;
-    }
-
-    .announcement-meta {
-        flex-shrink: 0;
-        flex-direction: column;
-        align-items: flex-end;
+@media (width >=768px) {
+    .announcement-list {
+        gap: var(--oj-spacing-4);
+        padding: var(--oj-spacing-5);
     }
 }
 </style>

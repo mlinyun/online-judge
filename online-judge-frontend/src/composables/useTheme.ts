@@ -4,6 +4,7 @@
  * 使用 Pinia 进行状态管理和持久化
  */
 import { onMounted, watch } from "vue";
+import { storeToRefs } from "pinia";
 import { useSettingStore } from "@/stores/modules/setting";
 
 /**
@@ -56,17 +57,20 @@ function initTheme() {
 export function useTheme() {
     const settingStore = useSettingStore();
 
+    // 使用 storeToRefs 保持响应式状态
+    const { themeMode, effectiveTheme, isDark } = storeToRefs(settingStore);
+
     onMounted(() => {
         initTheme();
     });
 
     return {
         /** 当前主题模式 (dark/light/system) */
-        themeMode: settingStore.themeMode,
+        themeMode,
         /** 当前实际生效的主题 */
-        effectiveTheme: settingStore.effectiveTheme,
+        effectiveTheme,
         /** 当前是否为深色主题 */
-        isDark: settingStore.isDark,
+        isDark,
         /** 设置主题模式 */
         setTheme: settingStore.setTheme,
         /** 切换主题 (dark <-> light) */

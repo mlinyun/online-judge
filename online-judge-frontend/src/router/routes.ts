@@ -11,6 +11,8 @@ const AdminLayout = () => import("@/layouts/admin/index.vue");
 // 主应用相关页面组件将使用路由懒加载，在路由配置中直接引入
 // 首页（包含公告列表）
 const HomeView = () => import("@views/home/index.vue");
+// 公告列表页面
+const AnnouncementList = () => import("@views/home/list/index.vue");
 // 公告详情页面
 const AnnouncementDetail = () => import("@views/home/detail/index.vue");
 // 题目列表页
@@ -70,6 +72,12 @@ export const routes: Array<RouteRecordRaw> = [
                 name: "home",
                 component: HomeView,
                 meta: { title: "首页" },
+            },
+            {
+                path: "announcement/list",
+                name: "announcement-list",
+                component: AnnouncementList,
+                meta: { title: "公告列表页" },
             },
             {
                 path: "announcement/detail/:id",
