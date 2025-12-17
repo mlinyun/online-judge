@@ -153,14 +153,19 @@ const handleLogout = async () => {
     color: var(--oj-text-color);
 }
 
+.dropdown-arrow {
+    display: none;
+    color: var(--oj-text-muted);
+}
+
 @media (width >=768px) {
     .user-name {
         display: block;
     }
-}
 
-.dropdown-arrow {
-    color: var(--oj-text-muted);
+    .dropdown-arrow {
+        display: block;
+    }
 }
 
 :deep(.el-dropdown-menu__item) {

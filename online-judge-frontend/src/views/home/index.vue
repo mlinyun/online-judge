@@ -25,13 +25,13 @@ defineOptions({ name: "HomeView" });
     margin: 0 auto;
 }
 
-@media (width >=640px) {
+@media (width >= 640px) {
     .home-view {
         padding: var(--oj-spacing-6);
     }
 }
 
-@media (width >=1024px) {
+@media (width >= 1024px) {
     .home-view {
         padding: var(--oj-spacing-8);
     }

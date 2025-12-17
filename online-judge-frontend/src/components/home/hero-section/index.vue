@@ -53,8 +53,8 @@ const navigateToRank = () => {
     top: 50%;
     left: 50%;
     z-index: -1;
-    width: 600px;
-    height: 600px;
+    width: 100%;
+    height: 400px;
     pointer-events: none;
     background: radial-gradient(circle, rgb(6 182 212 / 15%) 0%, transparent 70%);
     filter: blur(60px);
