@@ -58,7 +58,6 @@ declare module 'vue' {
     IEpUser: typeof import('~icons/ep/user')['default']
     OjCol: typeof import('./../../components/grid/OjCol.vue')['default']
     OjRow: typeof import('./../../components/grid/OjRow.vue')['default']
-    RankingBoard: typeof import('./../../components/RankingBoard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ThemToggle: typeof import('./../../components/main/header/components/them-toggle.vue')['default']
