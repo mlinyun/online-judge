@@ -60,7 +60,7 @@ declare module 'vue' {
     OjRow: typeof import('./../../components/grid/OjRow.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    ThemToggle: typeof import('./../../components/main/header/components/them-toggle.vue')['default']
+    ThemeToggle: typeof import('./../../components/main/header/components/them-toggle.vue')['default']
     UserDropdown: typeof import('./../../components/main/header/components/user-dropdown.vue')['default']
   }
 }

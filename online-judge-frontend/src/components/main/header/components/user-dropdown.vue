@@ -158,7 +158,7 @@ const handleLogout = async () => {
     color: var(--oj-text-muted);
 }
 
-@media (width >=768px) {
+@media (width >= 768px) {
     .user-name {
         display: block;
     }
