@@ -166,6 +166,12 @@ public:
      * 权限：只允许管理员查询
      */
     Json::Value SelectAnnouncementListByAdmin(Json::Value &queryjson);
+
+    /**
+     * 功能：设置公告激活状态
+     * 权限：只允许管理员操作
+     */
+    Json::Value UpdateAnnouncementActive(Json::Value &updatejson);
     // ------------------------------ 公告模块 End ------------------------------
 
     // ------------------------------ 讨论模块 Start ------------------------------

@@ -354,7 +354,7 @@ Json::Value MoDB::SelectUserRank(Json::Value &queryjson) {
         bsoncxx::builder::stream::document document{};
         // ACNum 值越大，越靠前；若 ACNum 相同，则 SubmitNum 越小排名越高，如果 ACNum 和 SubmitNum 都相同，则按 _id 排序
         document << "ACNum" << -1 << "SubmitNum" << 1 << "_id" << 1;
-        
+
         // 构造聚合管道
         mongocxx::pipeline pipe;
         // 排序、跳过和限制
@@ -392,37 +392,83 @@ Json::Value MoDB::SelectUserRank(Json::Value &queryjson) {
  * 权限：只允许管理员查询
  * @name SelectUserSetInfo
  * @brief 分页查询用户列表（管理员权限）
- * @param queryjson Json(Page, PageSize)
+ * @param queryjson Json(Page, PageSize, SearchInfo(NickName, School, Major, Account))
  * @return Json(success, code, message, data(List[{_id, NickName, PersonalProfile, School, Major, JoinTime}], Total))
  */
 Json::Value MoDB::SelectUserSetInfo(Json::Value &queryjson) {
     try {
+        // 提取查询信息
+        Json::Value searchinfo = queryjson["SearchInfo"];
         int page = stoi(queryjson["Page"].asString());
         int pagesize = stoi(queryjson["PageSize"].asString());
         int skip = (page - 1) * pagesize;
 
+        // 获取数据库连接
         auto client = pool.acquire();
         mongocxx::collection usercoll = (*client)[DATABASE_NAME][COLLECTION_USERS];
-
-        bsoncxx::builder::stream::document document{};
-        mongocxx::pipeline pipe;
-        pipe.skip(skip);
-        pipe.limit(pagesize);
-
-        document << "NickName" << 1 << "PersonalProfile" << 1 << "School" << 1 << "Major" << 1 << "JoinTime" << 1;
-
-        pipe.project(document.view());
         Json::Reader reader;
+        mongocxx::pipeline pipe, pipetot;
+        bsoncxx::builder::stream::document document{};
 
-        mongocxx::cursor cursor = usercoll.aggregate(pipe);
+        // 查询用户名（NickName）
+        if (searchinfo["NickName"].asString().size() > 0) {
+            document << "NickName" << open_document << "$regex" << searchinfo["NickName"].asString() << close_document;
+            pipe.match(document.view());
+            pipetot.match(document.view());
+            document.clear();
+        }
+
+        // 查询学校（School）
+        if (searchinfo["School"].asString().size() > 0) {
+            document << "School" << open_document << "$regex" << searchinfo["School"].asString() << close_document;
+            pipe.match(document.view());
+            pipetot.match(document.view());
+            document.clear();
+        }
+
+        // 查询专业（Major）
+        if (searchinfo["Major"].asString().size() > 0) {
+            document << "Major" << open_document << "$regex" << searchinfo["Major"].asString() << close_document;
+            pipe.match(document.view());
+            pipetot.match(document.view());
+            document.clear();
+        }
+
+        // 查询账号（Account）
+        if (searchinfo["Account"].asString().size() > 0) {
+            document << "Account" << open_document << "$regex" << searchinfo["Account"].asString() << close_document;
+            pipe.match(document.view());
+            pipetot.match(document.view());
+            document.clear();
+        }
+
+        // 获取总条数
+        int total = 0;
+        pipetot.count("TotalNum");
+        mongocxx::cursor cursor = usercoll.aggregate(pipetot);
+        for (auto doc : cursor) {
+            Json::Value tmpjson;
+            reader.parse(bsoncxx::to_json(doc), tmpjson);
+            total = tmpjson["TotalNum"].asInt();
+        }
+
+        // 排序
+        pipe.sort({make_document(kvp("_id", 1))});
+        // 跳过
+        pipe.skip(skip);
+        // 限制
+        pipe.limit(pagesize);
+        // 投影
+        document << "NickName" << 1 << "PersonalProfile" << 1 << "School" << 1 << "Major" << 1 << "JoinTime" << 1;
+        pipe.project(document.view());
+
         Json::Value list(Json::arrayValue);
-
+        cursor = usercoll.aggregate(pipe);
         for (auto doc : cursor) {
             Json::Value jsonvalue;
             reader.parse(bsoncxx::to_json(doc), jsonvalue);
             list.append(jsonvalue);
         }
-        auto total = static_cast<int>(usercoll.count_documents({}));
         return response::SuccessList("查询成功", list, total);
     } catch (const std::exception &e) {
         return response::InternalError("数据库异常：" + std::string(e.what()));
@@ -1041,7 +1087,7 @@ Json::Value MoDB::GetProblemTags() {
  * 权限：只允许管理员添加
  * @name InsertAnnouncement
  * @brief 插入新公告
- * @param insertjson Json(Title, Content, UserId, Level)
+ * @param insertjson Json(Title, Content, UserId, Level, Active)
  * @return Json(success, code, message, data(AnnouncementId))
  */
 Json::Value MoDB::InsertAnnouncement(Json::Value &insertjson) {
@@ -1052,6 +1098,7 @@ Json::Value MoDB::InsertAnnouncement(Json::Value &insertjson) {
         string content = insertjson["Content"].asString();
         int64_t userid = stoll(insertjson["UserId"].asString());
         int level = stoi(insertjson["Level"].asString());
+        bool isactive = insertjson["Active"].asBool();
 
         // 获取数据库连接
         auto client = pool.acquire();
@@ -1060,8 +1107,8 @@ Json::Value MoDB::InsertAnnouncement(Json::Value &insertjson) {
         // 构造插入文档
         bsoncxx::builder::stream::document document{};
         document << "_id" << id << "Title" << title.data() << "Content" << content.data() << "UserId" << userid
-                 << "Views" << 0 << "Comments" << 0 << "Level" << level << "CreateTime" << GetTime().data()
-                 << "UpdateTime" << GetTime().data();
+                 << "Views" << 0 << "Comments" << 0 << "Level" << level << "Active" << isactive << "CreateTime"
+                 << GetTime().data() << "UpdateTime" << GetTime().data();
 
         // 执行插入操作
         auto result = announcementcoll.insert_one(document.view());
@@ -1130,7 +1177,7 @@ Json::Value MoDB::SelectAnnouncement(Json::Value &queryjson) {
  * @name SelectAnnouncementByEdit
  * @brief 查询公告的详细信息，主要是编辑时的查询（管理员权限）
  * @param queryjson Json(AnnouncementId)
- * @return Json(success, code, message, data(_id, Title, Content, Level))
+ * @return Json(success, code, message, data(_id, Title, Content, Level, Active))
  */
 Json::Value MoDB::SelectAnnouncementByEdit(Json::Value &queryjson) {
     try {
@@ -1144,7 +1191,7 @@ Json::Value MoDB::SelectAnnouncementByEdit(Json::Value &queryjson) {
         bsoncxx::builder::stream::document document{};
         mongocxx::pipeline pipe;
         pipe.match({make_document(kvp("_id", announcementid))});
-        document << "Title" << 1 << "Content" << 1 << "Level" << 1;
+        document << "Title" << 1 << "Content" << 1 << "Level" << 1 << "Active" << 1;
         pipe.project(document.view());
         mongocxx::cursor cursor = announcementcoll.aggregate(pipe);
 
@@ -1167,7 +1214,7 @@ Json::Value MoDB::SelectAnnouncementByEdit(Json::Value &queryjson) {
  * 权限：只允许管理员修改
  * @name UpdateAnnouncement
  * @brief 更新指定公告的信息
- * @param updatejson Json(AnnouncementId, Title, Content, Level)
+ * @param updatejson Json(AnnouncementId, Title, Content, Level, Active)
  * @return Json(success, code, message, data(Result))
  */
 Json::Value MoDB::UpdateAnnouncement(Json::Value &updatejson) {
@@ -1177,6 +1224,7 @@ Json::Value MoDB::UpdateAnnouncement(Json::Value &updatejson) {
         string title = updatejson["Title"].asString();
         string content = updatejson["Content"].asString();
         int level = stoi(updatejson["Level"].asString());
+        bool isactive = updatejson["Active"].asBool();
 
         // 获取数据库连接
         auto client = pool.acquire();
@@ -1185,7 +1233,7 @@ Json::Value MoDB::UpdateAnnouncement(Json::Value &updatejson) {
         // 构造更新文档
         bsoncxx::builder::stream::document document{};
         document << "$set" << open_document << "Title" << title.data() << "Content" << content.data() << "Level"
-                 << level << "UpdateTime" << GetTime().data() << close_document;
+                 << level << "Active" << isactive << "UpdateTime" << GetTime().data() << close_document;
 
         // 执行更新
         auto result = announcementcoll.update_one({make_document(kvp("_id", announcementid))}, document.view());
@@ -1233,7 +1281,7 @@ Json::Value MoDB::DeleteAnnouncement(Json::Value &deletejson) {
 }
 
 /**
- * 功能：分页查询公告列表
+ * 功能：分页查询公告列表（激活的公告）
  * 权限：所有用户均可查询
  * @name SelectAnnouncementList
  * @brief 分页查询公告列表
@@ -1254,6 +1302,10 @@ Json::Value MoDB::SelectAnnouncementList(Json::Value &queryjson) {
         // 获取数据库连接
         auto client = pool.acquire();
         mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+
+        // 只查询激活的公告
+        pipe.match({make_document(kvp("Active", true))});
+        pipetot.match({make_document(kvp("Active", true))});
 
         // 获取总条数
         int total = 0;
@@ -1281,6 +1333,97 @@ Json::Value MoDB::SelectAnnouncementList(Json::Value &queryjson) {
             list.append(jsonvalue);
         }
         return response::SuccessList(list, total);
+    } catch (const std::exception &e) {
+        return response::DatabaseError();
+    }
+}
+
+/**
+ * 功能：分页查询所有公告列表（包括未激活的公告）
+ * 权限：只允许管理员查询
+ * @name SelectAnnouncementListByAdmin
+ * @brief 分页查询所有公告列表
+ * @param queryjson Json(Page, PageSize)
+ * @return Json(success, code, message, data(List[{_id, Title, Views, Comments, Active, CreateTime}], Total))
+ */
+Json::Value MoDB::SelectAnnouncementListByAdmin(Json::Value &queryjson) {
+    try {
+        // 提取查询信息
+        int page = stoi(queryjson["Page"].asString());
+        int pagesize = stoi(queryjson["PageSize"].asString());
+        int skip = (page - 1) * pagesize;
+
+        Json::Reader reader;
+        bsoncxx::builder::stream::document document{};
+        mongocxx::pipeline pipe, pipetot;
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+
+        // 获取总条数（不过滤 Active 状态）
+        int total = 0;
+        pipetot.count("TotalNum");
+        mongocxx::cursor cursor = announcementcoll.aggregate(pipetot);
+        for (auto doc : cursor) {
+            Json::Value tmpjson;
+            reader.parse(bsoncxx::to_json(doc), tmpjson);
+            total = tmpjson["TotalNum"].asInt();
+        }
+        pipe.sort({make_document(kvp("CreateTime", -1))});
+        pipe.sort({make_document(kvp("Level", -1))});
+        pipe.skip(skip);
+        pipe.limit(pagesize);
+
+        document << "Title" << 1 << "Views" << 1 << "Comments" << 1 << "Active" << 1 << "CreateTime" << 1;
+        pipe.project(document.view());
+
+        cursor = announcementcoll.aggregate(pipe);
+
+        Json::Value list(Json::arrayValue);
+        for (auto doc : cursor) {
+            Json::Value jsonvalue;
+            reader.parse(bsoncxx::to_json(doc), jsonvalue);
+            list.append(jsonvalue);
+        }
+        return response::SuccessList(list, total);
+    } catch (const std::exception &e) {
+        return response::DatabaseError();
+    }
+}
+
+/**
+ * 功能：设置公告激活状态
+ * 权限：只允许管理员操作
+ * @name UpdateAnnouncementActive
+ * @brief 设置公告是否激活
+ * @param updatejson Json(AnnouncementId, Active)
+ * @return Json(success, code, message, data(Result))
+ */
+Json::Value MoDB::UpdateAnnouncementActive(Json::Value &updatejson) {
+    try {
+        // 提取公告 ID 和激活状态
+        int64_t announcementid = stoll(updatejson["AnnouncementId"].asString());
+        bool isactive = updatejson["Active"].asBool();
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+
+        // 构造更新文档
+        bsoncxx::builder::stream::document document{};
+        document << "$set" << open_document << "Active" << isactive << close_document;
+
+        // 执行更新操作
+        auto result = announcementcoll.update_one({make_document(kvp("_id", announcementid))}, document.view());
+        if (!result || result->modified_count() < 1) {
+            return response::Fail(error_code::ANNOUNCEMENT_NOT_FOUND, "公告不存在！");
+        }
+
+        // 构造返回数据
+        Json::Value data;
+        data["Result"] = static_cast<bool>(result->modified_count());
+        return response::Success("设置公告状态成功", data);
     } catch (const std::exception &e) {
         return response::DatabaseError();
     }

@@ -2,8 +2,19 @@
 /**
  * 管理后台 - 侧边栏
  */
-import { computed, ref } from "vue";
-import { Expand as IconEpExpand, Platform as IconEpPlatform } from "@element-plus/icons-vue";
+import { computed, ref, type Component } from "vue";
+import {
+    Bell as IconEpBell,
+    ChatDotRound as IconEpChatDotRound,
+    Comment as IconEpComment,
+    Document as IconEpDocument,
+    Expand as IconEpExpand,
+    Odometer as IconEpOdometer,
+    Platform as IconEpPlatform,
+    Reading as IconEpReading,
+    Setting as IconEpSetting,
+    User as IconEpUser,
+} from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
 
 defineOptions({ name: "AdminAside" });
@@ -49,7 +60,7 @@ const handleLogoClick = () => {
 interface MenuItem {
     name: string;
     path?: string;
-    icon?: string;
+    icon?: Component;
     children?: MenuItem[];
 }
 
@@ -92,12 +103,8 @@ const goToFrontend = () => {
     <aside class="admin-sidebar" :style="{ width: sidebarWidth }">
         <!-- Logo -->
         <div class="sidebar-header">
-            <div
-                class="sidebar-brand"
-                @click="handleLogoClick"
-                @mouseenter="isLogoHovered = true"
-                @mouseleave="isLogoHovered = false"
-            >
+            <div class="sidebar-brand" @click="handleLogoClick" @mouseenter="isLogoHovered = true"
+                @mouseleave="isLogoHovered = false">
                 <el-icon class="brand-icon" :size="22">
                     <component :is="props.collapsed && isLogoHovered ? IconEpExpand : IconEpPlatform" />
                 </el-icon>

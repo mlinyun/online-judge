@@ -195,8 +195,21 @@ declare namespace Api {
         /** 用户排名列表响应参数 */
         type UserRankListResponse = ApiResponse<UserRankListResult>;
 
+        /** 分页查询用户列表请求参数 */
+        interface UserManageListParams extends Common.PaginationParams {
+            /** 搜索信息 */
+            SearchInfo?: {
+                /** 用户昵称 */
+                NickName?: string;
+                /** 学校 */
+                School?: string;
+                /** 专业 */
+                Major?: string;
+                /** 用户账号 */
+                Account?: string;
+            };
+        }
         /** 用户管理列表项 */
-        // _id, NickName, PersonalProfile, School, Major, JoinTime
         interface UserManageListItem {
             /** 用户 ID */
             _id: UserId;
@@ -427,6 +440,8 @@ declare namespace Api {
             Content: string;
             /** 公告等级 */
             Level: number;
+            /** 公告是否激活 */
+            Active: boolean;
         }
         /** 添加公告响应数据结构 */
         interface InsertAnnouncementResult {
@@ -466,6 +481,8 @@ declare namespace Api {
             Content: string;
             /** 公告等级 */
             Level: number;
+            /** 公告是否激活 */
+            Active: boolean;
         }
         /** 查询公告详细信息（编辑）响应参数 */
         type SelectAnnouncementByEditResponse = ApiResponse<SelectAnnouncementByEditResult>;
@@ -480,6 +497,8 @@ declare namespace Api {
             Content: string;
             /** 公告等级 */
             Level: number;
+            /** 公告是否激活 */
+            Active: boolean;
         }
         /** 更新公告响应参数 */
         type UpdateAnnouncementResponse = ApiResponse<Common.OperationResult>;
@@ -504,6 +523,16 @@ declare namespace Api {
         type SelectAnnouncementListResult = Common.PaginationResponse<SelectAnnouncementListItem>;
         /** 分页查询公告列表响应参数 */
         type SelectAnnouncementListResponse = ApiResponse<SelectAnnouncementListResult>;
+
+        /** 设置公告激活状态请求参数 */
+        interface UpdateAnnouncementActiveParams {
+            /** 公告 ID */
+            AnnouncementId: AnnouncementId;
+            /** 公告是否激活 */
+            Active: boolean;
+        }
+        /** 设置公告激活状态响应参数 */
+        type UpdateAnnouncementActiveResponse = ApiResponse<Common.OperationResult>;
     }
 
     /** 讨论相关类型 */

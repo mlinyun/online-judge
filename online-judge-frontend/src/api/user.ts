@@ -141,13 +141,13 @@ export const selectUserRank = (
  * @tags 用户模块
  * @description 分页查询用户列表（管理员权限）
  * @request GET `/admin/user/list`
- * @param params 分页参数，详见 {@link Api.Common.PaginationParams}
+ * @param data 分页参数，详见 {@link Api.User.UserManageListParams}
  * @returns 用户列表，详见 {@link Api.User.UserManageListResponse}
  */
 export const selectUserList = (
-    params: Api.Common.PaginationParams
+    data: Api.User.UserManageListParams
 ): Promise<AxiosResponse<Api.User.UserManageListResponse>> => {
-    return get<Api.User.UserManageListResult>("/admin/user/list", { ...params });
+    return post<Api.User.UserManageListResult>("/admin/user/list", data);
 };
 
 /**

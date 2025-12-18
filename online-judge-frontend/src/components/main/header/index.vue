@@ -38,7 +38,8 @@ const activeMenu = computed(() => {
             return item.path;
         }
     }
-    return "/";
+    // 默认返回空字符串
+    return "";
 });
 
 // 导航到指定路径
@@ -110,9 +111,7 @@ const toggleMobileMenu = () => {
 </template>
 
 <style scoped>
-/* ============================================
- * 导航栏整体样式
- * ============================================ */
+/* 导航栏整体样式 */
 .oj-navbar {
     position: fixed;
     top: 0;
@@ -150,10 +149,7 @@ const toggleMobileMenu = () => {
     margin-left: auto;
 }
 
-/* ============================================
- * Logo 样式
- * ============================================ */
-
+/* Logo 样式 */
 .oj-navbar-brand {
     display: flex;
     flex-shrink: 0;
@@ -186,10 +182,7 @@ const toggleMobileMenu = () => {
     color: var(--oj-color-primary);
 }
 
-/* ============================================
- * 桌面端菜单样式
- * ============================================ */
-
+/* 桌面端菜单样式 */
 .oj-navbar-menu {
     display: none;
     flex: 1;
@@ -198,7 +191,7 @@ const toggleMobileMenu = () => {
     border-bottom: none;
 }
 
-@media (width >=768px) {
+@media (width >= 768px) {
     .oj-navbar-menu {
         display: flex;
         justify-content: center;
@@ -283,20 +276,14 @@ const toggleMobileMenu = () => {
     display: none !important;
 }
 
-/* ============================================
- * 右侧工具栏
- * ============================================ */
-
+/* 右侧工具栏 */
 .oj-navbar-actions {
     display: flex;
     gap: var(--oj-spacing-3);
     align-items: center;
 }
 
-/* ============================================
- * 移动端菜单按钮
- * ============================================ */
-
+/* 移动端菜单按钮 */
 .oj-mobile-menu-btn {
     display: flex;
     align-items: center;
@@ -317,16 +304,13 @@ const toggleMobileMenu = () => {
     transform: rotate(90deg);
 }
 
-@media (width >=768px) {
+@media (width >= 768px) {
     .oj-mobile-menu-btn {
         display: none;
     }
 }
 
-/* ============================================
- * 移动端菜单
- * ============================================ */
-
+/* 移动端菜单 */
 .oj-mobile-menu {
     display: flex;
     flex-direction: column;
@@ -337,7 +321,7 @@ const toggleMobileMenu = () => {
     backdrop-filter: blur(12px);
 }
 
-@media (width >=768px) {
+@media (width >= 768px) {
     .oj-mobile-menu {
         display: none;
     }
@@ -416,26 +400,5 @@ const toggleMobileMenu = () => {
 
 .oj-mobile-nav-link:hover :deep(.el-icon) {
     transform: scale(1.2);
-}
-
-/* ============================================
- * 过渡动画
- * ============================================ */
-
-.oj-slide-down-enter-active,
-.oj-slide-down-leave-active {
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.oj-slide-down-enter-from,
-.oj-slide-down-leave-to {
-    opacity: 0;
-    transform: translateY(-10px);
-}
-
-.oj-slide-down-enter-to,
-.oj-slide-down-leave-from {
-    opacity: 1;
-    transform: translateY(0);
 }
 </style>

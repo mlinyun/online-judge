@@ -231,21 +231,19 @@ void doGetUserRank(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetUserSetInfo(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetUserSetInfo start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
+    // 解析传入的 Json
+    Json::Value queryjson;
+    Json::Reader reader;
+    reader.parse(req.body, queryjson);
     Json::Value resjson;
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
+    // 请求参数校验（Page 和 PageSize 是必传参数）
+    if (!queryjson.isMember("Page") || !queryjson.isMember("PageSize")) {
         resjson = response::BadRequest();
-    } else {
-        // 获取 Token 参数
-        string token = GetRequestToken(req);
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        Json::Value queryjson;
-        queryjson["Token"] = token;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        resjson = control.SelectUserSetInfo(queryjson);
     }
+    queryjson["Token"] = token;
+    resjson = control.SelectUserSetInfo(queryjson);
     cout << "doGetUserSetInfo end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -632,6 +630,26 @@ void doGetAnnouncementListByAdmin(const httplib::Request &req, httplib::Response
         resjson = control.SelectAnnouncementListByAdmin(queryjson);
     }
     cout << "doGetAnnouncementListByAdmin end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
+    res.set_content(resbody, "application/json; charset=utf-8");
+}
+
+/**
+ * 处理设置公告激活状态的请求
+ */
+void doUpdateAnnouncementActive(const httplib::Request &req, httplib::Response &res) {
+    cout << "doUpdateAnnouncementActive start!!!" << endl;
+    // 获取 Token 参数
+    string token = GetRequestToken(req);
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    // 解析传入的 Json
+    reader.parse(req.body, jsonvalue);
+    jsonvalue["Token"] = token;
+
+    Json::Value resjson = control.UpdateAnnouncementActive(jsonvalue);
+    cout << "doUpdateAnnouncementActive end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
     res.set_content(resbody, "application/json; charset=utf-8");
@@ -1463,7 +1481,7 @@ void HttpServer::Run() {
     // 用户排名查询
     server.Get(API + "/user/rank", doGetUserRank);
     // 分页查询用户列表（管理员权限）
-    server.Get(API + "/admin/user/list", doGetUserSetInfo);
+    server.Post(API + "/admin/user/list", doGetUserSetInfo);
     // 用户登录通过 Token 鉴权（Token 鉴权实现）
     server.Get(API + "/user/auth", doGetUserInfoByToken);
     // 用户修改密码
@@ -1507,6 +1525,8 @@ void HttpServer::Run() {
     server.Get(API + "/announcement/list", doGetAnnouncementList);
     // 分页获取公告列表（管理员权限）
     server.Get(API + "/admin/announcement/list", doGetAnnouncementListByAdmin);
+    // 设置公告激活状态（管理员权限）
+    server.Post(API + "/admin/announcement/active", doUpdateAnnouncementActive);
     // -------------------- 公告模块 End --------------------
 
     // --------------------  讨论模块 Start --------------------

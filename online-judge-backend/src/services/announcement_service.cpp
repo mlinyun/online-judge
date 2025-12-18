@@ -50,7 +50,12 @@ Json::Value AnnouncementService::SelectAnnouncementList(Json::Value &queryjson) 
 
 // 分页查询公告列表（管理员权限）
 Json::Value AnnouncementService::SelectAnnouncementListByAdmin(Json::Value &queryjson) {
-    return MoDB::GetInstance()->SelectAnnouncementList(queryjson);
+    return MoDB::GetInstance()->SelectAnnouncementListByAdmin(queryjson);
+}
+
+// 设置公告激活状态（管理员权限）
+Json::Value AnnouncementService::UpdateAnnouncementActive(Json::Value &updatejson) {
+    return MoDB::GetInstance()->UpdateAnnouncementActive(updatejson);
 }
 
 AnnouncementService::AnnouncementService() {

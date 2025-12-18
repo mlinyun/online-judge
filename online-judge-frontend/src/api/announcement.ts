@@ -144,3 +144,21 @@ export const selectAnnouncementListByAdmin = (
         ...params,
     });
 };
+
+/**
+ * 设置公告激活状态（管理员权限）
+ * @name updateAnnouncementActive
+ * @tags 公告模块
+ * @description 设置公告的激活状态
+ * @request POST `/admin/announcement/active`
+ * @param data 公告激活状态信息，详见 {@link Api.Announcement.UpdateAnnouncementActiveParams}
+ * @returns 设置结果，详见 {@link Api.Announcement.UpdateAnnouncementActiveResponse}
+ */
+export const updateAnnouncementActive = (
+    data: Api.Announcement.UpdateAnnouncementActiveParams
+): Promise<AxiosResponse<Api.Announcement.UpdateAnnouncementActiveResponse>> => {
+    return post<Api.Common.OperationResult>("/admin/announcement/active", data, {
+        showSuccessMessage: true,
+        successMessage: "公告状态更新成功！",
+    });
+};

@@ -347,6 +347,19 @@ Json::Value Control::SelectAnnouncementListByAdmin(Json::Value &queryjson) {
     }
     return AnnouncementService::GetInstance()->SelectAnnouncementListByAdmin(queryjson);
 }
+
+/**
+ * 功能：设置公告激活状态
+ * 权限：只允许管理员操作
+ */
+Json::Value Control::UpdateAnnouncementActive(Json::Value &updatejson) {
+    // 如果不是管理员，无权设置公告状态
+    bool is_administrator = UserService::GetInstance()->IsAdministrator(updatejson);
+    if (!is_administrator) {
+        return response::Forbidden();
+    }
+    return AnnouncementService::GetInstance()->UpdateAnnouncementActive(updatejson);
+}
 // ------------------------------ 公告模块 End ------------------------------
 
 // ------------------------------ 讨论模块 Start ------------------------------

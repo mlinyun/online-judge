@@ -218,6 +218,22 @@ public:
      * 传出：bool
      */
     bool UpdateAnnouncementComments(Json::Value &updatejson);
+
+    /**
+     * 功能：分页查询所有公告列表（包括未激活的公告）
+     * 权限：只允许管理员查询
+     * 传入：Json(Page, PageSize)
+     * 传出：Json(Result, Reason, List[_id, Title, Views, Comments, Active, CreateTime], Total)
+     */
+    Json::Value SelectAnnouncementListByAdmin(Json::Value &queryjson);
+
+    /**
+     * 功能：设置公告激活状态
+     * 权限：只允许管理员操作
+     * 传入：Json(AnnouncementId, Active)
+     * 传出：Json(Result, Reason)
+     */
+    Json::Value UpdateAnnouncementActive(Json::Value &updatejson);
     // ------------------------------ 公告模块 End ------------------------------
 
     // ------------------------------ 讨论模块 Start ------------------------------

@@ -36,6 +36,9 @@ public:
 
     // 分页查询公告列表（管理员权限）
     Json::Value SelectAnnouncementListByAdmin(Json::Value &queryjson);
+
+    // 设置公告激活状态（管理员权限）
+    Json::Value UpdateAnnouncementActive(Json::Value &updatejson);
 };
 
 #endif  // ANNOUNCEMENT_SERVICE_H
