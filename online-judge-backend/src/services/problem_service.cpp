@@ -5,10 +5,10 @@
 
 #include <fstream>
 
+#include "constants/judge.h"
 #include "db/mongo_database.h"
 #include "db/redis_database.h"
 #include "utils/response.h"
-#include "constants/judge.h"
 
 /**
  * 存储题目数据的路径前缀

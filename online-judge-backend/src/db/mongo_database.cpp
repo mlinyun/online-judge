@@ -12,6 +12,7 @@
 
 #include "constants/db.h"
 #include "constants/judge.h"
+#include "constants/user.h"
 #include "utils/id_generator.hpp"  // 唯一 ID 生成器
 #include "utils/response.h"        // 统一响应工具
 
@@ -74,8 +75,9 @@ Json::Value MoDB::UserRegister(Json::Value &registerjson) {
         // 获取数据库连接
         auto client = pool.acquire();
         mongocxx::collection usercoll = (*client)[DATABASE_NAME][COLLECTION_USERS];
-        mongocxx::cursor cursor = usercoll.find({make_document(kvp("Account", account.data()))});
+
         // 判断账户是否存在
+        mongocxx::cursor cursor = usercoll.find({make_document(kvp("Account", account.data()))});
         if (cursor.begin() != cursor.end()) {
             return response::UserAccountExists();
         }
@@ -91,14 +93,20 @@ Json::Value MoDB::UserRegister(Json::Value &registerjson) {
         string jointime = GetTime();
         // 默认头像
         string avatar = "http://127.0.0.1:8081/api/image/1";
-        // 插入
+        // 默认用户权限为普通用户（3）
+        int authority = constants::user::USER_AUTHORITY_ORDINARY;
+        // 设置默认的个人简介
+        if (personalprofile.empty()) {
+            personalprofile = "这个人很懒，什么都没有留下。";
+        }
+        // 构造用户文档
         bsoncxx::builder::stream::document document{};
         document << "_id" << id << "Avatar" << avatar.data() << "NickName" << nickname.data() << "Account"
                  << account.data() << "PassWord" << password.data() << "PersonalProfile" << personalprofile.data()
                  << "School" << school.data() << "Major" << major.data() << "JoinTime" << jointime.data()
                  << "CommentLikes" << open_array << close_array << "Solves" << open_array << close_array << "SubmitNum"
-                 << 0 << "ACNum" << 0 << "Authority" << 3;
-
+                 << 0 << "ACNum" << 0 << "Authority" << authority;
+        // 插入用户文档
         auto result = usercoll.insert_one(document.view());
         if ((*result).result().inserted_count() < 1) {
             return response::DatabaseError("数据库插入失败！");
@@ -486,7 +494,7 @@ bool MoDB::UpdateUserProblemInfo(Json::Value &updatejson) {
     try {
         // 提取用户 ID、题目 ID 和状态
         int64_t userid = stoll(updatejson["UserId"].asString());
-        int problemid = stoi(updatejson["ProblemId"].asString());
+        int64_t problemid = stoll(updatejson["ProblemId"].asString());
         int status = stoi(updatejson["Status"].asString());
 
         // 获取数据库连接
@@ -848,21 +856,6 @@ Json::Value MoDB::DeleteProblem(Json::Value &deletejson) {
 }
 
 /**
- * 功能：将字符串转换为整数（仅限正整数，且长度小于4）
- */
-int mystoi(string num) {
-    int resnum = 0;
-    if (num.size() >= 4 || num.size() == 0)
-        return resnum;
-    for (auto n : num) {
-        if (isdigit(n)) {
-            resnum = resnum * 10 + n - '0';
-        }
-    }
-    return resnum;
-}
-
-/**
  * 功能：分页获取题目列表
  * 权限：所有用户均可查询
  * @name SelectProblemList
@@ -888,7 +881,7 @@ Json::Value MoDB::SelectProblemList(Json::Value &queryjson) {
 
         // 查询 ID
         if (searchinfo["Id"].asString().size() > 0) {
-            int id = mystoi(searchinfo["Id"].asString());
+            int64_t id = stoll(searchinfo["Id"].asString());
             pipe.match({make_document(kvp("_id", id))});
             pipetot.match({make_document(kvp("_id", id))});
         }
@@ -1321,7 +1314,7 @@ Json::Value MoDB::SelectAnnouncementList(Json::Value &queryjson) {
         pipe.skip(skip);
         pipe.limit(pagesize);
 
-        document << "Title" << 1 << "Views" << 1 << "Comments" << 1 << "CreateTime" << 1;
+        document << "Title" << 1 << "Views" << 1 << "Comments" << 1 << "Level" << 1 << "CreateTime" << 1;
         pipe.project(document.view());
 
         cursor = announcementcoll.aggregate(pipe);
@@ -1349,19 +1342,41 @@ Json::Value MoDB::SelectAnnouncementList(Json::Value &queryjson) {
 Json::Value MoDB::SelectAnnouncementListByAdmin(Json::Value &queryjson) {
     try {
         // 提取查询信息
+        Json::Value searchinfo = queryjson["SearchInfo"];
         int page = stoi(queryjson["Page"].asString());
         int pagesize = stoi(queryjson["PageSize"].asString());
         int skip = (page - 1) * pagesize;
 
-        Json::Reader reader;
-        bsoncxx::builder::stream::document document{};
-        mongocxx::pipeline pipe, pipetot;
-
         // 获取数据库连接
         auto client = pool.acquire();
         mongocxx::collection announcementcoll = (*client)[DATABASE_NAME][COLLECTION_ANNOUNCEMENTS];
+        Json::Reader reader;
+        mongocxx::pipeline pipe, pipetot;
+        bsoncxx::builder::stream::document document{};
 
-        // 获取总条数（不过滤 Active 状态）
+        // 查询标题（Title）
+        if (searchinfo["Title"].asString().size() > 0) {
+            document << "Title" << open_document << "$regex" << searchinfo["Title"].asString() << close_document;
+            pipe.match(document.view());
+            pipetot.match(document.view());
+            document.clear();
+        }
+
+        // 查询公告级别（Level）
+        if (searchinfo["Level"].asString().size() > 0) {
+            int level = stoi(searchinfo["Level"].asString());
+            pipe.match({make_document(kvp("Level", level))});
+            pipetot.match({make_document(kvp("Level", level))});
+        }
+
+        // 查询激活状态（Active）
+        if (searchinfo["Active"].asString().size() > 0) {
+            bool isactive = searchinfo["Active"].asBool();
+            pipe.match({make_document(kvp("Active", isactive))});
+            pipetot.match({make_document(kvp("Active", isactive))});
+        }
+
+        // 获取总条数
         int total = 0;
         pipetot.count("TotalNum");
         mongocxx::cursor cursor = announcementcoll.aggregate(pipetot);
@@ -1375,7 +1390,8 @@ Json::Value MoDB::SelectAnnouncementListByAdmin(Json::Value &queryjson) {
         pipe.skip(skip);
         pipe.limit(pagesize);
 
-        document << "Title" << 1 << "Views" << 1 << "Comments" << 1 << "Active" << 1 << "CreateTime" << 1;
+        document << "Title" << 1 << "Views" << 1 << "Comments" << 1 << "Level" << 1 << "Active" << 1 << "CreateTime"
+                 << 1;
         pipe.project(document.view());
 
         cursor = announcementcoll.aggregate(pipe);
@@ -1768,6 +1784,8 @@ Json::Value MoDB::SelectDiscussList(Json::Value &queryjson) {
  */
 Json::Value MoDB::SelectDiscussListByAdmin(Json::Value &queryjson) {
     try {
+        // 提取搜索参数
+        Json::Value searchinfo = queryjson["SearchInfo"];
         // 提取分页参数
         int page = stoi(queryjson["Page"].asString());
         int pagesize = stoi(queryjson["PageSize"].asString());
@@ -1776,9 +1794,30 @@ Json::Value MoDB::SelectDiscussListByAdmin(Json::Value &queryjson) {
         // 获取数据库连接
         auto client = pool.acquire();
         mongocxx::collection discusscoll = (*client)[DATABASE_NAME][COLLECTION_DISCUSSES];
-
-        bsoncxx::builder::stream::document document{};
         mongocxx::pipeline pipe, pipetot;
+        bsoncxx::builder::stream::document document{};
+
+        // 查询标题（Title）
+        if (searchinfo["Title"].asString().size() > 0) {
+            document << "Title" << open_document << "$regex" << searchinfo["Title"].asString() << close_document;
+            pipe.match(document.view());
+            pipetot.match(document.view());
+            document.clear();
+        }
+
+        // 查询用户 ID（UserId）
+        if (searchinfo["UserId"].asString().size() > 0) {
+            int64_t userid = stoll(searchinfo["UserId"].asString());
+            pipe.match({make_document(kvp("UserId", userid))});
+            pipetot.match({make_document(kvp("UserId", userid))});
+        }
+
+        // 查询父级 ID（ParentId）
+        if (searchinfo["ParentId"].asString().size() > 0) {
+            int64_t parentid = stoll(searchinfo["ParentId"].asString());
+            pipe.match({make_document(kvp("ParentId", parentid))});
+            pipetot.match({make_document(kvp("ParentId", parentid))});
+        }
 
         // 获取总条数
         int total = 0;
@@ -2208,24 +2247,54 @@ Json::Value MoDB::SelectSolutionList(Json::Value &queryjson) {
  * 权限：只允许管理员查询
  * @name SelectSolutionListByAdmin
  * @brief 分页查询题解列表（管理员权限）
- * @param queryjson Json(Page, PageSize)
+ * @param queryjson Json(Page, PageSize, SearchInfo(Title, UserId, ParentId, Public))
  * @return Json(success, code, message, data(List[{_id, Title, Views, Comments, CreateTime, User{_id, Avatar,
  * NickName}}], Total))
  */
 Json::Value MoDB::SelectSolutionListByAdmin(Json::Value &queryjson) {
     try {
+        // 提取搜索参数
+        Json::Value searchinfo = queryjson["SearchInfo"];
         // 提取分页参数
         int page = stoi(queryjson["Page"].asString());
         int pagesize = stoi(queryjson["PageSize"].asString());
         int skip = (page - 1) * pagesize;
 
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection solutioncoll = (*client)[DATABASE_NAME][COLLECTION_SOLUTIONS];
         Json::Reader reader;
         bsoncxx::builder::stream::document document{};
         mongocxx::pipeline pipe, pipetot;
 
-        // 获取数据库连接
-        auto client = pool.acquire();
-        mongocxx::collection solutioncoll = (*client)[DATABASE_NAME][COLLECTION_SOLUTIONS];
+        // 查询标题（Title）
+        if (searchinfo["Title"].asString().size() > 0) {
+            document << "Title" << open_document << "$regex" << searchinfo["Title"].asString() << close_document;
+            pipe.match(document.view());
+            pipetot.match(document.view());
+            document.clear();
+        }
+
+        // 查询用户 ID（UserId）
+        if (searchinfo["UserId"].asString().size() > 0) {
+            int64_t userid = stoll(searchinfo["UserId"].asString());
+            pipe.match({make_document(kvp("UserId", userid))});
+            pipetot.match({make_document(kvp("UserId", userid))});
+        }
+
+        // 查询父级 ID（ParentId）
+        if (searchinfo["ParentId"].asString().size() > 0) {
+            int64_t parentid = stoll(searchinfo["ParentId"].asString());
+            pipe.match({make_document(kvp("ParentId", parentid))});
+            pipetot.match({make_document(kvp("ParentId", parentid))});
+        }
+
+        // 查询公开状态（Public）
+        if (searchinfo.isMember("Public")) {
+            bool ispublic = searchinfo["Public"].asBool();
+            pipe.match({make_document(kvp("Public", ispublic))});
+            pipetot.match({make_document(kvp("Public", ispublic))});
+        }
 
         // 获取总条数
         int total = 0;

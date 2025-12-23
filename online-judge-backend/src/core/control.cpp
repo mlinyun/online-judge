@@ -206,6 +206,7 @@ Json::Value Control::EditProblem(Json::Value &editjson) {
         // 更新题目（只需要传入题目数据即可）
         resjson = ProblemService::GetInstance()->UpdateProblem(problemjson);
     }
+    // 初始化题目标签
     TagService::GetInstance()->InitProblemTags();
     return resjson;
 }
