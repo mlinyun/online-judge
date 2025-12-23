@@ -688,7 +688,6 @@ void Judger::JudgmentResult(struct result *res, string &index) {
 
 // 结束函数
 Json::Value Judger::Done() {
-
     if (m_result == PJ)
         m_result = AC;
 

@@ -14,6 +14,7 @@
 #include "core/control.h"
 #include "services/user_service.h"  // 用户服务（用于登录验证）
 #include "utils/json_utils.h"       // JSON 工具
+#include "utils/param_validator.h"  // 参数校验工具
 #include "utils/response.h"         // 统一响应工具
 
 using namespace std;
@@ -78,11 +79,24 @@ string GetRequestToken(const httplib::Request &req) {
  */
 void doUserRegister(const httplib::Request &req, httplib::Response &res) {
     cout << "doUserRegister start!!!" << endl;
-    Json::Value jsonvalue;
-    Json::Reader reader;
+    Json::Value jsonvalue;  // 存储请求的 JSON 数据
+    Json::Reader reader;    // JSON 解析器
+    Json::Value resjson;    // 存储响应的 JSON 数据
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    Json::Value resjson = control.UserRegister(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（NickName, Account, PassWord, School, Major 是必传递参数，PersonalProfile 是可选参数）
+        string errMsg;  // 用于存储错误信息
+        // 必填参数列表
+        const vector<string> requiredFields = {"NickName", "Account", "PassWord", "School", "Major"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，调用 Control 层处理注册逻辑
+            resjson = control.UserRegister(jsonvalue);
+        }
+    }
     cout << "doUserRegister end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -96,9 +110,21 @@ void doUserLogin(const httplib::Request &req, httplib::Response &res) {
     cout << "doUserLogin start!!!" << endl;
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    Json::Value resjson = control.UserLogin(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（Account 和 PassWord 是必传递参数）
+        string errMsg;
+        const vector<string> requiredFields = {"Account", "PassWord"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，调用 Control 层处理登录逻辑
+            resjson = control.UserLogin(jsonvalue);
+        }
+    }
     cout << "doUserLogin end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -110,18 +136,21 @@ void doUserLogin(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetUserInfo(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetUserInfo start!!!" << endl;
-    Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("UserId")) {
-        resjson = response::BadRequest();
+    Json::Value resjson;  // 存储响应的 JSON 数据
+    string errMsg;
+    // 请求参数校验（UserId 是必传递参数）
+    if (!validator::ParamValidator::CheckRequired(req, "UserId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
         // 获取用户 ID 参数
         string userid = req.get_param_value("UserId");
+        // 构造查询 JSON
         Json::Value queryjson;
         queryjson["Token"] = token;
         queryjson["UserId"] = userid;
+        // 调用 Control 层处理获取用户信息逻辑
         resjson = control.SelectUserInfo(queryjson);
     }
     cout << "doGetUserInfo end!!!" << endl;
@@ -136,9 +165,10 @@ void doGetUserInfo(const httplib::Request &req, httplib::Response &res) {
 void doGetUserUpdateInfo(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetUserUpdateInfo start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("UserId")) {
-        resjson = response::BadRequest();
+    string errMsg;
+    // 请求参数校验（UserId 是必传递参数）
+    if (!validator::ParamValidator::CheckRequired(req, "UserId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取用户 ID 参数
         string userid = req.get_param_value("UserId");
@@ -147,6 +177,7 @@ void doGetUserUpdateInfo(const httplib::Request &req, httplib::Response &res) {
         Json::Value queryjson;
         queryjson["Token"] = token;
         queryjson["UserId"] = userid;
+        // 调用 Control 层处理获取用户信息逻辑
         resjson = control.SelectUserUpdateInfo(queryjson);
     }
     cout << "doGetUserUpdateInfo end!!!" << endl;
@@ -160,14 +191,27 @@ void doGetUserUpdateInfo(const httplib::Request &req, httplib::Response &res) {
  */
 void doUpdateUserInfo(const httplib::Request &req, httplib::Response &res) {
     cout << "doUpdateUserInfo start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
-    // 解析传入的 Json
     Json::Value jsonvalue;
     Json::Reader reader;
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-    Json::Value resjson = control.UpdateUserInfo(jsonvalue);
+    Json::Value resjson;
+    // 解析传入的 Json
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（UserId, Avatar, NickName, PersonalProfile, School, Major 是必传递参数）
+        string errMsg;
+        const vector<string> requiredFields = {"UserId", "Avatar", "NickName", "PersonalProfile", "School", "Major"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            // 调用 Control 层处理更新用户信息逻辑
+            resjson = control.UpdateUserInfo(jsonvalue);
+        }
+    }
     cout << "doUpdateUserInfo end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -180,9 +224,10 @@ void doUpdateUserInfo(const httplib::Request &req, httplib::Response &res) {
 void doDeleteUser(const httplib::Request &req, httplib::Response &res) {
     cout << "doDeleteUser start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("UserId")) {
-        resjson = response::BadRequest();
+    string errMsg;
+    // 请求参数校验（UserId 是必传递参数）
+    if (!validator::ParamValidator::CheckRequired(req, "UserId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -191,6 +236,7 @@ void doDeleteUser(const httplib::Request &req, httplib::Response &res) {
         Json::Value jsonvalue;
         jsonvalue["Token"] = token;
         jsonvalue["UserId"] = userid;
+        // 调用 Control 层处理删除用户逻辑
         resjson = control.DeleteUser(jsonvalue);
     }
     cout << "doDeleteUser end!!!" << endl;
@@ -205,9 +251,11 @@ void doDeleteUser(const httplib::Request &req, httplib::Response &res) {
 void doGetUserRank(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetUserRank start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 请求参数校验 (Page 和 PageSize 是必传参数)
+    string errMsg;
+    const vector<string> requiredParams = {"Page", "PageSize"};
+    if (!validator::ParamValidator::CheckRequiredList(req, requiredParams, &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -218,6 +266,7 @@ void doGetUserRank(const httplib::Request &req, httplib::Response &res) {
         queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
+        // 调用 Control 层处理获取用户排名逻辑
         resjson = control.SelectUserRank(queryjson);
     }
     cout << "doGetUserRank end!!!" << endl;
@@ -231,26 +280,40 @@ void doGetUserRank(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetUserSetInfo(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetUserSetInfo start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
-    // 解析传入的 Json
     Json::Value queryjson;
     Json::Reader reader;
-    reader.parse(req.body, queryjson);
     Json::Value resjson;
-    // 请求参数校验（Page 和 PageSize 是必传参数）
-    if (!queryjson.isMember("Page") || !queryjson.isMember("PageSize")) {
-        resjson = response::BadRequest();
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（Page 和 PageSize 是必传参数，SearchInfo 是可选参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Page", "PageSize"};
+        // 可选 SearchInfo 参数的 Key 列表
+        const vector<string> SearchInfoKeys = {"NickName", "Account", "School", "Major"};
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) ||
+            !validator::ParamValidator::CheckOptionalObjectKeys(queryjson, "SearchInfo", SearchInfoKeys, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            queryjson["Token"] = token;
+            // 调用 Control 层处理分页获取用户列表逻辑
+            resjson = control.SelectUserSetInfo(queryjson);
+        }
     }
-    queryjson["Token"] = token;
-    resjson = control.SelectUserSetInfo(queryjson);
     cout << "doGetUserSetInfo end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
     res.set_content(resbody, "application/json; charset=utf-8");
 }
 
-// 通过 Token 登录用户获取信息
+/**
+ * 通过 Token 登录用户获取信息
+ */
 void doGetUserInfoByToken(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetUserInfoByToken start!!!" << endl;
     // 获取 Token 参数
@@ -264,17 +327,32 @@ void doGetUserInfoByToken(const httplib::Request &req, httplib::Response &res) {
     res.set_content(resbody, "application/json; charset=utf-8");
 }
 
-// 处理用户修改密码的请求
+/**
+ * 处理用户修改密码的请求
+ */
 void doUpdateUserPassword(const httplib::Request &req, httplib::Response &res) {
     cout << "doUpdateUserPassword start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     // 解析传入的 Json
     Json::Value updatejson;
     Json::Reader reader;
-    reader.parse(req.body, updatejson);
-    updatejson["Token"] = token;
-    Json::Value resjson = control.UpdateUserPassword(updatejson);
+    Json::Value resjson;
+    if (!reader.parse(req.body, updatejson)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（OldPassWord 和 NewPassWord 是必传递参数）
+        string errMsg;
+        const vector<string> requiredFields = {"OldPassWord", "NewPassWord"};
+        if (!validator::ParamValidator::CheckRequiredList(updatejson, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            updatejson["Token"] = token;
+            // 调用 Control 层处理修改密码逻辑
+            resjson = control.UpdateUserPassword(updatejson);
+        }
+    }
     cout << "doUpdateUserPassword end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -305,9 +383,10 @@ void doUserLogout(const httplib::Request &req, httplib::Response &res) {
 void doGetProblemInfo(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetProblemInfo start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("ProblemId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（ProblemId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "ProblemId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -316,6 +395,7 @@ void doGetProblemInfo(const httplib::Request &req, httplib::Response &res) {
         Json::Value queryjson;
         queryjson["Token"] = token;
         queryjson["ProblemId"] = problemid;
+        // 调用 Control 层处理获取题目信息逻辑
         resjson = control.SelectProblemInfo(queryjson);
     }
     cout << "doGetProblemInfo end!!!" << endl;
@@ -330,9 +410,10 @@ void doGetProblemInfo(const httplib::Request &req, httplib::Response &res) {
 void doGetProblemInfoByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetProblemInfoByAdmin start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("ProblemId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（ProblemId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "ProblemId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -341,6 +422,7 @@ void doGetProblemInfoByAdmin(const httplib::Request &req, httplib::Response &res
         Json::Value queryjson;
         queryjson["Token"] = token;
         queryjson["ProblemId"] = problemid;
+        // 调用 Control 层处理获取题目信息逻辑
         resjson = control.SelectProblemInfoByAdmin(queryjson);
     }
     cout << "doGetProblemInfoByAdmin end!!!" << endl;
@@ -354,14 +436,27 @@ void doGetProblemInfoByAdmin(const httplib::Request &req, httplib::Response &res
  */
 void doEditProblem(const httplib::Request &req, httplib::Response &res) {
     cout << "doEditProblem start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-    Json::Value resjson = control.EditProblem(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（EditType 和 ProblemData 是必传参数）
+        string errMsg;
+        const vector<string> requiredFields = {"EditType", "ProblemData"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            // 调用 Control 层处理编辑题目逻辑
+            resjson = control.EditProblem(jsonvalue);
+        }
+    }
     cout << "doEditProblem end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -374,9 +469,10 @@ void doEditProblem(const httplib::Request &req, httplib::Response &res) {
 void doDeleteProblem(const httplib::Request &req, httplib::Response &res) {
     cout << "doDeleteProblem start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("ProblemId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（ProblemId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "ProblemId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -385,6 +481,7 @@ void doDeleteProblem(const httplib::Request &req, httplib::Response &res) {
         Json::Value deletejson;
         deletejson["Token"] = token;
         deletejson["ProblemId"] = problemid;
+        // 调用 Control 层处理删除题目逻辑
         resjson = control.DeleteProblem(deletejson);
     }
     cout << "doDeleteProblem end!!!" << endl;
@@ -398,26 +495,26 @@ void doDeleteProblem(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetProblemList(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetProblemList start!!!" << endl;
+    Json::Value queryjson;
+    Json::Reader reader;
     Json::Value resjson;
-    // 请求参数校验（Page 和 PageSize 是必须的，SearchInfo 是可选的）
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
     } else {
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        Json::Value queryjson;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        // 如果有搜索信息参数，则解析它
-        if (req.has_param("SearchInfo")) {
-            Json::Value searchinfo;
-            Json::Reader reader;
-            // 获取搜索信息参数并解析
-            reader.parse(req.get_param_value("SearchInfo"), searchinfo);
-            queryjson["SearchInfo"] = searchinfo;
+        // 请求参数校验（Page 和 PageSize 是必须的，SearchInfo 是可选的）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Page", "PageSize"};
+        // 可选 SearchInfo 参数的 Key 列表
+        const vector<string> SearchInfoKeys = {"Id", "Title", "Tags"};
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) ||
+            !validator::ParamValidator::CheckOptionalObjectKeys(queryjson, "SearchInfo", SearchInfoKeys, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，调用 Control 层处理获取题目列表逻辑
+            resjson = control.SelectProblemList(queryjson);
         }
-        resjson = control.SelectProblemList(queryjson);
     }
     cout << "doGetProblemList end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -431,9 +528,11 @@ void doGetProblemList(const httplib::Request &req, httplib::Response &res) {
 void doGetProblemListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetProblemListByAdmin start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（Page 和 PageSize 是必传参数）
+    string errMsg;
+    const vector<string> requiredParams = {"Page", "PageSize"};
+    if (!validator::ParamValidator::CheckRequiredList(req, requiredParams, &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -444,6 +543,7 @@ void doGetProblemListByAdmin(const httplib::Request &req, httplib::Response &res
         queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
+        // 调用 Control 层处理获取题目列表逻辑
         resjson = control.SelectProblemListByAdmin(queryjson);
     }
     cout << "doGetProblemListByAdmin end!!!" << endl;
@@ -457,10 +557,19 @@ void doGetProblemListByAdmin(const httplib::Request &req, httplib::Response &res
 // 处理获取题目的所有标签的请求
 void doGetTags(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetTags start!!!" << endl;
-    Json::Value queryjson;
-    string tagtype = req.get_param_value("TagType");
-    queryjson["TagType"] = tagtype;
-    Json::Value resjson = control.GetTags(queryjson);
+    Json::Value resjson;
+    // 请求参数校验（TagType 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "TagType", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
+    } else {
+        // 获取标签类型参数
+        string tagtype = req.get_param_value("TagType");
+        Json::Value queryjson;
+        queryjson["TagType"] = tagtype;
+        // 调用 Control 层处理获取标签逻辑
+        resjson = control.GetTags(queryjson);
+    }
     cout << "doGetTags end!!!" << endl;
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
     res.set_content(resbody, "application/json; charset=utf-8");
@@ -473,14 +582,28 @@ void doGetTags(const httplib::Request &req, httplib::Response &res) {
  */
 void doInsertAnnouncement(const httplib::Request &req, httplib::Response &res) {
     cout << "doInsertAnnouncement start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-    Json::Value resjson = control.InsertAnnouncement(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（Title、Content、Level 和 Active 是必传参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Title", "Content", "Level", "Active"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            // 调用 Control 层处理插入公告逻辑
+            resjson = control.InsertAnnouncement(jsonvalue);
+        }
+    }
     cout << "doInsertAnnouncement end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -493,9 +616,10 @@ void doInsertAnnouncement(const httplib::Request &req, httplib::Response &res) {
 void doGetAnnouncement(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetAnnouncement start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("AnnouncementId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（AnnouncementId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "AnnouncementId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -504,6 +628,7 @@ void doGetAnnouncement(const httplib::Request &req, httplib::Response &res) {
         Json::Value queryjson;
         queryjson["Token"] = token;
         queryjson["AnnouncementId"] = announcementid;
+        // 调用 Control 层处理获取公告信息逻辑
         resjson = control.SelectAnnouncement(queryjson);
     }
     cout << "doGetAnnouncement end!!!" << endl;
@@ -518,9 +643,10 @@ void doGetAnnouncement(const httplib::Request &req, httplib::Response &res) {
 void doSelectAnnouncement(const httplib::Request &req, httplib::Response &res) {
     cout << "doSelectAnnouncement start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("AnnouncementId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（AnnouncementId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "AnnouncementId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -529,6 +655,7 @@ void doSelectAnnouncement(const httplib::Request &req, httplib::Response &res) {
         Json::Value queryjson;
         queryjson["Token"] = token;
         queryjson["AnnouncementId"] = announcementid;
+        // 调用 Control 层处理获取公告信息逻辑
         resjson = control.SelectAnnouncementByEdit(queryjson);
     }
     cout << "doSelectAnnouncement end!!!" << endl;
@@ -542,14 +669,28 @@ void doSelectAnnouncement(const httplib::Request &req, httplib::Response &res) {
  */
 void doUpdateAnnouncement(const httplib::Request &req, httplib::Response &res) {
     cout << "doUpdateAnnouncement start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-    Json::Value resjson = control.UpdateAnnouncement(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（AnnouncementId、Title、Content、Level 和 Active 是必传参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"AnnouncementId", "Title", "Content", "Level", "Active"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            // 调用 Control 层处理更新公告逻辑
+            resjson = control.UpdateAnnouncement(jsonvalue);
+        }
+    }
     cout << "doUpdateAnnouncement end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -562,9 +703,10 @@ void doUpdateAnnouncement(const httplib::Request &req, httplib::Response &res) {
 void doDeleteAnnouncement(const httplib::Request &req, httplib::Response &res) {
     cout << "doDeleteAnnouncement start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("AnnouncementId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（AnnouncementId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "AnnouncementId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -573,6 +715,7 @@ void doDeleteAnnouncement(const httplib::Request &req, httplib::Response &res) {
         Json::Value deletejson;
         deletejson["Token"] = token;
         deletejson["AnnouncementId"] = announcementid;
+        // 调用 Control 层处理删除公告逻辑
         resjson = control.DeleteAnnouncement(deletejson);
     }
     cout << "doDeleteAnnouncement end!!!" << endl;
@@ -588,8 +731,10 @@ void doGetAnnouncementList(const httplib::Request &req, httplib::Response &res) 
     cout << "doGetAnnouncementList start!!!" << endl;
     Json::Value resjson;
     // 请求参数校验
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    string errMsg;
+    const vector<string> requiredParams = {"Page", "PageSize"};
+    if (!validator::ParamValidator::CheckRequiredList(req, requiredParams, &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -600,6 +745,7 @@ void doGetAnnouncementList(const httplib::Request &req, httplib::Response &res) 
         queryjson["Token"] = token;
         queryjson["Page"] = page;
         queryjson["PageSize"] = pagesize;
+        // 调用 Control 层处理分页获取公告列表逻辑
         resjson = control.SelectAnnouncementList(queryjson);
     }
     cout << "doGetAnnouncementList end!!!" << endl;
@@ -613,21 +759,30 @@ void doGetAnnouncementList(const httplib::Request &req, httplib::Response &res) 
  */
 void doGetAnnouncementListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetAnnouncementListByAdmin start!!!" << endl;
+    Json::Value queryjson;
+    Json::Reader reader;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
     } else {
-        // 获取 Token 参数
-        string token = GetRequestToken(req);
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        Json::Value queryjson;
-        queryjson["Token"] = token;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        resjson = control.SelectAnnouncementListByAdmin(queryjson);
+        // 请求参数校验（Page 和 PageSize 是必传参数，SearchInfo 是可选参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Page", "PageSize"};
+        // 可选 SearchInfo 参数的 Key 列表
+        const vector<string> SearchInfoKeys = {"Title", "Level", "Active"};
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) ||
+            !validator::ParamValidator::CheckOptionalObjectKeys(queryjson, "SearchInfo", SearchInfoKeys, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            queryjson["Token"] = token;
+            // 调用 Control 层处理分页获取公告列表逻辑
+            resjson = control.SelectAnnouncementListByAdmin(queryjson);
+        }
     }
     cout << "doGetAnnouncementListByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -640,15 +795,27 @@ void doGetAnnouncementListByAdmin(const httplib::Request &req, httplib::Response
  */
 void doUpdateAnnouncementActive(const httplib::Request &req, httplib::Response &res) {
     cout << "doUpdateAnnouncementActive start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-
-    Json::Value resjson = control.UpdateAnnouncementActive(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（AnnouncementId 和 Active 是必传参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"AnnouncementId", "Active"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            resjson = control.UpdateAnnouncementActive(jsonvalue);
+        }
+    }
     cout << "doUpdateAnnouncementActive end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -662,14 +829,28 @@ void doUpdateAnnouncementActive(const httplib::Request &req, httplib::Response &
  */
 void doInsertDiscuss(const httplib::Request &req, httplib::Response &res) {
     cout << "doInsertDiscuss start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-    Json::Value resjson = control.InsertDiscuss(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（Title、 Content 和 ParentId 是必传参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Title", "Content", "ParentId"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            // 调用 Control 层处理插入讨论逻辑
+            resjson = control.InsertDiscuss(jsonvalue);
+        }
+    }
     cout << "doInsertDiscuss end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -682,9 +863,10 @@ void doInsertDiscuss(const httplib::Request &req, httplib::Response &res) {
 void doGetDiscuss(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetDiscuss start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("DiscussId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（DiscussId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "DiscussId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -693,6 +875,7 @@ void doGetDiscuss(const httplib::Request &req, httplib::Response &res) {
         Json::Value queryjson;
         queryjson["Token"] = token;
         queryjson["DiscussId"] = discussid;
+        // 调用 Control 层处理获取讨论信息逻辑
         resjson = control.SelectDiscuss(queryjson);
     }
     cout << "doGetDiscuss end!!!" << endl;
@@ -707,9 +890,10 @@ void doGetDiscuss(const httplib::Request &req, httplib::Response &res) {
 void doSelectDiscussByEdit(const httplib::Request &req, httplib::Response &res) {
     cout << "doSelectDiscussByEdit start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("DiscussId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（DiscussId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "DiscussId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -718,6 +902,7 @@ void doSelectDiscussByEdit(const httplib::Request &req, httplib::Response &res) 
         Json::Value queryjson;
         queryjson["Token"] = token;
         queryjson["DiscussId"] = discussid;
+        // 调用 Control 层处理获取讨论信息逻辑
         resjson = control.SelectDiscussByEdit(queryjson);
     }
     cout << "doSelectDiscussByEdit end!!!" << endl;
@@ -731,14 +916,28 @@ void doSelectDiscussByEdit(const httplib::Request &req, httplib::Response &res) 
  */
 void doUpdateDiscuss(const httplib::Request &req, httplib::Response &res) {
     cout << "doUpdateDiscuss start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-    Json::Value resjson = control.UpdateDiscuss(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（DiscussId、Title 和 Content 是必传参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"DiscussId", "Title", "Content"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            // 调用 Control 层处理更新讨论逻辑
+            resjson = control.UpdateDiscuss(jsonvalue);
+        }
+    }
     cout << "doUpdateDiscuss end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -751,9 +950,10 @@ void doUpdateDiscuss(const httplib::Request &req, httplib::Response &res) {
 void doDeleteDiscuss(const httplib::Request &req, httplib::Response &res) {
     cout << "doDeleteDiscuss start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("DiscussId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（DiscussId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "DiscussId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -762,6 +962,7 @@ void doDeleteDiscuss(const httplib::Request &req, httplib::Response &res) {
         Json::Value deletejson;
         deletejson["Token"] = token;
         deletejson["DiscussId"] = discussid;
+        // 调用 Control 层处理删除讨论逻辑
         resjson = control.DeleteDiscuss(deletejson);
     }
     cout << "doDeleteDiscuss end!!!" << endl;
@@ -775,29 +976,30 @@ void doDeleteDiscuss(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetDiscussList(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetDiscussList start!!!" << endl;
+    Json::Value queryjson;
+    Json::Reader reader;
     Json::Value resjson;
-    // 请求参数校验（Page 和 PageSize 是必须的，SearchInfo 是可选的）
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
     } else {
-        // 获取 Token 参数
-        string token = GetRequestToken(req);
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        Json::Value queryjson;
-        queryjson["Token"] = token;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        // 如果有搜索信息参数，则解析它
-        if (req.has_param("SearchInfo")) {
-            Json::Value searchinfo;
-            Json::Reader reader;
-            // 获取搜索信息参数并解析
-            reader.parse(req.get_param_value("SearchInfo"), searchinfo);
-            queryjson["SearchInfo"] = searchinfo;
+        // 请求参数校验（Page 和 PageSize 是必须的，SearchInfo 是可选的）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Page", "PageSize"};
+        // 可选 SearchInfo 参数的 Key 列表
+        const vector<string> SearchInfoKeys = {"ParentId", "UserId"};
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) ||
+            !validator::ParamValidator::CheckOptionalObjectKeys(queryjson, "SearchInfo", SearchInfoKeys, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            queryjson["Token"] = token;
+            // 调用 Control 层处理获取讨论列表逻辑
+            resjson = control.SelectDiscussList(queryjson);
         }
-        resjson = control.SelectDiscussList(queryjson);
     }
     cout << "doGetDiscussList end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -810,21 +1012,30 @@ void doGetDiscussList(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetDiscussListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetDiscussListByAdmin start!!!" << endl;
+    Json::Value queryjson;
+    Json::Reader reader;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
     } else {
-        // 获取 Token 参数
-        string token = GetRequestToken(req);
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        Json::Value queryjson;
-        queryjson["Token"] = token;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        resjson = control.SelectDiscussListByAdmin(queryjson);
+        // 请求参数校验（Page 和 PageSize 是必传参数，SearchInfo 是可选的）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Page", "PageSize"};
+        // 可选 SearchInfo 参数的 Key 列表
+        const vector<string> SearchInfoKeys = {"ParentId", "UserId", "Title"};
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) ||
+            !validator::ParamValidator::CheckOptionalObjectKeys(queryjson, "SearchInfo", SearchInfoKeys, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            queryjson["Token"] = token;
+            // 调用 Control 层处理获取讨论列表逻辑
+            resjson = control.SelectDiscussListByAdmin(queryjson);
+        }
     }
     cout << "doGetDiscussListByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -840,14 +1051,28 @@ void doGetDiscussListByAdmin(const httplib::Request &req, httplib::Response &res
  */
 void doInsertSolution(const httplib::Request &req, httplib::Response &res) {
     cout << "doInsertSolution start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-    Json::Value resjson = control.InsertSolution(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（ParentId、Title、Content 和 Public 是必传参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"ParentId", "Title", "Content", "Public"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            // 调用 Control 层处理插入题解逻辑
+            resjson = control.InsertSolution(jsonvalue);
+        }
+    }
     cout << "doInsertSolution end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -860,9 +1085,10 @@ void doInsertSolution(const httplib::Request &req, httplib::Response &res) {
 void doGetSolution(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetSolution start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("SolutionId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（SolutionId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "SolutionId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -871,6 +1097,7 @@ void doGetSolution(const httplib::Request &req, httplib::Response &res) {
         Json::Value queryjson;
         queryjson["Token"] = token;
         queryjson["SolutionId"] = solutionid;
+        // 调用 Control 层处理获取题解信息逻辑
         resjson = control.SelectSolution(queryjson);
     }
     cout << "doGetSolution end!!!" << endl;
@@ -885,9 +1112,10 @@ void doGetSolution(const httplib::Request &req, httplib::Response &res) {
 void doSelectSolutionByEdit(const httplib::Request &req, httplib::Response &res) {
     cout << "doSelectSolutionByEdit start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("SolutionId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（SolutionId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "SolutionId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -896,6 +1124,7 @@ void doSelectSolutionByEdit(const httplib::Request &req, httplib::Response &res)
         Json::Value queryjson;
         queryjson["Token"] = token;
         queryjson["SolutionId"] = solutionid;
+        // 调用 Control 层处理获取题解信息逻辑
         resjson = control.SelectSolutionByEdit(queryjson);
     }
     cout << "doSelectSolutionByEdit end!!!" << endl;
@@ -909,14 +1138,28 @@ void doSelectSolutionByEdit(const httplib::Request &req, httplib::Response &res)
  */
 void doUpdateSolution(const httplib::Request &req, httplib::Response &res) {
     cout << "doUpdateSolution start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-    Json::Value resjson = control.UpdateSolution(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（SolutionId、Title、Content 和 Public 是必传参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"SolutionId", "Title", "Content", "Public"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            // 调用 Control 层处理更新题解逻辑
+            resjson = control.UpdateSolution(jsonvalue);
+        }
+    }
     cout << "doUpdateSolution end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -929,9 +1172,10 @@ void doUpdateSolution(const httplib::Request &req, httplib::Response &res) {
 void doDeleteSolution(const httplib::Request &req, httplib::Response &res) {
     cout << "doDeleteSolution start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("SolutionId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（SolutionId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "SolutionId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -940,6 +1184,7 @@ void doDeleteSolution(const httplib::Request &req, httplib::Response &res) {
         Json::Value deletejson;
         deletejson["Token"] = token;
         deletejson["SolutionId"] = solutionid;
+        // 调用 Control 层处理删除题解逻辑
         resjson = control.DeleteSolution(deletejson);
     }
     cout << "doDeleteSolution end!!!" << endl;
@@ -953,29 +1198,30 @@ void doDeleteSolution(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetSolutionList(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetSolutionList start!!!" << endl;
+    Json::Value queryjson;
+    Json::Reader reader;
     Json::Value resjson;
-    // 请求参数校验（Page 和 PageSize 是必须的，SearchInfo 是可选的）
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
     } else {
-        // 获取 Token 参数
-        string token = GetRequestToken(req);
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        Json::Value queryjson;
-        queryjson["Token"] = token;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        // 如果有搜索信息参数，则解析它
-        if (req.has_param("SearchInfo")) {
-            Json::Value searchinfo;
-            Json::Reader reader;
-            // 获取搜索信息参数并解析
-            reader.parse(req.get_param_value("SearchInfo"), searchinfo);
-            queryjson["SearchInfo"] = searchinfo;
+        // 请求参数校验（Page 和 PageSize 是必须的，SearchInfo 是可选的）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Page", "PageSize"};
+        // 可选 SearchInfo 参数的 Key 列表
+        const vector<string> SearchInfoKeys = {"ParentId", "UserId"};
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) ||
+            !validator::ParamValidator::CheckOptionalObjectKeys(queryjson, "SearchInfo", SearchInfoKeys, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            queryjson["Token"] = token;
+            // 调用 Control 层处理获取题解列表逻辑
+            resjson = control.SelectSolutionList(queryjson);
         }
-        resjson = control.SelectSolutionList(queryjson);
     }
     cout << "doGetSolutionList end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -988,21 +1234,30 @@ void doGetSolutionList(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetSolutionListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetSolutionListByAdmin start!!!" << endl;
+    Json::Value queryjson;
+    Json::Reader reader;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
     } else {
-        // 获取 Token 参数
-        string token = GetRequestToken(req);
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        Json::Value queryjson;
-        queryjson["Token"] = token;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        resjson = control.SelectSolutionListByAdmin(queryjson);
+        // 请求参数校验（Page 和 PageSize 是必须的，SearchInfo 是可选的）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Page", "PageSize"};
+        // 可选 SearchInfo 参数的 Key 列表
+        const vector<string> SearchInfoKeys = {"ParentId", "UserId", "Title", "Public"};
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) ||
+            !validator::ParamValidator::CheckOptionalObjectKeys(queryjson, "SearchInfo", SearchInfoKeys, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            queryjson["Token"] = token;
+            // 调用 Control 层处理获取题解列表逻辑
+            resjson = control.SelectSolutionListByAdmin(queryjson);
+        }
     }
     cout << "doGetSolutionListByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -1018,14 +1273,28 @@ void doGetSolutionListByAdmin(const httplib::Request &req, httplib::Response &re
  */
 void doInsertComment(const httplib::Request &req, httplib::Response &res) {
     cout << "doInsertComment start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-    Json::Value resjson = control.InsertComment(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（ParentId, ParentType, Content 和 CommentType 是必传参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"ParentId", "ParentType", "Content", "CommentType"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            // 调用 Control 层处理插入评论逻辑
+            resjson = control.InsertComment(jsonvalue);
+        }
+    }
     cout << "doInsertComment end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -1037,40 +1306,39 @@ void doInsertComment(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetComment(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetComment start!!!" << endl;
+    Json::Value queryjson;
+    Json::Reader reader;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("CommentType") || !req.has_param("ParentId") || !req.has_param("Page") ||
-        !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
     } else {
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        // 获取评论类型和父级 ID 参数
-        string parentid = req.get_param_value("ParentId");
-        string commenttype = req.get_param_value("CommentType");
-        // 构造查询 Json
-        Json::Value queryjson;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        queryjson["ParentId"] = parentid;
-        queryjson["CommentType"] = commenttype;
-        // 如果是查询父评论，还需要传入子评论的数量参数
-        if (commenttype == "Father") {
-            string sonnum = req.get_param_value("SonNum");
-            if (sonnum.empty()) {
-                // sonum 必须大于 0，这里默认设置为 2
-                sonnum = "2";
+        // 请求参数校验（CommentType, ParentId, Page 和 PageSize 是必须的，SonNum 是可选的）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"CommentType", "ParentId", "Page", "PageSize"};
+        // 可选 SonNum 参数为子评论数量，仅当 CommentType 为 Father 时使用
+        bool flag = validator::ParamValidator::CheckPositiveNumber(queryjson, "SonNum", &errMsg);
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) || !flag) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 当 CommentType 为 Father 时，SonNum 是必须传递参数
+            if (queryjson["CommentType"].asString() == "Father" && queryjson["SonNum"].isNull()) {
+                resjson = response::BadRequest("SonNum is required when CommentType is Father");
+            } else {
+                // 参数校验通过，继续处理
+                // 获取 Token 参数
+                string token = GetRequestToken(req);
+                queryjson["Token"] = token;
+                // 调用 Control 层处理获取评论列表逻辑
+                resjson = control.GetComment(queryjson);
             }
-            queryjson["SonNum"] = sonnum;
         }
-        resjson = control.GetComment(queryjson);
+        cout << "doGetComment end!!!" << endl;
+        SetResponseStatus(resjson, res);
+        string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
+        res.set_content(resbody, "application/json; charset=utf-8");
     }
-
-    cout << "doGetComment end!!!" << endl;
-    SetResponseStatus(resjson, res);
-    string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
-    res.set_content(resbody, "application/json; charset=utf-8");
 }
 
 /**
@@ -1079,9 +1347,11 @@ void doGetComment(const httplib::Request &req, httplib::Response &res) {
 void doGetCommentListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetCommentListByAdmin start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（Page 和 PageSize 是必传参数）
+    string errMsg;
+    const vector<string> requiredParams = {"Page", "PageSize"};
+    if (!validator::ParamValidator::CheckRequiredList(req, requiredParams, &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -1106,9 +1376,11 @@ void doGetCommentListByAdmin(const httplib::Request &req, httplib::Response &res
 void doDeleteComment(const httplib::Request &req, httplib::Response &res) {
     cout << "doDeleteComment start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("CommentId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（CommentId 是必传参数）
+    string errMsg;
+    const vector<string> requiredParams = {"CommentId"};
+    if (!validator::ParamValidator::CheckRequiredList(req, requiredParams, &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -1128,34 +1400,34 @@ void doDeleteComment(const httplib::Request &req, httplib::Response &res) {
 
 // ------------------------------ 测评记录模块 Start ------------------------------
 /**
- * 处理分页获取测评记录列表的请求
+ * 处理分页获取测评记录列表的请求 TODO: 参数校验更新到这 2025年12月24日 03:45:34
  */
 void doGetStatusRecordList(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetStatusRecordList start!!!" << endl;
+    Json::Value queryjson;
+    Json::Reader reader;
     Json::Value resjson;
-    // 请求参数校验（Page 和 PageSize 是必须的，SearchInfo 可选的）
-    if (!req.has_param("Page") || !req.has_param("PageSize")) {
-        resjson = response::BadRequest();
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
     } else {
-        // 获取 Token 参数
-        string token = GetRequestToken(req);
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        // 构造查询 Json
-        Json::Value queryjson;
-        queryjson["Token"] = token;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        // 如果有搜索信息参数，则解析它
-        if (req.has_param("SearchInfo")) {
-            Json::Value searchinfo;
-            Json::Reader reader;
-            // 获取搜索信息参数并解析
-            reader.parse(req.get_param_value("SearchInfo"), searchinfo);
-            queryjson["SearchInfo"] = searchinfo;
+        // 请求参数校验（Page 和 PageSize 是必须的，SearchInfo 可选的）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Page", "PageSize"};
+        // 可选 SearchInfo 参数的 Key 列表 ProblemId, UserId, ProblemTitle, Status, Language
+        const vector<string> SearchInfoKeys = {"ProblemId", "UserId", "ProblemTitle", "Status", "Language"};
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) ||
+            !validator::ParamValidator::CheckOptionalObjectKeys(queryjson, "SearchInfo", SearchInfoKeys, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            queryjson["Token"] = token;
+            // 调用 Control 层处理分页获取测评记录列表逻辑
+            resjson = control.SelectStatusRecordList(queryjson);
         }
-        resjson = control.SelectStatusRecordList(queryjson);
     }
     cout << "doGetStatusRecordList end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -1169,9 +1441,10 @@ void doGetStatusRecordList(const httplib::Request &req, httplib::Response &res) 
 void doGetStatusRecord(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetStatusRecord start!!!" << endl;
     Json::Value resjson;
-    // 请求参数校验
-    if (!req.has_param("StatusRecordId")) {
-        resjson = response::BadRequest();
+    // 请求参数校验（StatusRecordId 是必传参数）
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "StatusRecordId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
     } else {
         // 获取 Token 参数
         string token = GetRequestToken(req);
@@ -1195,14 +1468,28 @@ void doGetStatusRecord(const httplib::Request &req, httplib::Response &res) {
  */
 void doJudgeCode(const httplib::Request &req, httplib::Response &res) {
     cout << "doJudgeCode start!!!" << endl;
-    // 获取 Token 参数
-    string token = GetRequestToken(req);
     Json::Value jsonvalue;
     Json::Reader reader;
+    Json::Value resjson;
     // 解析传入的 Json
-    reader.parse(req.body, jsonvalue);
-    jsonvalue["Token"] = token;
-    Json::Value resjson = control.GetJudgeCode(jsonvalue);
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        // 请求参数校验（ProblemId, Language 和 Code 是必传参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"ProblemId", "Language", "Code"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            // 调用 Control 层处理提交代码判题逻辑
+            resjson = control.GetJudgeCode(jsonvalue);
+        }
+    }
     cout << "doJudgeCode end!!!" << endl;
     SetResponseStatus(resjson, res);
     string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
@@ -1500,7 +1787,7 @@ void HttpServer::Run() {
     // 删除题目（管理员权限）
     server.Delete(API + "/admin/problem/delete", doDeleteProblem);
     // 分页获取题目列表
-    server.Get(API + "/problem/list", doGetProblemList);
+    server.Post(API + "/problem/list", doGetProblemList);
     // 分页获取题目列表（管理员权限）
     server.Get(API + "/admin/problem/list", doGetProblemListByAdmin);
     // -------------------- 题目模块 End --------------------
@@ -1524,7 +1811,7 @@ void HttpServer::Run() {
     // 分页获取公告列表
     server.Get(API + "/announcement/list", doGetAnnouncementList);
     // 分页获取公告列表（管理员权限）
-    server.Get(API + "/admin/announcement/list", doGetAnnouncementListByAdmin);
+    server.Post(API + "/admin/announcement/list", doGetAnnouncementListByAdmin);
     // 设置公告激活状态（管理员权限）
     server.Post(API + "/admin/announcement/active", doUpdateAnnouncementActive);
     // -------------------- 公告模块 End --------------------
@@ -1541,9 +1828,9 @@ void HttpServer::Run() {
     // 删除讨论
     server.Delete(API + "/discussion/delete", doDeleteDiscuss);
     // 分页查询讨论
-    server.Get(API + "/discussion/list", doGetDiscussList);
+    server.Post(API + "/discussion/list", doGetDiscussList);
     // 分页查询讨论（管理员权限）
-    server.Get(API + "/admin/discussion/list", doGetDiscussListByAdmin);
+    server.Post(API + "/admin/discussion/list", doGetDiscussListByAdmin);
     // --------------------  讨论模块 End --------------------
 
     // -------------------- 题解模块 Start --------------------
@@ -1558,16 +1845,16 @@ void HttpServer::Run() {
     // 删除题解
     server.Delete(API + "/solution/delete", doDeleteSolution);
     // 分页查询题解（公开题解）
-    server.Get(API + "/solution/list", doGetSolutionList);
+    server.Post(API + "/solution/list", doGetSolutionList);
     // 分页查询题解（管理员权限）
-    server.Get(API + "/admin/solution/list", doGetSolutionListByAdmin);
+    server.Post(API + "/admin/solution/list", doGetSolutionListByAdmin);
     // -------------------- 题解模块 End --------------------
 
     // -------------------- 评论模块 Start --------------------
     // 添加评论
     server.Post(API + "/comment/insert", doInsertComment);
     // 获取评论
-    server.Get(API + "/comment/info", doGetComment);
+    server.Post(API + "/comment/info", doGetComment);
     // 管理员查询评论
     server.Get(API + "/admin/comment/list", doGetCommentListByAdmin);
     // 删除评论
@@ -1578,7 +1865,7 @@ void HttpServer::Run() {
     // 查询一条详细测评记录
     server.Get(API + "/status/record/info", doGetStatusRecord);
     // 返回状态记录的信息
-    server.Get(API + "/status/record/list", doGetStatusRecordList);
+    server.Post(API + "/status/record/list", doGetStatusRecordList);
     // -------------------- 测评记录模块 End --------------------
 
     // -------------------- 判题模块 Start --------------------
