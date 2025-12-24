@@ -97,14 +97,14 @@ export const deleteProblem = (
  * @name selectProblemList
  * @tags 题目模块
  * @description 分页获取题目列表
- * @request GET `/problem/list`
- * @param params 题目列表查询参数，详见 {@link Api.Problem.SelectProblemListParams}
+ * @request POST `/problem/list`
+ * @param data 题目列表查询参数，详见 {@link Api.Problem.SelectProblemListParams}
  * @returns 题目列表，详见 {@link Api.Problem.SelectProblemListResponse}
  */
 export const selectProblemList = (
-    params: Api.Problem.SelectProblemListParams
+    data: Api.Problem.SelectProblemListParams
 ): Promise<AxiosResponse<Api.Problem.SelectProblemListResponse>> => {
-    return get<Api.Problem.SelectProblemListResult>("/problem/list", { ...params });
+    return post<Api.Problem.SelectProblemListResult>("/problem/list", data);
 };
 
 /**
@@ -112,12 +112,12 @@ export const selectProblemList = (
  * @name selectProblemListByAdmin
  * @tags 题目模块
  * @description 管理员分页获取题目列表
- * @request GET `/admin/problem/list`
- * @param params 分页查询请求参数，详见 {@link Api.Common.PaginationParams}
+ * @request POST `/admin/problem/list`
+ * @param data 分页查询请求参数，详见 {@link Api.Problem.SelectProblemListByAdminParams}
  * @returns 题目列表，详见 {@link Api.Problem.SelectProblemListResponse}
  */
 export const selectProblemListByAdmin = (
-    params: Api.Common.PaginationParams
+    data: Api.Problem.SelectProblemListByAdminParams
 ): Promise<AxiosResponse<Api.Problem.SelectProblemListResponse>> => {
-    return get<Api.Problem.SelectProblemListResult>("/admin/problem/list", { ...params });
+    return post<Api.Problem.SelectProblemListResult>("/admin/problem/list", data);
 };

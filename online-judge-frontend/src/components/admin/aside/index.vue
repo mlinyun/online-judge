@@ -103,8 +103,12 @@ const goToFrontend = () => {
     <aside class="admin-sidebar" :style="{ width: sidebarWidth }">
         <!-- Logo -->
         <div class="sidebar-header">
-            <div class="sidebar-brand" @click="handleLogoClick" @mouseenter="isLogoHovered = true"
-                @mouseleave="isLogoHovered = false">
+            <div
+                class="sidebar-brand"
+                @click="handleLogoClick"
+                @mouseenter="isLogoHovered = true"
+                @mouseleave="isLogoHovered = false"
+            >
                 <el-icon class="brand-icon" :size="22">
                     <component :is="props.collapsed && isLogoHovered ? IconEpExpand : IconEpPlatform" />
                 </el-icon>

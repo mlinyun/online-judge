@@ -4,7 +4,7 @@
  */
 import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Collection, Delete, Edit, MoreFilled, School, Search, User, View } from "@element-plus/icons-vue";
+import { Collection, Delete, Edit, More, School, Search, User, View } from "@element-plus/icons-vue";
 import { deleteUser, selectUserList } from "@/api/user";
 import { DateUtils } from "@/utils/date/date-utils.ts";
 import type { Api } from "@/types/api/api";
@@ -29,7 +29,7 @@ const total = ref(0);
 
 const users = ref<Api.User.UserManageListItem[]>([]);
 
-// 工具栏：后端 SearchInfo 支持字段
+// 工具栏：搜索信息 SearchInfo 支持的字段
 const searchNickName = ref("");
 const searchSchool = ref("");
 const searchMajor = ref("");
@@ -283,7 +283,7 @@ onMounted(() => {
                                         trigger="click"
                                         @command="(cmd) => handleRowCommand(cmd as any, scope.row)"
                                     >
-                                        <el-button class="opt-btn" link :icon="MoreFilled">操作</el-button>
+                                        <el-button class="opt-btn" link :icon="More">操作</el-button>
                                         <template #dropdown>
                                             <el-dropdown-menu>
                                                 <el-dropdown-item command="view" :icon="View">查看</el-dropdown-item>
@@ -398,7 +398,7 @@ onMounted(() => {
 }
 
 .users-table :deep(.el-table__body td.el-table__cell) {
-    border-bottom: 1px solid rgb(255 255 255 / 6%);
+    border-bottom: 1px solid var(--oj-table-border);
 }
 
 .user-cell {
@@ -419,7 +419,7 @@ onMounted(() => {
 }
 
 .user-name {
-    font-weight: 600;
+    font-weight: var(--oj-font-weight-semibold);
     color: var(--oj-text-color);
 }
 

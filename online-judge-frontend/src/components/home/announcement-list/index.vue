@@ -40,7 +40,6 @@ const fetchAnnouncements = async () => {
     }
 };
 
-
 // 导航到公告详情
 const navigateToAnnouncement = (announcementId: Api.Announcement.AnnouncementId) => {
     router.push({ name: "announcement-detail", params: { id: announcementId } });
@@ -98,11 +97,19 @@ onMounted(() => {
 
         <!-- 公告列表 -->
         <div v-else class="announcement-list">
-            <el-card v-for="announcement in announcements" :key="announcement._id" class="announcement-card"
-                shadow="never">
-                <div class="announcement-card-inner" role="button" tabindex="0"
+            <el-card
+                v-for="announcement in announcements"
+                :key="announcement._id"
+                class="announcement-card"
+                shadow="never"
+            >
+                <div
+                    class="announcement-card-inner"
+                    role="button"
+                    tabindex="0"
                     @click="navigateToAnnouncement(announcement._id)"
-                    @keydown.enter="navigateToAnnouncement(announcement._id)">
+                    @keydown.enter="navigateToAnnouncement(announcement._id)"
+                >
                     <el-row :gutter="12" align="middle">
                         <el-col :span="3" class="announcement-leading">
                             <el-icon size="32" class="announcement-leading-icon">
@@ -256,7 +263,7 @@ onMounted(() => {
     display: inline-flex;
     gap: var(--oj-spacing-1);
     align-items: center;
-    font-family: var(--oj-font-family-mono);
+    font-family: var(--oj-font-family-mono), monospace;
     font-size: var(--oj-font-size-sm);
     color: var(--oj-text-muted);
 }

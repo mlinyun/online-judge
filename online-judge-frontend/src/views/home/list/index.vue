@@ -20,7 +20,6 @@ const total = ref(0);
 
 const hasData = computed(() => announcements.value.length > 0);
 
-
 const navigateToAnnouncement = (announcementId: Api.Announcement.AnnouncementId) => {
     router.push({ name: "announcement-detail", params: { id: announcementId } });
 };
@@ -92,11 +91,19 @@ onMounted(() => {
             </div>
 
             <div v-else class="announcement-list">
-                <el-card v-for="announcement in announcements" :key="announcement._id" class="announcement-card"
-                    shadow="never">
-                    <div class="announcement-card-inner" role="button" tabindex="0"
+                <el-card
+                    v-for="announcement in announcements"
+                    :key="announcement._id"
+                    class="announcement-card"
+                    shadow="never"
+                >
+                    <div
+                        class="announcement-card-inner"
+                        role="button"
+                        tabindex="0"
                         @click="navigateToAnnouncement(announcement._id)"
-                        @keydown.enter="navigateToAnnouncement(announcement._id)">
+                        @keydown.enter="navigateToAnnouncement(announcement._id)"
+                    >
                         <el-row :gutter="12" align="middle">
                             <el-col :span="3" class="announcement-leading">
                                 <el-icon size="36" class="announcement-leading-icon">
@@ -144,9 +151,15 @@ onMounted(() => {
             </div>
 
             <div class="announcement-pagination">
-                <el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 50]"
-                    layout="total, sizes, prev, pager, next, jumper" :total="total" background
-                    @size-change="handleSizeChange" />
+                <el-pagination
+                    v-model:current-page="page"
+                    v-model:page-size="pageSize"
+                    :page-sizes="[10, 20, 50]"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total"
+                    background
+                    @size-change="handleSizeChange"
+                />
             </div>
         </div>
     </div>

@@ -527,24 +527,30 @@ void doGetProblemList(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetProblemListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetProblemListByAdmin start!!!" << endl;
+    Json::Value queryjson;
+    Json::Reader reader;
     Json::Value resjson;
-    // 请求参数校验（Page 和 PageSize 是必传参数）
-    string errMsg;
-    const vector<string> requiredParams = {"Page", "PageSize"};
-    if (!validator::ParamValidator::CheckRequiredList(req, requiredParams, &errMsg)) {
-        resjson = response::BadRequest(errMsg);
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
     } else {
-        // 获取 Token 参数
-        string token = GetRequestToken(req);
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        Json::Value queryjson;
-        queryjson["Token"] = token;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        // 调用 Control 层处理获取题目列表逻辑
-        resjson = control.SelectProblemListByAdmin(queryjson);
+        // 请求参数校验（Page 和 PageSize 是必传参数，SearchInfo 是可选参数）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Page", "PageSize"};
+        // 可选 SearchInfo 参数的 Key 列表
+        const vector<string> SearchInfoKeys = {"Id", "Title", "Tags", "UserNickName"};
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) ||
+            !validator::ParamValidator::CheckOptionalObjectKeys(queryjson, "SearchInfo", SearchInfoKeys, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            queryjson["Token"] = token;
+            // 调用 Control 层处理获取题目列表逻辑
+            resjson = control.SelectProblemListByAdmin(queryjson);;
+        }
     }
     cout << "doGetProblemListByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -1346,23 +1352,30 @@ void doGetComment(const httplib::Request &req, httplib::Response &res) {
  */
 void doGetCommentListByAdmin(const httplib::Request &req, httplib::Response &res) {
     cout << "doGetCommentListByAdmin start!!!" << endl;
+    Json::Value queryjson;
+    Json::Reader reader;
     Json::Value resjson;
-    // 请求参数校验（Page 和 PageSize 是必传参数）
-    string errMsg;
-    const vector<string> requiredParams = {"Page", "PageSize"};
-    if (!validator::ParamValidator::CheckRequiredList(req, requiredParams, &errMsg)) {
-        resjson = response::BadRequest(errMsg);
+    // 解析传入的 Json
+    if (!reader.parse(req.body, queryjson)) {
+        resjson = response::BadRequest("Invalid JSON format");
     } else {
-        // 获取 Token 参数
-        string token = GetRequestToken(req);
-        // 获取分页参数
-        string page = req.get_param_value("Page");
-        string pagesize = req.get_param_value("PageSize");
-        Json::Value queryjson;
-        queryjson["Token"] = token;
-        queryjson["Page"] = page;
-        queryjson["PageSize"] = pagesize;
-        resjson = control.SelectCommentListByAdmin(queryjson);
+        // 请求参数校验（Page 和 PageSize 是必传参数，SearchInfo 是可选的）
+        string errMsg;
+        // 必传参数列表
+        const vector<string> requiredFields = {"Page", "PageSize"};
+        // 可选 SearchInfo 参数的 Key 列表
+        const vector<string> SearchInfoKeys = {"ParentType", "UserId", "Content"};
+        if (!validator::ParamValidator::CheckRequiredList(queryjson, requiredFields, &errMsg) ||
+            !validator::ParamValidator::CheckOptionalObjectKeys(queryjson, "SearchInfo", SearchInfoKeys, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            // 参数校验通过，继续处理
+            // 获取 Token 参数
+            string token = GetRequestToken(req);
+            queryjson["Token"] = token;
+            // 调用 Control 层处理获取评论列表逻辑
+            resjson = control.SelectCommentListByAdmin(queryjson);
+        }
     }
     cout << "doGetCommentListByAdmin end!!!" << endl;
     SetResponseStatus(resjson, res);
@@ -1789,7 +1802,7 @@ void HttpServer::Run() {
     // 分页获取题目列表
     server.Post(API + "/problem/list", doGetProblemList);
     // 分页获取题目列表（管理员权限）
-    server.Get(API + "/admin/problem/list", doGetProblemListByAdmin);
+    server.Post(API + "/admin/problem/list", doGetProblemListByAdmin);
     // -------------------- 题目模块 End --------------------
 
     // --------------------  标签模块 Start --------------------
@@ -1856,7 +1869,7 @@ void HttpServer::Run() {
     // 获取评论
     server.Post(API + "/comment/info", doGetComment);
     // 管理员查询评论
-    server.Get(API + "/admin/comment/list", doGetCommentListByAdmin);
+    server.Post(API + "/admin/comment/list", doGetCommentListByAdmin);
     // 删除评论
     server.Delete(API + "/comment/delete", doDeleteComment);
     // -------------------- 评论模块 End --------------------

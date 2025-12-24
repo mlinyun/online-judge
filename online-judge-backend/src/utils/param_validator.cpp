@@ -91,6 +91,14 @@ bool ParamValidator::CheckOptionalObjectKeys(const Json::Value &root, const std:
         return false;
     }
 
+    // 可选字段不能是空对象
+    if (obj.empty()) {
+        if (errMsg) {
+            *errMsg = field + " must not be an empty object";
+        }
+        return false;
+    }
+
     // 构建可选字段允许 Key 集合
     std::unordered_set<std::string> allowSet(allowKeys.begin(), allowKeys.end());
 

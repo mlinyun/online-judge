@@ -952,6 +952,7 @@ Json::Value MoDB::SelectProblemList(Json::Value &queryjson) {
 Json::Value MoDB::SelectProblemListByAdmin(Json::Value &queryjson) {
     try {
         // 提取查询信息
+        Json::Value searchinfo = queryjson["SearchInfo"];
         int page = stoi(queryjson["Page"].asString());
         int pagesize = stoi(queryjson["PageSize"].asString());
         int skip = (page - 1) * pagesize;
@@ -963,6 +964,42 @@ Json::Value MoDB::SelectProblemListByAdmin(Json::Value &queryjson) {
         Json::Reader reader;
         mongocxx::pipeline pipe, pipetot;
         bsoncxx::builder::stream::document document{};
+
+        // 查询 ID
+        if (searchinfo["Id"].asString().size() > 0) {
+            int64_t id = stoll(searchinfo["Id"].asString());
+            pipe.match({make_document(kvp("_id", id))});
+            pipetot.match({make_document(kvp("_id", id))});
+        }
+
+        // 查询标题
+        if (searchinfo["Title"].asString().size() > 0) {
+            document << "Title" << open_document << "$regex" << searchinfo["Title"].asString() << close_document;
+            pipe.match(document.view());
+            pipetot.match(document.view());
+            document.clear();
+        }
+
+        // 查询标签
+        if (searchinfo["Tags"].size() > 0) {
+            auto in_array = document << "Tags" << open_document << "$in" << open_array;
+            for (int i = 0; i < searchinfo["Tags"].size(); i++) {
+                in_array = in_array << searchinfo["Tags"][i].asString();
+            }
+            bsoncxx::document::value doc = in_array << close_array << close_document << finalize;
+            pipe.match(doc.view());
+            pipetot.match(doc.view());
+            document.clear();
+        }
+
+        // 查询创建者昵称
+        if (searchinfo["UserNickName"].asString().size() > 0) {
+            document << "UserNickName" << open_document << "$regex" << searchinfo["UserNickName"].asString()
+                     << close_document;
+            pipe.match(document.view());
+            pipetot.match(document.view());
+            document.clear();
+        }
 
         // 获取总条数
         int total = 0;
@@ -1778,7 +1815,7 @@ Json::Value MoDB::SelectDiscussList(Json::Value &queryjson) {
  * 权限：只允许管理员查询
  * @name SelectDiscussListByAdmin
  * @brief 分页查询讨论列表（管理员权限）
- * @param queryjson Json(Page, PageSize)
+ * @param queryjson Json(Page, PageSize, SearchInfo(Title, UserId, ParentId))
  * @return Json(success, code, message, data(List[{_id, Title, Views, Comments, CreateTime, User{_id, Avatar,
  * NickName}}], Total))
  */
@@ -1837,8 +1874,8 @@ Json::Value MoDB::SelectDiscussListByAdmin(Json::Value &queryjson) {
         pipe.lookup(document.view());
 
         document.clear();
-        document << "Title" << 1 << "Views" << 1 << "Comments" << 1 << "CreateTime" << 1 << "User._id" << 1
-                 << "User.Avatar" << 1 << "User.NickName" << 1;
+        document << "Title" << 1 << "ParentId" << 1 << "Views" << 1 << "Comments" << 1 << "CreateTime" << 1
+                 << "User._id" << 1 << "User.Avatar" << 1 << "User.NickName" << 1;
         pipe.project(document.view());
 
         cursor = discusscoll.aggregate(pipe);
@@ -2777,6 +2814,8 @@ Json::Value MoDB::GetSonComment(Json::Value &queryjson) {
  */
 Json::Value MoDB::SelectCommentListByAdmin(Json::Value &queryjson) {
     try {
+        // 提取搜索参数
+        Json::Value searchinfo = queryjson["SearchInfo"];
         // 提取分页参数
         int page = stoi(queryjson["Page"].asString());
         int pagesize = stoi(queryjson["PageSize"].asString());
@@ -2785,9 +2824,41 @@ Json::Value MoDB::SelectCommentListByAdmin(Json::Value &queryjson) {
         // 获取数据库连接
         auto client = pool.acquire();
         mongocxx::collection commentcoll = (*client)[DATABASE_NAME][COLLECTION_COMMENTS];
-
-        mongocxx::pipeline pipe;
         bsoncxx::builder::stream::document document{};
+        mongocxx::pipeline pipe, pipetot;
+
+        // 查询父级类型（ParentType）
+        if (searchinfo["ParentType"].asString().size() > 0) {
+            pipe.match({make_document(kvp("ParentType", searchinfo["ParentType"].asString()))});
+            pipetot.match({make_document(kvp("ParentType", searchinfo["ParentType"].asString()))});
+        }
+
+        // 查询用户 ID（UserId）
+        if (searchinfo["UserId"].asString().size() > 0) {
+            int64_t userid = stoll(searchinfo["UserId"].asString());
+            pipe.match({make_document(kvp("UserId", userid))});
+            pipetot.match({make_document(kvp("UserId", userid))});
+        }
+
+        // 查询评论内容（Content）
+        if (searchinfo["Content"].asString().size() > 0) {
+            document << "Content" << open_document << "$regex" << searchinfo["Content"].asString() << close_document;
+            pipe.match(document.view());
+            pipetot.match(document.view());
+            document.clear();
+        }
+
+        // 获取总条数
+        int total = 0;
+        pipetot.count("TotalNum");
+        mongocxx::cursor cursor = commentcoll.aggregate(pipetot);
+        for (auto doc : cursor) {
+            Json::Value tmpjson;
+            Json::Reader reader;
+            reader.parse(bsoncxx::to_json(doc), tmpjson);
+            total = tmpjson["TotalNum"].asInt();
+        }
+
         // 按照时间先后顺序
         pipe.sort({make_document(kvp("CreateTime", -1))});
         // 跳过多少条
@@ -2799,17 +2870,43 @@ Json::Value MoDB::SelectCommentListByAdmin(Json::Value &queryjson) {
                  << close_document << close_document;
         pipe.append_stage(document.view());
         document.clear();
+        // 将父评论的用户Id和用户表进行外连接
+        document << "from" << COLLECTION_USERS << "localField" << "UserId" << "foreignField" << "_id" << "as" << "User";
+        pipe.lookup(document.view());
+        document.clear();
+
+        // 拆散子评论，逐条查询子评论用户信息后再合并回数组
+        document << "path" << "$Child_Comments" << "preserveNullAndEmptyArrays" << true;
+        pipe.unwind(document.view());
+        document.clear();
+        document << "from" << COLLECTION_USERS << "localField" << "Child_Comments.UserId" << "foreignField" << "_id"
+                 << "as" << "Child_Comments.User";
+        pipe.lookup(document.view());
+        document.clear();
+
+        document << "_id" << "$_id" << "ParentId" << open_document << "$first" << "$ParentId" << close_document
+                 << "ParentType" << open_document << "$first" << "$ParentType" << close_document << "Content"
+                 << open_document << "$first" << "$Content" << close_document << "Likes" << open_document << "$first"
+                 << "$Likes" << close_document << "CreateTime" << open_document << "$first" << "$CreateTime"
+                 << close_document << "Child_Total" << open_document << "$first" << "$Child_Total" << close_document
+                 << "User" << open_document << "$first" << "$User" << close_document << "Child_Comments"
+                 << open_document << "$push" << "$Child_Comments" << close_document;
+        pipe.group(document.view());
+        document.clear();
 
         // 选择需要的字段
-        document << "ParentId" << 1 << "ParentType" << 1 << "Content" << 1 << "CreateTime" << 1 << "Child_Total" << 1
-                 << "Child_Comments._id" << 1 << "Child_Comments.Content" << 1 << "Child_Comments.CreateTime" << 1;
+        document << "ParentId" << 1 << "ParentType" << 1 << "Content" << 1 << "Likes" << 1 << "User._id" << 1
+                 << "User.Avatar" << 1 << "User.NickName" << 1 << "CreateTime" << 1 << "Child_Total" << 1
+                 << "Child_Comments._id" << 1 << "Child_Comments.Content" << 1 << "Child_Comments.User._id" << 1
+                 << "Child_Comments.User.NickName" << 1 << "Child_Comments.User.Avatar" << 1
+                 << "Child_Comments.CreateTime" << 1;
         pipe.project(document.view());
         document.clear();
 
         Json::Reader reader;
         Json::Value list(Json::arrayValue);
 
-        mongocxx::cursor cursor = commentcoll.aggregate(pipe);
+        cursor = commentcoll.aggregate(pipe);
         // 检查查询结果是否为空
         if (cursor.begin() == cursor.end()) {
             return response::CommentNotFound();
@@ -2820,9 +2917,11 @@ Json::Value MoDB::SelectCommentListByAdmin(Json::Value &queryjson) {
             reader.parse(bsoncxx::to_json(doc), jsonvalue);
             list.append(jsonvalue);
         }
-        int total = static_cast<int>(commentcoll.count_documents({}));
+        // int total = static_cast<int>(commentcoll.count_documents({}));
         return response::SuccessList(list, total);
     } catch (const std::exception &e) {
+        // TODO: 记录日志 e.what()
+        cout << "SelectCommentListByAdmin error: " << e.what() << endl;
         return response::DatabaseError();
     }
 }

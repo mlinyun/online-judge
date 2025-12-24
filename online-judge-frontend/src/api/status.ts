@@ -10,7 +10,7 @@
  * @module api/status
  */
 
-import { get } from "@/utils/http";
+import { get, post } from "@/utils/http";
 import type { AxiosResponse } from "axios";
 import type { Api } from "@/types/api/api";
 
@@ -36,12 +36,12 @@ export const selectStatusRecord = (
  * @name selectStatusRecordList
  * @tags 测评记录模块
  * @description 分页获取状态记录列表
- * @request GET `/status/info`
- * @param params 查询参数，详见 {@link Api.Status.SelectStatusRecordListParams}
+ * @request POST `/status/info`
+ * @param data 查询参数，详见 {@link Api.Status.SelectStatusRecordListParams}
  * @returns 状态记录列表，详见 {@link Api.Status.SelectStatusRecordListResponse}
  */
 export const selectStatusRecordList = (
-    params: Api.Status.SelectStatusRecordListParams
+    data: Api.Status.SelectStatusRecordListParams
 ): Promise<AxiosResponse<Api.Status.SelectStatusRecordListResponse>> => {
-    return get<Api.Status.SelectStatusRecordListResult>("/status/record/list", { ...params });
+    return post<Api.Status.SelectStatusRecordListResult>("/status/record/list", data);
 };

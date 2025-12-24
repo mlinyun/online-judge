@@ -230,7 +230,7 @@ declare namespace Api {
         type UserManageListResponse = ApiResponse<UserManageListResult>;
 
         /** 通过 Token 登录用户响应数据结构 */
-        type LoginUserByTokenResult = LoginUserResult;
+        type LoginUserByTokenResult = UserLoginResult;
         /** 通过 Token 登录用户响应参数 */
         type LoginUserByTokenResponse = ApiResponse<LoginUserByTokenResult>;
 
@@ -396,6 +396,20 @@ declare namespace Api {
                 Tags?: Tag.Tags;
             };
         }
+        /** 分页获取题目列表请求参数（管理员权限） */
+        interface SelectProblemListByAdminParams extends Common.PaginationParams {
+            /** 搜索信息 */
+            SearchInfo?: {
+                /** 题目 ID */
+                Id?: ProblemId;
+                /** 题目标题 */
+                Title?: string;
+                /** 题目标签列表 */
+                Tags?: Tag.Tags;
+                /** 题目创建者昵称 */
+                UserNickName?: string;
+            };
+        }
         /** 题目列表项数据结构 */
         interface SelectProblemListItem {
             /** 题目 ID */
@@ -516,6 +530,8 @@ declare namespace Api {
             Views: number;
             /** 评论数 */
             Comments: number;
+            /** 公告等级 */
+            Level: number;
             /** 创建时间 */
             CreateTime: Common.DateTimeString;
         }
@@ -523,6 +539,28 @@ declare namespace Api {
         type SelectAnnouncementListResult = Common.PaginationResponse<SelectAnnouncementListItem>;
         /** 分页查询公告列表响应参数 */
         type SelectAnnouncementListResponse = ApiResponse<SelectAnnouncementListResult>;
+
+        /** 分页获取公告列表（管理员权限）请求参数 */
+        interface SelectAnnouncementListByAdminParams extends Common.PaginationParams {
+            /** 搜索信息 */
+            SearchInfo?: {
+                /** 公告标题 */
+                Title?: string;
+                /** 公告等级 */
+                Level?: number;
+                /** 公告是否激活 */
+                Active?: boolean;
+            };
+        }
+        /** 分页获取公告列表（管理员权限）列表项 */
+        interface SelectAnnouncementListByAdminItem extends SelectAnnouncementListItem {
+            /** 公告是否激活 */
+            Active: boolean;
+        }
+        /** 分页获取公告列表（管理员权限）响应数据结构 */
+        type SelectAnnouncementListByAdminResult = Common.PaginationResponse<SelectAnnouncementListByAdminItem>;
+        /** 分页获取公告列表（管理员权限）响应参数 */
+        type SelectAnnouncementListByAdminResponse = ApiResponse<SelectAnnouncementListByAdminResult>;
 
         /** 设置公告激活状态请求参数 */
         interface UpdateAnnouncementActiveParams {
@@ -618,12 +656,26 @@ declare namespace Api {
                 UserId?: User.UserId;
             };
         }
+        /** 分页查询讨论列表（管理员权限）请求参数 */
+        interface SelectDiscussListByAdminParams extends Common.PaginationParams {
+            /** 搜索信息 */
+            SearchInfo?: {
+                /** 讨论标题 */
+                Title?: string;
+                /** 父 ID，0 或者题目 ID */
+                ParentId?: Problem.ProblemId | "0";
+                /** 用户 ID */
+                UserId?: User.UserId;
+            };
+        }
         /** 分页查询讨论列表项 */
         interface SelectDiscussListItem {
             /** 讨论 ID */
             _id: DiscussId;
             /** 讨论标题 */
             Title: string;
+            /** 父 ID，0 或者题目 ID */
+            ParentId: Problem.ProblemId | "0";
             /** 浏览量 */
             Views: number;
             /** 评论数 */
@@ -631,7 +683,7 @@ declare namespace Api {
             /** 创建时间 */
             CreateTime: Common.DateTimeString;
             /** 讨论用户信息 */
-            User: User;
+            User: User.SimpleUserInfo;
         }
         /** 分页查询讨论列表响应数据结构 */
         type SelectDiscussListResult = Common.PaginationResponse<SelectDiscussListItem>;
@@ -750,6 +802,20 @@ declare namespace Api {
         /** 分页查询题解列表响应参数 */
         type SelectSolutionListResponse = ApiResponse<SelectSolutionListResult>;
 
+        /** 分页查询题解列表（管理员权限）请求参数 */
+        interface SelectSolutionListByAdminParams extends Common.PaginationParams {
+            /** 搜索信息 */
+            SearchInfo?: {
+                /** 题解标题 */
+                Title?: string;
+                /** 父 ID，题目 ID */
+                ParentId?: Problem.ProblemId;
+                /** 用户 ID */
+                UserId?: User.UserId;
+                /** 公开标志 */
+                Public?: boolean;
+            };
+        }
         /** 分页查询题解列表（管理员权限）列表项 */
         interface SelectSolutionListByAdminItem extends SelectSolutionListItem {
             /** 公开标志 */
@@ -782,7 +848,7 @@ declare namespace Api {
             /** 添加成功返回的评论 ID */
             CommentId: CommentId;
             /** 创建时间 */
-            CreateTime: DateTimeString;
+            CreateTime: Common.DateTimeString;
         }
         /** 添加评论响应参数 */
         type InsertCommentResponse = ApiResponse<InsertCommentResult>;
@@ -837,19 +903,49 @@ declare namespace Api {
         /** 分页获取评论列表响应参数 */
         type SelectCommentListResponse = ApiResponse<SelectCommentListResult>;
 
+        /** 分页获取评论列表（管理员权限）请求参数 */
+        interface SelectCommentListByAdminParams extends Common.PaginationParams {
+            /** 搜索信息 */
+            SearchInfo?: {
+                /** 父类型 */
+                ParentType?: "Announcement" | "Discuss" | "Solution";
+                /** 评论内容 */
+                Content?: string;
+                /** 评论用户ID */
+                UserId?: User.UserId;
+            };
+        }
         /** 子评论列表项（管理员权限） */
         interface ChildCommentListByAdminItem {
             /** 评论 ID */
             _id: CommentId;
             /** 评论内容 */
             Content: string;
+            /** 评论用户信息 */
+            User: User.SimpleUserInfo;
             /** 创建时间：评论时间 */
             CreateTime: Common.DateTimeString;
         }
         /** 评论列表项（管理员权限） */
-        interface SelectCommentListByAdminItem extends SelectCommentListItem {
-            /** 重写子评论列表 */
+        interface SelectCommentListByAdminItem {
+            /** 评论 ID */
+            _id: CommentId;
+            /** 评论用户信息 */
+            User: User.SimpleUserInfo;
+            /** 父级 ID */
+            ParentId: Announcement.AnnouncementId | Discuss.DiscussId | Solution.SolutionId;
+            /** 父类型 */
+            ParentType: "Announcement" | "Discuss" | "Solution";
+            /** 评论内容 */
+            Content: string;
+            /** 点赞数量 */
+            Likes: number;
+            /** 创建时间：评论时间 */
+            CreateTime: Common.DateTimeString;
+            /** 子评论列表 */
             Child_Comments: ChildCommentListByAdminItem[];
+            /** 子评论数量 */
+            Child_Total: number;
         }
         /** 分页获取评论列表（管理员权限）响应数据结构 */
         type SelectCommentListByAdminResult = Common.PaginationResponse<SelectCommentListByAdminItem>;

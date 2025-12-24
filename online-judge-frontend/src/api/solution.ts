@@ -113,16 +113,14 @@ export const deleteSolution = (
  * @name selectSolutionList
  * @tags 题解模块
  * @description 分页查询题解列表
- * @request GET `/solution/list`
- * @param params 查询参数，详见 {@link Api.Solution.SelectSolutionListParams}
+ * @request POST `/solution/list`
+ * @param data 查询参数，详见 {@link Api.Solution.SelectSolutionListParams}
  * @returns 题解列表，详见 {@link Api.Solution.SelectSolutionListResponse}
  */
 export const selectSolutionList = (
-    params: Api.Solution.SelectSolutionListParams
+    data: Api.Solution.SelectSolutionListParams
 ): Promise<AxiosResponse<Api.Solution.SelectSolutionListResponse>> => {
-    return get<Api.Solution.SelectSolutionListResult>("/solution/list", {
-        ...params,
-    });
+    return post<Api.Solution.SelectSolutionListResult>("/solution/list", data);
 };
 
 /**
@@ -130,14 +128,12 @@ export const selectSolutionList = (
  * @name selectSolutionListByAdmin
  * @tags 题解模块
  * @description 分页查询题解列表（管理员权限）
- * @request GET `/admin/solution/list`
- * @param params 查询参数，详见 {@link Api.Common.PaginationParams}
+ * @request POST `/admin/solution/list`
+ * @param data 查询参数，详见 {@link Api.Solution.SelectSolutionListByAdminParams}
  * @returns 题解列表，详见 {@link Api.Solution.SelectSolutionListResponse}
  */
 export const selectSolutionListByAdmin = (
-    params: Api.Common.PaginationParams
+    data: Api.Solution.SelectSolutionListByAdminParams
 ): Promise<AxiosResponse<Api.Solution.SelectSolutionListByAdminResponse>> => {
-    return get<Api.Solution.SelectSolutionListByAdminResult>("/admin/solution/list", {
-        ...params,
-    });
+    return post<Api.Solution.SelectSolutionListByAdminResult>("/admin/solution/list", data);
 };

@@ -100,11 +100,16 @@ export const updateDiscuss = (
 export const deleteDiscuss = (
     discussId: Api.Discuss.DiscussId
 ): Promise<AxiosResponse<Api.Discuss.DeleteDiscussResponse>> => {
-    return del<Api.Common.OperationResult>("/discussion/delete", {
-        DiscussId: discussId,
-        showSuccessMessage: true,
-        successMessage: "讨论删除成功！",
-    });
+    return del<Api.Common.OperationResult>(
+        "/discussion/delete",
+        {
+            DiscussId: discussId,
+        },
+        {
+            showSuccessMessage: true,
+            successMessage: "讨论删除成功！",
+        }
+    );
 };
 
 /**
@@ -112,14 +117,14 @@ export const deleteDiscuss = (
  * @name selectDiscussList
  * @tags 讨论模块
  * @description 分页查询讨论列表
- * @request GET `/discussion/list`
- * @param params 分页查询参数，详见 {@link Api.Discuss.SelectDiscussListParams}
+ * @request POST `/discussion/list`
+ * @param data 分页查询参数，详见 {@link Api.Discuss.SelectDiscussListParams}
  * @return 分页查询响应，详见 {@link Api.Discuss.SelectDiscussListResponse}
  */
 export const selectDiscussList = (
-    params: Api.Discuss.SelectDiscussListParams
+    data: Api.Discuss.SelectDiscussListParams
 ): Promise<AxiosResponse<Api.Discuss.SelectDiscussListResponse>> => {
-    return get<Api.Discuss.SelectDiscussListResult>("/discussion/list", { ...params });
+    return post<Api.Discuss.SelectDiscussListResult>("/discussion/list", data);
 };
 
 /**
@@ -127,12 +132,12 @@ export const selectDiscussList = (
  * @name selectDiscussListByAdmin
  * @tags 讨论模块
  * @description 分页查询讨论列表（管理员权限）
- * @request GET `/admin/discussion/list`
- * @param params 分页查询参数，详见 {@link Api.Common.PaginationParams}
+ * @request POST `/admin/discussion/list`
+ * @param data 分页查询参数，详见 {@link Api.Discuss.SelectDiscussListByAdminParams}
  * @return 分页查询响应，详见 {@link Api.Discuss.SelectDiscussListResponse}
  */
 export const selectDiscussListByAdmin = (
-    params: Api.Common.PaginationParams
+    data: Api.Discuss.SelectDiscussListByAdminParams
 ): Promise<AxiosResponse<Api.Discuss.SelectDiscussListResponse>> => {
-    return get<Api.Discuss.SelectDiscussListResult>("/admin/discussion/list", { ...params });
+    return post<Api.Discuss.SelectDiscussListResult>("/admin/discussion/list", data);
 };

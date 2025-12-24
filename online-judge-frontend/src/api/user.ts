@@ -140,7 +140,7 @@ export const selectUserRank = (
  * @name selectUserList
  * @tags 用户模块
  * @description 分页查询用户列表（管理员权限）
- * @request GET `/admin/user/list`
+ * @request POST `/admin/user/list`
  * @param data 分页参数，详见 {@link Api.User.UserManageListParams}
  * @returns 用户列表，详见 {@link Api.User.UserManageListResponse}
  */

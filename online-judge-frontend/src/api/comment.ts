@@ -12,9 +12,9 @@
  * @module api/comment
  */
 
-import { get, post, del } from "@/utils/http";
+import { post, del } from "@/utils/http";
 import type { AxiosResponse } from "axios";
-import { type Api } from "@/types/api/api";
+import type { Api } from "@/types/api/api";
 
 /**
  * 添加评论
@@ -39,14 +39,14 @@ export const insertComment = (
  * @name selectCommentList
  * @tags 评论模块
  * @description 分页查询评论列表
- * @request GET `/comment/info`
- * @param params 查询参数，详见 {@link Api.Comment.SelectCommentListParams}
+ * @request POST `/comment/info`
+ * @param data 查询参数，详见 {@link Api.Comment.SelectCommentListParams}
  * @returns 评论列表，详见 {@link Api.Comment.SelectCommentListResponse}
  */
 export const selectCommentList = (
-    params: Api.Comment.SelectCommentListParams
+    data: Api.Comment.SelectCommentListParams
 ): Promise<AxiosResponse<Api.Comment.SelectCommentListResponse>> => {
-    return get<Api.Comment.SelectCommentListResult>("/comment/info", { ...params });
+    return post<Api.Comment.SelectCommentListResult>("/comment/info", data);
 };
 
 /**
@@ -54,14 +54,14 @@ export const selectCommentList = (
  * @name selectCommentListByAdmin
  * @tags 评论模块
  * @description 分页查询评论列表（管理员权限）
- * @request GET `/comment/admin/info`
- * @param params 查询参数，详见 {@link Api.Common.PaginationParams}
+ * @request POST `/comment/admin/info`
+ * @param data 查询参数，详见 {@link Api.Comment.SelectCommentListByAdminParams}
  * @returns 评论列表，详见 {@link Api.Comment.SelectCommentListByAdminResponse}
  */
 export const selectCommentListByAdmin = (
-    params: Api.Common.PaginationParams
+    data: Api.Comment.SelectCommentListByAdminParams
 ): Promise<AxiosResponse<Api.Comment.SelectCommentListByAdminResponse>> => {
-    return get<Api.Comment.SelectCommentListByAdminResult>("/admin/comment/list", { ...params });
+    return post<Api.Comment.SelectCommentListByAdminResult>("/admin/comment/list", data);
 };
 
 /**

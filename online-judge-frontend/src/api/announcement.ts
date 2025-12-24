@@ -133,16 +133,14 @@ export const selectAnnouncementList = (
  * @name selectAnnouncementListByAdmin
  * @tags 公告模块
  * @description 管理员分页获取公告列表
- * @request GET `/admin/announcement/list`
- * @param params 分页查询参数，详见 {@link Api.Common.PaginationParams}
- * @returns 公告列表，详见 {@link Api.Announcement.SelectAnnouncementListResponse}
+ * @request POST `/admin/announcement/list`
+ * @param data 分页查询参数，详见 {@link Api.Announcement.SelectAnnouncementListByAdminParams}
+ * @returns 公告列表，详见 {@link Api.Announcement.SelectAnnouncementListByAdminResponse}
  */
 export const selectAnnouncementListByAdmin = (
-    params: Api.Common.PaginationParams
-): Promise<AxiosResponse<Api.Announcement.SelectAnnouncementListResponse>> => {
-    return get<Api.Announcement.SelectAnnouncementListResult>("/admin/announcement/list", {
-        ...params,
-    });
+    data: Api.Announcement.SelectAnnouncementListByAdminParams
+): Promise<AxiosResponse<Api.Announcement.SelectAnnouncementListByAdminResponse>> => {
+    return post<Api.Announcement.SelectAnnouncementListByAdminResult>("/admin/announcement/list", data);
 };
 
 /**
