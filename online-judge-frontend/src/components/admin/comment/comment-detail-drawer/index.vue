@@ -187,8 +187,14 @@ const handleRefresh = () => {
 </script>
 
 <template>
-    <el-drawer v-model="open" :append-to-body="true" :with-header="false" direction="rtl" size="520px"
-        class="comment-drawer">
+    <el-drawer
+        v-model="open"
+        :append-to-body="true"
+        :with-header="false"
+        direction="rtl"
+        size="520px"
+        class="comment-drawer"
+    >
         <div class="drawer-shell">
             <header class="drawer-header">
                 <div class="header-left">
@@ -200,8 +206,13 @@ const handleRefresh = () => {
                 </div>
 
                 <div class="header-right">
-                    <el-button v-if="viewMode === 'child' && resolvedParent" class="icon-btn" circle :icon="ArrowLeft"
-                        @click="backToParent" />
+                    <el-button
+                        v-if="viewMode === 'child' && resolvedParent"
+                        class="icon-btn"
+                        circle
+                        :icon="ArrowLeft"
+                        @click="backToParent"
+                    />
                     <el-button class="icon-btn" circle :icon="RefreshRight" @click="handleRefresh" />
                     <el-button class="icon-btn" circle :icon="Close" @click="open = false" />
                 </div>
@@ -274,8 +285,9 @@ const handleRefresh = () => {
 
                                     <div class="child-actions">
                                         <div class="child-time">{{ DateUtils.formatDateTime(child.CreateTime) }}</div>
-                                        <el-button class="child-view" link type="primary"
-                                            @click="showChild(child)">查看</el-button>
+                                        <el-button class="child-view" link type="primary" @click="showChild(child)"
+                                            >查看</el-button
+                                        >
                                     </div>
                                 </div>
                                 <div class="child-content" :title="child.Content">{{ child.Content }}</div>
@@ -458,7 +470,7 @@ const handleRefresh = () => {
     border-radius: var(--oj-radius-xl);
 }
 
-.card+.card {
+.card + .card {
     margin-top: var(--oj-spacing-4);
 }
 

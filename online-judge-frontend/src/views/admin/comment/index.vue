@@ -261,13 +261,28 @@ onMounted(() => {
     <section class="admin-comment" aria-label="评论管理">
         <div class="toolbar oj-glass-panel">
             <div class="toolbar-left">
-                <el-input v-model="searchContent" class="toolbar-field" :prefix-icon="Search" clearable
-                    placeholder="评论内容 (Content)" />
+                <el-input
+                    v-model="searchContent"
+                    class="toolbar-field"
+                    :prefix-icon="Search"
+                    clearable
+                    placeholder="评论内容 (Content)"
+                />
 
-                <el-input v-model="searchUserId" class="toolbar-field" :prefix-icon="User" clearable
-                    placeholder="用户ID (UserId)" />
+                <el-input
+                    v-model="searchUserId"
+                    class="toolbar-field"
+                    :prefix-icon="User"
+                    clearable
+                    placeholder="用户ID (UserId)"
+                />
 
-                <el-select v-model="searchParentType" class="toolbar-field toolbar-select" clearable placeholder="所有类型">
+                <el-select
+                    v-model="searchParentType"
+                    class="toolbar-field toolbar-select"
+                    clearable
+                    placeholder="所有类型"
+                >
                     <el-option label="公告" value="Announcement" />
                     <el-option label="讨论" value="Discuss" />
                     <el-option label="题解" value="Solution" />
@@ -284,15 +299,25 @@ onMounted(() => {
                 </template>
 
                 <template #default>
-                    <el-empty v-if="!comments.length && !loadError" :description="hasSearch ? '暂无匹配的评论' : '暂无评论数据'" />
+                    <el-empty
+                        v-if="!comments.length && !loadError"
+                        :description="hasSearch ? '暂无匹配的评论' : '暂无评论数据'"
+                    />
 
                     <el-empty v-else-if="!comments.length && loadError" :description="loadError">
                         <el-button type="primary" plain @click="fetchComments">重试加载</el-button>
                     </el-empty>
 
                     <div v-else>
-                        <el-table :data="comments" class="comment-table" table-layout="fixed" row-key="_id" lazy
-                            :load="loadChildren" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+                        <el-table
+                            :data="comments"
+                            class="comment-table"
+                            table-layout="fixed"
+                            row-key="_id"
+                            lazy
+                            :load="loadChildren"
+                            :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+                        >
                             <el-table-column label="评论内容" min-width="360">
                                 <template #default="scope">
                                     <p class="content-clamp" :title="scope.row.Content">{{ scope.row.Content }}</p>
@@ -350,14 +375,17 @@ onMounted(() => {
 
                             <el-table-column label="操作" width="120" fixed="right" align="center">
                                 <template #default="scope">
-                                    <el-dropdown trigger="click"
-                                        @command="(cmd) => handleRowCommand(cmd as any, scope.row)">
+                                    <el-dropdown
+                                        trigger="click"
+                                        @command="(cmd) => handleRowCommand(cmd as any, scope.row)"
+                                    >
                                         <el-button class="opt-btn" link :icon="More">操作</el-button>
                                         <template #dropdown>
                                             <el-dropdown-menu>
                                                 <el-dropdown-item command="view" :icon="View">查看</el-dropdown-item>
-                                                <el-dropdown-item command="delete" :icon="Delete"
-                                                    divided>删除</el-dropdown-item>
+                                                <el-dropdown-item command="delete" :icon="Delete" divided
+                                                    >删除</el-dropdown-item
+                                                >
                                             </el-dropdown-menu>
                                         </template>
                                     </el-dropdown>
@@ -366,18 +394,27 @@ onMounted(() => {
                         </el-table>
 
                         <div class="pagination-bar">
-                            <el-pagination v-model:current-page="page" v-model:page-size="pageSize"
-                                :page-sizes="[10, 20, 40, 60]" :total="total"
-                                layout="total, sizes, prev, pager, next, jumper" @current-change="handlePageChange"
-                                @size-change="handleSizeChange" />
+                            <el-pagination
+                                v-model:current-page="page"
+                                v-model:page-size="pageSize"
+                                :page-sizes="[10, 20, 40, 60]"
+                                :total="total"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                @current-change="handlePageChange"
+                                @size-change="handleSizeChange"
+                            />
                         </div>
                     </div>
                 </template>
             </el-skeleton>
         </div>
 
-        <CommentDetailDrawer v-model="detailOpen" :row="detailRow" :parent-row="detailParentRow"
-            @refresh="fetchComments" />
+        <CommentDetailDrawer
+            v-model="detailOpen"
+            :row="detailRow"
+            :parent-row="detailParentRow"
+            @refresh="fetchComments"
+        />
     </section>
 </template>
 
