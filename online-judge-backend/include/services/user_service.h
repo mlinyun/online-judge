@@ -42,6 +42,9 @@ public:
     // 用户排名查询
     Json::Value SelectUserRank(Json::Value &queryjson);
 
+    // 通过 UserId 获取用户排名值
+    Json::Value SelectUserRankValue(Json::Value &queryjson);
+
     // 分页查询用户列表（管理员权限）
     Json::Value SelectUserSetInfo(Json::Value &queryjson);
 

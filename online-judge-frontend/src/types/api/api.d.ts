@@ -195,6 +195,14 @@ declare namespace Api {
         /** 用户排名列表响应参数 */
         type UserRankListResponse = ApiResponse<UserRankListResult>;
 
+        /** 通过 UserId 获取用户排名值响应数据结构 */
+        interface SelectUserRankValueResult {
+            /** 用户排名值 */
+            Rank: number;
+        }
+        /** 通过 UserId 获取用户排名值响应参数 */
+        type SelectUserRankValueResponse = ApiResponse<SelectUserRankValueResult>;
+
         /** 分页查询用户列表请求参数 */
         interface UserManageListParams extends Common.PaginationParams {
             /** 搜索信息 */

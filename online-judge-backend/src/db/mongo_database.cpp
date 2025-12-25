@@ -396,6 +396,58 @@ Json::Value MoDB::SelectUserRank(Json::Value &queryjson) {
 }
 
 /**
+ * 功能：通过 UserId 获取用户排名值
+ * 权限：只允许用户本人查询
+ * @name SelectUserRankValue
+ * @brief 通过 UserId 获取用户的排名值
+ * @param queryjson Json(UserId)
+ * @return Json(success, code, message, data(Rank))
+ */
+Json::Value MoDB::SelectUserRankValue(Json::Value &queryjson) {
+    try {
+        int64_t userid = stoll(queryjson["UserId"].asString());
+
+        auto client = pool.acquire();
+        mongocxx::collection usercoll = (*client)[DATABASE_NAME][COLLECTION_USERS];
+
+        auto user_opt = usercoll.find_one(make_document(kvp("_id", userid)));
+        if (!user_opt) {
+            return response::UserNotFound();
+        }
+
+        auto view = user_opt->view();
+        auto get_int = [](const bsoncxx::document::view &v, const char *key) -> int64_t {
+            auto ele = v[key];
+            if (!ele) return 0;
+            if (ele.type() == bsoncxx::type::k_int32) return ele.get_int32().value;
+            if (ele.type() == bsoncxx::type::k_int64) return ele.get_int64().value;
+            return 0;
+        };
+
+        int64_t acnum = get_int(view, "ACNum");
+        int64_t submitnum = get_int(view, "SubmitNum");
+
+        // 统计“比该用户更靠前”的用户数量：
+        // ACNum 更大；或 ACNum 相同但 SubmitNum 更小；或两者相同但 _id 更小（与排行榜的 _id 升序一致）
+        bsoncxx::builder::stream::document filter;
+        filter << "$or" << open_array
+               << open_document << "ACNum" << open_document << "$gt" << acnum << close_document << close_document
+               << open_document << "ACNum" << acnum << "SubmitNum" << open_document << "$lt" << submitnum << close_document
+               << close_document
+               << open_document << "ACNum" << acnum << "SubmitNum" << submitnum << "_id" << open_document << "$lt" << userid
+               << close_document << close_document
+               << close_array;
+
+        int rank = static_cast<int>(usercoll.count_documents(filter.view())) + 1;
+        Json::Value data;
+        data["Rank"] = rank;
+        return response::Success("查询成功", data);
+    } catch (const std::exception &e) {
+        return response::InternalError("数据库异常：" + std::string(e.what()));
+    }
+}
+
+/**
  * 功能：分页查询用户列表
  * 权限：只允许管理员查询
  * @name SelectUserSetInfo
@@ -613,10 +665,14 @@ Json::Value MoDB::UpdateUserPassword(Json::Value &updatejson) {
         // 构造更新文档
         bsoncxx::builder::stream::document document{};
         document << "$set" << open_document << "PassWord" << newpassword.data() << close_document;
-        // 执行更新操作，确保旧密码匹配
-        auto result = usercoll.update_one(make_document(kvp("_id", userid)), document.view());
-        if (!result || result->matched_count() == 0) {
-            return response::UserNotFound("未找到对应用户，密码修改失败！");
+        // 执行更新操作，确保旧密码匹配（避免检查通过后密码被并发修改导致越权更新）
+        auto result = usercoll.update_one(filter.view(), document.view());
+        if (!result) {
+            return response::DatabaseError("密码修改失败！");
+        }
+        if (result->matched_count() == 0) {
+            // 理论上前面已校验旧密码，这里兜底处理并发修改等情况
+            return response::UserOldPasswordWrong();
         }
         // 构建返回数据
         Json::Value data;
@@ -3331,10 +3387,7 @@ Json::Value MoDB::SelectStatusRecordList(Json::Value &queryjson) {
         pipe.project(document.view());
         Json::Value list(Json::arrayValue);
         cursor = statusrecordcoll.aggregate(pipe);
-        // 检查查询结果是否为空
-        if (cursor.begin() == cursor.end()) {
-            return response::StatusRecordNotFound();
-        }
+
         // 遍历查询结果，构造返回列表
         for (auto doc : cursor) {
             Json::Value jsonvalue;

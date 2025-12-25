@@ -276,6 +276,29 @@ void doGetUserRank(const httplib::Request &req, httplib::Response &res) {
 }
 
 /**
+ * 通过 UserId 获取用户排名值
+ */
+void doGetUserRankValue(const httplib::Request &req, httplib::Response &res) {
+    cout << "doGetUserRankValue start!!!" << endl;
+    Json::Value resjson;
+    string errMsg;
+    if (!validator::ParamValidator::CheckRequired(req, "UserId", &errMsg)) {
+        resjson = response::BadRequest(errMsg);
+    } else {
+        string token = GetRequestToken(req);
+        string userid = req.get_param_value("UserId");
+        Json::Value queryjson;
+        queryjson["Token"] = token;
+        queryjson["UserId"] = userid;
+        resjson = control.SelectUserRankValue(queryjson);
+    }
+    cout << "doGetUserRankValue end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
+    res.set_content(resbody, "application/json; charset=utf-8");
+}
+
+/**
  * 处理分页获取用户列表的请求（管理员权限）
  */
 void doGetUserSetInfo(const httplib::Request &req, httplib::Response &res) {
@@ -549,7 +572,8 @@ void doGetProblemListByAdmin(const httplib::Request &req, httplib::Response &res
             string token = GetRequestToken(req);
             queryjson["Token"] = token;
             // 调用 Control 层处理获取题目列表逻辑
-            resjson = control.SelectProblemListByAdmin(queryjson);;
+            resjson = control.SelectProblemListByAdmin(queryjson);
+            ;
         }
     }
     cout << "doGetProblemListByAdmin end!!!" << endl;
@@ -1780,6 +1804,8 @@ void HttpServer::Run() {
     server.Delete(API + "/admin/user/delete", doDeleteUser);
     // 用户排名查询
     server.Get(API + "/user/rank", doGetUserRank);
+    // 通过 UserId 获取用户排名值
+    server.Get(API + "/user/rank/value", doGetUserRankValue);
     // 分页查询用户列表（管理员权限）
     server.Post(API + "/admin/user/list", doGetUserSetInfo);
     // 用户登录通过 Token 鉴权（Token 鉴权实现）

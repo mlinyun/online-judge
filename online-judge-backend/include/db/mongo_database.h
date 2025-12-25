@@ -73,6 +73,12 @@ public:
     Json::Value SelectUserRank(Json::Value &queryjson);
 
     /**
+     * 功能：通过 UserId 获取用户排名值
+     * 权限：所有用户均可查询
+     */
+    Json::Value SelectUserRankValue(Json::Value &queryjson);
+
+    /**
      * 功能：分页查询用户列表
      * 权限：只允许管理员查询
      */

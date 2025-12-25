@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { useRouter } from "vue-router";
 import { selectUserRank } from "@/api/user";
 import type { Api } from "@/types/api/api";
 import type { TableInstance } from "element-plus";
 import { UserFilled } from "@element-plus/icons-vue";
 
 defineOptions({ name: "UserRank" });
-
-const router = useRouter();
 
 const PAGE_SIZE = 20; // 每页加载 20 条
 const MAX_ITEMS = 100; // 最多加载 100 条用户排名
@@ -33,6 +30,9 @@ let intersectionObserver: IntersectionObserver | null = null;
 
 // 表格布局方式
 const tableLayout = ref<TableInstance["tableLayout"]>("fixed");
+
+const detailDrawerOpen = ref(false);
+const activeUserId = ref<Api.User.UserId | undefined>(undefined);
 
 const safeTotal = computed(() => total.value);
 
@@ -175,9 +175,8 @@ onUnmounted(() => {
 });
 
 const handleRowClick = (row: Api.User.UserRankListItem) => {
-    // TODO: 目前用户详情页能力有限，先跳转到资料页（后续可扩展传参展示他人资料）
-    if (!row?._id) return;
-    router.push({ name: "user-profile", query: { UserId: String(row._id) } });
+    activeUserId.value = row._id;
+    detailDrawerOpen.value = true;
 };
 
 /**
@@ -392,6 +391,7 @@ const getProfileText = (item: Api.User.UserRankListItem): string => {
                 </el-skeleton>
             </div>
         </el-card>
+        <UserDetailDrawer v-model="detailDrawerOpen" :userId="activeUserId" />
     </div>
 </template>
 

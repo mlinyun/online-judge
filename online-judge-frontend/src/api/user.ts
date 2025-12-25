@@ -136,6 +136,21 @@ export const selectUserRank = (
 };
 
 /**
+ * 通过 UserId 获取用户排名值
+ * @name selectUserRankById
+ * @tags 用户模块
+ * @description 通过 UserId 获取用户排名值
+ * @request GET `/user/rank/info`
+ * @param userId 用户 ID，详见 {@link Api.User.UserId}
+ * @returns 用户排名值，详见 {@link Api.User.SelectUserRankValueResponse}
+ */
+export const selectUserRankById = (
+    userId: Api.User.UserId
+): Promise<AxiosResponse<Api.User.SelectUserRankValueResponse>> => {
+    return get<Api.User.SelectUserRankValueResult>("/user/rank/info", { UserId: userId });
+};
+
+/**
  * 分页查询用户列表（管理员权限）
  * @name selectUserList
  * @tags 用户模块

@@ -79,6 +79,11 @@ Json::Value UserService::SelectUserRank(Json::Value &queryjson) {
     return MoDB::GetInstance()->SelectUserRank(queryjson);
 }
 
+// 通过 UserId 获取用户排名值
+Json::Value UserService::SelectUserRankValue(Json::Value &queryjson) {
+    return MoDB::GetInstance()->SelectUserRankValue(queryjson);
+}
+
 // 分页查询用户列表（管理员权限）
 Json::Value UserService::SelectUserSetInfo(Json::Value &queryjson) {
     return MoDB::GetInstance()->SelectUserSetInfo(queryjson);
@@ -91,7 +96,13 @@ bool UserService::UpdateUserProblemInfo(Json::Value &updatejson) {
 
 // 用户修改密码
 Json::Value UserService::UpdateUserPassword(Json::Value &updatejson) {
-    return MoDB::GetInstance()->UpdateUserPassword(updatejson);
+    Json::Value json = MoDB::GetInstance()->UpdateUserPassword(updatejson);
+    // 修改密码成功后使所有 Token 失效，强制重新登录
+    if (json.isObject() && json["success"].asBool()) {
+        std::string userid = updatejson["UserId"].asString();
+        ReDB::GetInstance()->DeleteTokensByUserId(userid);
+    }
+    return json;
 }
 
 // 用户退出登录

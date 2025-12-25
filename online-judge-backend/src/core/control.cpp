@@ -98,6 +98,19 @@ Json::Value Control::SelectUserRank(Json::Value &queryjson) {
 }
 
 /**
+ * 功能：通过 UserId 获取用户排名值
+ * 权限：只允许用户本人查询
+ */
+Json::Value Control::SelectUserRankValue(Json::Value &queryjson) {
+    // 如果不是本人，无权查询用户排名值
+    bool is_author = UserService::GetInstance()->IsAuthor(queryjson);
+    if (!is_author) {
+        return response::Forbidden();
+    }
+    return UserService::GetInstance()->SelectUserRankValue(queryjson);
+}
+
+/**
  * 功能：分页查询用户列表
  * 权限：只允许管理员查询
  */
