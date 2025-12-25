@@ -3,15 +3,13 @@
  * 管理后台 - 用户管理页面
  */
 import { computed, onMounted, ref, watch } from "vue";
-import { useRouter } from "vue-router";
 import { Collection, Delete, Edit, More, School, Search, User, View } from "@element-plus/icons-vue";
 import { deleteUser, selectUserList } from "@/api/user";
 import { DateUtils } from "@/utils/date/date-utils.ts";
+import { UserDetailDrawer, UserEditDialog } from "@/components/admin";
 import type { Api } from "@/types/api/api";
 
 defineOptions({ name: "AdminUsers" });
-
-const router = useRouter();
 
 const loading = ref(false);
 const loadError = ref("");
@@ -28,6 +26,12 @@ const pageSize = ref(20);
 const total = ref(0);
 
 const users = ref<Api.User.UserManageListItem[]>([]);
+
+const detailDrawerOpen = ref(false);
+const activeUserId = ref<Api.User.UserId | undefined>(undefined);
+
+const editDialogOpen = ref(false);
+const editUserId = ref<Api.User.UserId | undefined>(undefined);
 
 // 工具栏：搜索信息 SearchInfo 支持的字段
 const searchNickName = ref("");
@@ -107,8 +111,8 @@ const fetchUsers = async () => {
  * @param row 行数据
  */
 const handleView = (row: Api.User.UserManageListItem) => {
-    // TODO: 后期可以改为弹出侧边栏查看用户详情
-    router.push({ name: "user-profile", query: { UserId: row._id } });
+    activeUserId.value = row._id;
+    detailDrawerOpen.value = true;
 };
 
 /**
@@ -116,8 +120,8 @@ const handleView = (row: Api.User.UserManageListItem) => {
  * @param row
  */
 const handleEdit = (row: Api.User.UserManageListItem) => {
-    // TODO: 后期可以改为弹出框编辑用户信息
-    router.push({ name: "user-setting", query: { UserId: row._id } });
+    editUserId.value = row._id;
+    editDialogOpen.value = true;
 };
 
 /**
@@ -195,34 +199,36 @@ onMounted(() => {
     <section class="admin-users" aria-label="用户管理">
         <!-- Toolbar -->
         <div class="toolbar oj-glass-panel">
-            <el-input
-                v-model="searchNickName"
-                class="toolbar-field"
-                :prefix-icon="Search"
-                clearable
-                placeholder="用户名（NickName）"
-            />
-            <el-input
-                v-model="searchSchool"
-                class="toolbar-field"
-                :prefix-icon="School"
-                clearable
-                placeholder="学校（School）"
-            />
-            <el-input
-                v-model="searchMajor"
-                class="toolbar-field"
-                :prefix-icon="Collection"
-                clearable
-                placeholder="专业（Major）"
-            />
-            <el-input
-                v-model="searchAccount"
-                class="toolbar-field"
-                :prefix-icon="User"
-                clearable
-                placeholder="账号（Account）"
-            />
+            <div class="toolbar-left">
+                <el-input
+                    v-model="searchNickName"
+                    class="toolbar-field"
+                    :prefix-icon="Search"
+                    clearable
+                    placeholder="用户名（NickName）"
+                />
+                <el-input
+                    v-model="searchSchool"
+                    class="toolbar-field"
+                    :prefix-icon="School"
+                    clearable
+                    placeholder="学校（School）"
+                />
+                <el-input
+                    v-model="searchMajor"
+                    class="toolbar-field"
+                    :prefix-icon="Collection"
+                    clearable
+                    placeholder="专业（Major）"
+                />
+                <el-input
+                    v-model="searchAccount"
+                    class="toolbar-field"
+                    :prefix-icon="User"
+                    clearable
+                    placeholder="账号（Account）"
+                />
+            </div>
         </div>
 
         <!-- Table -->
@@ -314,6 +320,8 @@ onMounted(() => {
                 </template>
             </el-skeleton>
         </div>
+        <UserDetailDrawer v-model="detailDrawerOpen" :user-id="activeUserId" />
+        <UserEditDialog v-model="editDialogOpen" :user-id="editUserId" @updated="fetchUsers" />
     </section>
 </template>
 
@@ -326,19 +334,53 @@ onMounted(() => {
 
 /* Toolbar */
 .toolbar {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     gap: var(--oj-spacing-4);
     align-items: center;
     justify-content: space-between;
     padding: var(--oj-spacing-4);
+    overflow: hidden;
+    border: 1px solid var(--oj-glass-border);
     border-radius: var(--oj-radius-xl);
-    transition: all 0.3s ease;
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.toolbar::before {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    background:
+        radial-gradient(520px circle at 12% 20%, rgb(var(--oj-color-primary-rgb) / 18%) 0%, transparent 55%),
+        radial-gradient(420px circle at 88% -10%, rgb(var(--oj-color-primary-rgb) / 10%) 0%, transparent 55%),
+        repeating-linear-gradient(90deg, rgb(var(--oj-color-primary-rgb) / 6%) 0 1px, transparent 1px 16px);
+    opacity: 0.9;
+}
+
+.toolbar::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    box-shadow:
+        0 0 0 1px rgb(var(--oj-color-primary-rgb) / 10%) inset,
+        0 18px 48px rgb(var(--oj-color-primary-rgb) / 10%);
+    opacity: 0.75;
+}
+
+.toolbar:hover {
+    border-color: rgb(var(--oj-color-primary-rgb) / 45%);
+    transform: translateY(-1px);
 }
 
 /* Input Adaptation */
 .toolbar :deep(.el-input__wrapper) {
     background-color: var(--oj-input-bg);
+    border-radius: var(--oj-radius-lg);
     box-shadow: 0 0 0 1px var(--oj-input-border) inset;
     transition: all 0.2s ease;
 }
@@ -367,8 +409,17 @@ onMounted(() => {
     color: var(--oj-text-color-secondary);
 }
 
+.toolbar-left {
+    display: grid;
+    flex: 1;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--oj-spacing-3);
+    align-items: center;
+    min-width: 0;
+}
+
 .toolbar-field {
-    width: min(240px, 100%);
+    width: 100%;
 }
 
 .skeleton-block {

@@ -4,7 +4,7 @@
  */
 import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Delete, Edit, More, Search, View } from "@element-plus/icons-vue";
+import { Delete, Document, Edit, More, Search, User, View } from "@element-plus/icons-vue";
 import { deleteSolution, selectSolutionListByAdmin } from "@/api/solution";
 import { DateUtils } from "@/utils/date/date-utils";
 import type { Api } from "@/types/api/api";
@@ -212,11 +212,28 @@ onMounted(() => {
                     placeholder="题解标题"
                 />
 
-                <el-input v-model="searchUserId" class="toolbar-field" clearable placeholder="用户ID" />
+                <el-input
+                    v-model="searchUserId"
+                    class="toolbar-field"
+                    :prefix-icon="User"
+                    clearable
+                    placeholder="用户ID"
+                />
 
-                <el-input v-model="searchParentId" class="toolbar-field" clearable placeholder="题目ID(ParentId)" />
+                <el-input
+                    v-model="searchParentId"
+                    class="toolbar-field"
+                    :prefix-icon="Document"
+                    clearable
+                    placeholder="题目ID(ParentId)"
+                />
 
-                <el-select v-model="searchPublic" class="toolbar-field toolbar-select" placeholder="公开状态">
+                <el-select
+                    v-model="searchPublic"
+                    class="toolbar-field toolbar-select"
+                    placeholder="公开状态"
+                    popper-class="oj-discussion-source-popper"
+                >
                     <el-option label="全部" value="all" />
                     <el-option label="公开" value="public" />
                     <el-option label="未公开" value="private" />
@@ -331,30 +348,119 @@ onMounted(() => {
 
 /* Toolbar */
 .toolbar {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     gap: var(--oj-spacing-4);
     align-items: center;
     justify-content: space-between;
     padding: var(--oj-spacing-4);
+    overflow: hidden;
+    border: 1px solid var(--oj-glass-border);
     border-radius: var(--oj-radius-xl);
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+
+    --el-color-primary: rgb(var(--oj-color-primary-rgb));
+    --el-select-input-focus-border-color: rgb(var(--oj-color-primary-rgb));
+}
+
+.toolbar::before {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    background:
+        radial-gradient(520px circle at 12% 20%, rgb(var(--oj-color-primary-rgb) / 18%) 0%, transparent 55%),
+        radial-gradient(420px circle at 88% -10%, rgb(var(--oj-color-primary-rgb) / 10%) 0%, transparent 55%),
+        repeating-linear-gradient(90deg, rgb(var(--oj-color-primary-rgb) / 6%) 0 1px, transparent 1px 16px);
+    opacity: 0.9;
+}
+
+.toolbar::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    box-shadow:
+        0 0 0 1px rgb(var(--oj-color-primary-rgb) / 10%) inset,
+        0 18px 48px rgb(var(--oj-color-primary-rgb) / 10%);
+    opacity: 0.75;
+}
+
+.toolbar:hover {
+    border-color: rgb(var(--oj-color-primary-rgb) / 45%);
+    transform: translateY(-1px);
 }
 
 .toolbar-left {
-    display: flex;
+    display: grid;
     flex: 1;
-    flex-wrap: wrap;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: var(--oj-spacing-3);
     align-items: center;
     min-width: 0;
 }
 
 .toolbar-field {
-    width: min(320px, 100%);
+    width: 100%;
 }
 
 .toolbar-select {
-    width: min(180px, 100%);
+    width: 100%;
+}
+
+/* Input Adaptation */
+.toolbar :deep(.el-input__wrapper) {
+    background-color: var(--oj-input-bg);
+    border-radius: var(--oj-radius-lg);
+    box-shadow: 0 0 0 1px var(--oj-input-border) inset;
+    transition: all 0.2s ease;
+}
+
+.toolbar :deep(.el-input__wrapper:hover) {
+    background-color: var(--oj-bg-hover);
+    box-shadow: 0 0 0 1px var(--oj-border-hover) inset;
+}
+
+.toolbar :deep(.el-input__wrapper.is-focus) {
+    background-color: var(--oj-input-bg);
+    box-shadow:
+        0 0 0 1px var(--oj-input-focus-border) inset,
+        0 0 0 3px var(--oj-color-primary-soft) !important;
+}
+
+.toolbar :deep(.el-select .el-input__wrapper.is-focus),
+.toolbar :deep(.el-select__wrapper.is-focused) {
+    box-shadow:
+        0 0 0 1px var(--oj-input-focus-border) inset,
+        0 0 0 3px var(--oj-color-primary-soft) !important;
+}
+
+.toolbar :deep(.el-input__inner) {
+    color: var(--oj-input-text);
+}
+
+.toolbar :deep(.el-input__inner::placeholder) {
+    color: var(--oj-input-placeholder);
+}
+
+.toolbar :deep(.el-input__prefix-inner) {
+    color: var(--oj-text-color-secondary);
+}
+
+/* Select dropdown (popper is teleported to body) */
+:global(.oj-discussion-source-popper) {
+    --el-color-primary: rgb(var(--oj-color-primary-rgb));
+}
+
+:global(.oj-discussion-source-popper .el-select-dropdown__item.is-selected) {
+    color: rgb(var(--oj-color-primary-rgb));
+}
+
+:global(.oj-discussion-source-popper .el-select-dropdown__item:hover) {
+    color: rgb(var(--oj-color-primary-rgb));
 }
 
 .skeleton-block {

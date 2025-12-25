@@ -1,12 +1,9 @@
 <script setup lang="ts">
 /**
  * 管理后台 - 评论管理页面
- *
- * - 后端搜索：SearchInfo.ParentType / Content / UserId
- * - 展示：父评论 + 子评论（树形表格懒加载展开）
  */
 import { computed, onMounted, ref, watch } from "vue";
-import { Delete, Edit, More, Search, View } from "@element-plus/icons-vue";
+import { Delete, Edit, More, Search, User, View } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 
 import { deleteComment, selectCommentListByAdmin } from "@/api/comment";
@@ -293,12 +290,28 @@ onMounted(() => {
     <section class="admin-comment" aria-label="评论管理">
         <div class="toolbar oj-glass-panel">
             <div class="toolbar-left">
-                <el-input v-model="searchContent" class="toolbar-field" :prefix-icon="Search" clearable
-                    placeholder="评论内容 (Content)" />
+                <el-input
+                    v-model="searchContent"
+                    class="toolbar-field"
+                    :prefix-icon="Search"
+                    clearable
+                    placeholder="评论内容 (Content)"
+                />
 
-                <el-input v-model="searchUserId" class="toolbar-field" clearable placeholder="用户ID (UserId)" />
+                <el-input
+                    v-model="searchUserId"
+                    class="toolbar-field"
+                    :prefix-icon="User"
+                    clearable
+                    placeholder="用户ID (UserId)"
+                />
 
-                <el-select v-model="searchParentType" class="toolbar-field toolbar-select" clearable placeholder="所有类型">
+                <el-select
+                    v-model="searchParentType"
+                    class="toolbar-field toolbar-select"
+                    clearable
+                    placeholder="所有类型"
+                >
                     <el-option label="公告" value="Announcement" />
                     <el-option label="讨论" value="Discuss" />
                     <el-option label="题解" value="Solution" />
@@ -315,15 +328,25 @@ onMounted(() => {
                 </template>
 
                 <template #default>
-                    <el-empty v-if="!comments.length && !loadError" :description="hasSearch ? '暂无匹配的评论' : '暂无评论数据'" />
+                    <el-empty
+                        v-if="!comments.length && !loadError"
+                        :description="hasSearch ? '暂无匹配的评论' : '暂无评论数据'"
+                    />
 
                     <el-empty v-else-if="!comments.length && loadError" :description="loadError">
                         <el-button type="primary" plain @click="fetchComments">重试加载</el-button>
                     </el-empty>
 
                     <div v-else>
-                        <el-table :data="comments" class="comment-table" table-layout="fixed" row-key="_id" lazy
-                            :load="loadChildren" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+                        <el-table
+                            :data="comments"
+                            class="comment-table"
+                            table-layout="fixed"
+                            row-key="_id"
+                            lazy
+                            :load="loadChildren"
+                            :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+                        >
                             <el-table-column label="评论内容" min-width="360">
                                 <template #default="scope">
                                     <p class="content-clamp" :title="scope.row.Content">{{ scope.row.Content }}</p>
@@ -381,15 +404,18 @@ onMounted(() => {
 
                             <el-table-column label="操作" width="120" fixed="right" align="right">
                                 <template #default="scope">
-                                    <el-dropdown trigger="click"
-                                        @command="(cmd) => handleRowCommand(cmd as any, scope.row)">
+                                    <el-dropdown
+                                        trigger="click"
+                                        @command="(cmd) => handleRowCommand(cmd as any, scope.row)"
+                                    >
                                         <el-button class="opt-btn" link :icon="More">操作</el-button>
                                         <template #dropdown>
                                             <el-dropdown-menu>
                                                 <el-dropdown-item command="view" :icon="View">查看</el-dropdown-item>
                                                 <el-dropdown-item command="edit" :icon="Edit">编辑</el-dropdown-item>
-                                                <el-dropdown-item command="delete" :icon="Delete"
-                                                    divided>删除</el-dropdown-item>
+                                                <el-dropdown-item command="delete" :icon="Delete" divided
+                                                    >删除</el-dropdown-item
+                                                >
                                             </el-dropdown-menu>
                                         </template>
                                     </el-dropdown>
@@ -398,10 +424,15 @@ onMounted(() => {
                         </el-table>
 
                         <div class="pagination-bar">
-                            <el-pagination v-model:current-page="page" v-model:page-size="pageSize"
-                                :page-sizes="[10, 20, 40, 60]" :total="total"
-                                layout="total, sizes, prev, pager, next, jumper" @current-change="handlePageChange"
-                                @size-change="handleSizeChange" />
+                            <el-pagination
+                                v-model:current-page="page"
+                                v-model:page-size="pageSize"
+                                :page-sizes="[10, 20, 40, 60]"
+                                :total="total"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                @current-change="handlePageChange"
+                                @size-change="handleSizeChange"
+                            />
                         </div>
                     </div>
                 </template>
@@ -418,30 +449,106 @@ onMounted(() => {
 }
 
 .toolbar {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     gap: var(--oj-spacing-4);
     align-items: center;
     justify-content: space-between;
     padding: var(--oj-spacing-4);
+    overflow: hidden;
+    border: 1px solid var(--oj-glass-border);
     border-radius: var(--oj-radius-xl);
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+
+    --el-color-primary: rgb(var(--oj-color-primary-rgb));
+    --el-select-input-focus-border-color: rgb(var(--oj-color-primary-rgb));
+}
+
+.toolbar::before {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    background:
+        radial-gradient(520px circle at 12% 20%, rgb(var(--oj-color-primary-rgb) / 18%) 0%, transparent 55%),
+        radial-gradient(420px circle at 88% -10%, rgb(var(--oj-color-primary-rgb) / 10%) 0%, transparent 55%),
+        repeating-linear-gradient(90deg, rgb(var(--oj-color-primary-rgb) / 6%) 0 1px, transparent 1px 16px);
+    opacity: 0.9;
+}
+
+.toolbar::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    box-shadow:
+        0 0 0 1px rgb(var(--oj-color-primary-rgb) / 10%) inset,
+        0 18px 48px rgb(var(--oj-color-primary-rgb) / 10%);
+    opacity: 0.75;
+}
+
+.toolbar:hover {
+    border-color: rgb(var(--oj-color-primary-rgb) / 45%);
+    transform: translateY(-1px);
 }
 
 .toolbar-left {
-    display: flex;
+    display: grid;
     flex: 1;
-    flex-wrap: wrap;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: var(--oj-spacing-3);
     align-items: center;
     min-width: 0;
 }
 
 .toolbar-field {
-    width: min(360px, 100%);
+    width: 100%;
 }
 
 .toolbar-select {
-    width: min(180px, 100%);
+    width: 100%;
+}
+
+/* Input Adaptation */
+.toolbar :deep(.el-input__wrapper) {
+    background-color: var(--oj-input-bg);
+    border-radius: var(--oj-radius-lg);
+    box-shadow: 0 0 0 1px var(--oj-input-border) inset;
+    transition: all 0.2s ease;
+}
+
+.toolbar :deep(.el-input__wrapper:hover) {
+    background-color: var(--oj-bg-hover);
+    box-shadow: 0 0 0 1px var(--oj-border-hover) inset;
+}
+
+.toolbar :deep(.el-input__wrapper.is-focus) {
+    background-color: var(--oj-input-bg);
+    box-shadow:
+        0 0 0 1px var(--oj-input-focus-border) inset,
+        0 0 0 3px var(--oj-color-primary-soft) !important;
+}
+
+.toolbar :deep(.el-select .el-input__wrapper.is-focus),
+.toolbar :deep(.el-select__wrapper.is-focused) {
+    box-shadow:
+        0 0 0 1px var(--oj-input-focus-border) inset,
+        0 0 0 3px var(--oj-color-primary-soft) !important;
+}
+
+.toolbar :deep(.el-input__inner) {
+    color: var(--oj-input-text);
+}
+
+.toolbar :deep(.el-input__inner::placeholder) {
+    color: var(--oj-input-placeholder);
+}
+
+.toolbar :deep(.el-input__prefix-inner) {
+    color: var(--oj-text-color-secondary);
 }
 
 .table-panel {

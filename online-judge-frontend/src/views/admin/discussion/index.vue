@@ -4,7 +4,7 @@
  */
 import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Delete, Edit, More, Search, View } from "@element-plus/icons-vue";
+import { Collection, Delete, Edit, More, Search, User, View } from "@element-plus/icons-vue";
 import { deleteDiscuss, selectDiscussListByAdmin } from "@/api/discussion";
 import { DateUtils } from "@/utils/date/date-utils";
 import type { Api } from "@/types/api/api";
@@ -225,14 +225,36 @@ onMounted(() => {
         <!-- Toolbar -->
         <div class="toolbar oj-glass-panel">
             <div class="toolbar-left">
-                <el-input v-model="searchTitle" class="toolbar-field" :prefix-icon="Search" clearable
-                    placeholder="搜索讨论标题..." />
+                <el-input
+                    v-model="searchTitle"
+                    class="toolbar-field"
+                    :prefix-icon="Search"
+                    clearable
+                    placeholder="搜索讨论标题..."
+                />
 
-                <el-input v-model="searchUserId" class="toolbar-field" clearable placeholder="用户ID" />
+                <el-input
+                    v-model="searchUserId"
+                    class="toolbar-field"
+                    :prefix-icon="User"
+                    clearable
+                    placeholder="用户ID"
+                />
 
-                <el-input v-model="searchParentId" class="toolbar-field" clearable placeholder="父ID (0或题目ID)" />
+                <el-input
+                    v-model="searchParentId"
+                    class="toolbar-field"
+                    :prefix-icon="Collection"
+                    clearable
+                    placeholder="父ID (0或题目ID)"
+                />
 
-                <el-select v-model="sourceFilter" class="toolbar-field toolbar-select" placeholder="讨论来源">
+                <el-select
+                    v-model="sourceFilter"
+                    class="toolbar-field toolbar-select"
+                    placeholder="讨论来源"
+                    popper-class="oj-discussion-source-popper"
+                >
                     <el-option label="全部" value="all" />
                     <el-option label="讨论区" value="forum" />
                     <el-option label="题目讨论" value="problem" />
@@ -250,8 +272,10 @@ onMounted(() => {
                 </template>
 
                 <template #default>
-                    <el-empty v-if="!filteredDiscussions.length && !loadError"
-                        :description="hasSearch ? '暂无匹配的讨论' : '暂无讨论数据'" />
+                    <el-empty
+                        v-if="!filteredDiscussions.length && !loadError"
+                        :description="hasSearch ? '暂无匹配的讨论' : '暂无讨论数据'"
+                    />
 
                     <el-empty v-else-if="!filteredDiscussions.length && loadError" :description="loadError">
                         <el-button type="primary" plain @click="fetchDiscussions">重试加载</el-button>
@@ -307,15 +331,18 @@ onMounted(() => {
 
                             <el-table-column label="操作" width="120" fixed="right" align="right">
                                 <template #default="scope">
-                                    <el-dropdown trigger="click"
-                                        @command="(cmd) => handleRowCommand(cmd as any, scope.row)">
+                                    <el-dropdown
+                                        trigger="click"
+                                        @command="(cmd) => handleRowCommand(cmd as any, scope.row)"
+                                    >
                                         <el-button class="opt-btn" link :icon="More">操作</el-button>
                                         <template #dropdown>
                                             <el-dropdown-menu>
                                                 <el-dropdown-item command="view" :icon="View">查看</el-dropdown-item>
                                                 <el-dropdown-item command="edit" :icon="Edit">编辑</el-dropdown-item>
-                                                <el-dropdown-item command="delete" :icon="Delete"
-                                                    divided>删除</el-dropdown-item>
+                                                <el-dropdown-item command="delete" :icon="Delete" divided
+                                                    >删除</el-dropdown-item
+                                                >
                                             </el-dropdown-menu>
                                         </template>
                                     </el-dropdown>
@@ -325,10 +352,15 @@ onMounted(() => {
 
                         <!-- Pagination -->
                         <div class="pagination-bar">
-                            <el-pagination v-model:current-page="page" v-model:page-size="pageSize"
-                                :page-sizes="[10, 20, 40, 60]" :total="total"
-                                layout="total, sizes, prev, pager, next, jumper" @current-change="handlePageChange"
-                                @size-change="handleSizeChange" />
+                            <el-pagination
+                                v-model:current-page="page"
+                                v-model:page-size="pageSize"
+                                :page-sizes="[10, 20, 40, 60]"
+                                :total="total"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                @current-change="handlePageChange"
+                                @size-change="handleSizeChange"
+                            />
                         </div>
                     </div>
                 </template>
@@ -346,30 +378,120 @@ onMounted(() => {
 
 /* Toolbar */
 .toolbar {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     gap: var(--oj-spacing-4);
     align-items: center;
     justify-content: space-between;
     padding: var(--oj-spacing-4);
+
+    --el-color-primary: rgb(var(--oj-color-primary-rgb));
+    --el-select-input-focus-border-color: rgb(var(--oj-color-primary-rgb));
+
+    overflow: hidden;
+    border: 1px solid var(--oj-glass-border);
     border-radius: var(--oj-radius-xl);
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.toolbar::before {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    background:
+        radial-gradient(520px circle at 12% 20%, rgb(var(--oj-color-primary-rgb) / 18%) 0%, transparent 55%),
+        radial-gradient(420px circle at 88% -10%, rgb(var(--oj-color-primary-rgb) / 10%) 0%, transparent 55%),
+        repeating-linear-gradient(90deg, rgb(var(--oj-color-primary-rgb) / 6%) 0 1px, transparent 1px 16px);
+    opacity: 0.9;
+}
+
+.toolbar::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    box-shadow:
+        0 0 0 1px rgb(var(--oj-color-primary-rgb) / 10%) inset,
+        0 18px 48px rgb(var(--oj-color-primary-rgb) / 10%);
+    opacity: 0.75;
+}
+
+.toolbar:hover {
+    border-color: rgb(var(--oj-color-primary-rgb) / 45%);
+    transform: translateY(-1px);
 }
 
 .toolbar-left {
-    display: flex;
+    display: grid;
     flex: 1;
-    flex-wrap: wrap;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: var(--oj-spacing-3);
     align-items: center;
     min-width: 0;
 }
 
 .toolbar-field {
-    width: min(320px, 100%);
+    width: 100%;
 }
 
 .toolbar-select {
-    width: min(180px, 100%);
+    width: 100%;
+}
+
+/* Input Adaptation */
+.toolbar :deep(.el-input__wrapper) {
+    background-color: var(--oj-input-bg);
+    border-radius: var(--oj-radius-lg);
+    box-shadow: 0 0 0 1px var(--oj-input-border) inset;
+    transition: all 0.2s ease;
+}
+
+.toolbar :deep(.el-input__wrapper:hover) {
+    background-color: var(--oj-bg-hover);
+    box-shadow: 0 0 0 1px var(--oj-border-hover) inset;
+}
+
+.toolbar :deep(.el-input__wrapper.is-focus) {
+    background-color: var(--oj-input-bg);
+    box-shadow:
+        0 0 0 1px var(--oj-input-focus-border) inset,
+        0 0 0 3px var(--oj-color-primary-soft) !important;
+}
+
+.toolbar :deep(.el-select .el-input__wrapper.is-focus),
+.toolbar :deep(.el-select__wrapper.is-focused) {
+    box-shadow:
+        0 0 0 1px var(--oj-input-focus-border) inset,
+        0 0 0 3px var(--oj-color-primary-soft) !important;
+}
+
+.toolbar :deep(.el-input__inner) {
+    color: var(--oj-input-text);
+}
+
+.toolbar :deep(.el-input__inner::placeholder) {
+    color: var(--oj-input-placeholder);
+}
+
+.toolbar :deep(.el-input__prefix-inner) {
+    color: var(--oj-text-color-secondary);
+}
+
+/* Select dropdown (popper is teleported to body) */
+:global(.oj-discussion-source-popper) {
+    --el-color-primary: rgb(var(--oj-color-primary-rgb));
+}
+
+:global(.oj-discussion-source-popper .el-select-dropdown__item.is-selected) {
+    color: rgb(var(--oj-color-primary-rgb));
+}
+
+:global(.oj-discussion-source-popper .el-select-dropdown__item:hover) {
+    color: rgb(var(--oj-color-primary-rgb));
 }
 
 .skeleton-block {

@@ -34,7 +34,7 @@ Json::Value Control::UserLogin(Json::Value &loginjson) {
 
 /**
  * 功能：查询用户信息
- * 权限：只允许用户本人查询
+ * 权限：只允许用户本人或者管理员查询
  */
 Json::Value Control::SelectUserInfo(Json::Value &queryjson) {
     // 检查用户是否已登录（全局请求前处理器中已经验证用户登录状态了）
@@ -42,9 +42,9 @@ Json::Value Control::SelectUserInfo(Json::Value &queryjson) {
     // if (!login_check.isNull()) {
     //     return login_check;
     // }
-    // 如果不是本人，无权查询用户信息
-    bool is_author = UserService::GetInstance()->IsAuthor(queryjson);
-    if (!is_author) {
+    // 如果不是本人或者管理员，无权查询用户信息
+    bool is_author_or_above = UserService::GetInstance()->IsAuthorOrAbove(queryjson);
+    if (!is_author_or_above) {
         return response::Forbidden();
     }
     return UserService::GetInstance()->SelectUserInfo(queryjson);
@@ -52,12 +52,12 @@ Json::Value Control::SelectUserInfo(Json::Value &queryjson) {
 
 /**
  * 功能：查询用户信息（在设置页面修改用户时使用）
- * 权限：只允许用户本人查询
+ * 权限：只允许用户本人或者管理员查询
  */
 Json::Value Control::SelectUserUpdateInfo(Json::Value &queryjson) {
-    // 如果不是本人，无权查询用户信息
-    bool is_author = UserService::GetInstance()->IsAuthor(queryjson);
-    if (!is_author) {
+    // 如果不是本人或者管理员，无权查询用户信息
+    bool is_author_or_above = UserService::GetInstance()->IsAuthorOrAbove(queryjson);
+    if (!is_author_or_above) {
         return response::Forbidden();
     }
     return UserService::GetInstance()->SelectUserUpdateInfo(queryjson);
@@ -69,8 +69,8 @@ Json::Value Control::SelectUserUpdateInfo(Json::Value &queryjson) {
  */
 Json::Value Control::UpdateUserInfo(Json::Value &updatejson) {
     // 如果不是本人或者管理员，无权修改用户信息
-    bool is_author = UserService::GetInstance()->IsAuthorOrAbove(updatejson);
-    if (!is_author) {
+    bool is_author_or_above = UserService::GetInstance()->IsAuthorOrAbove(updatejson);
+    if (!is_author_or_above) {
         return response::Forbidden();
     }
     return UserService::GetInstance()->UpdateUserInfo(updatejson);
@@ -420,8 +420,8 @@ Json::Value Control::UpdateDiscuss(Json::Value &updatejson) {
     // 2. 将作者 UserId 注入到 updatejson 中用于权限校验
     updatejson["UserId"] = authorId;
     // 3. 如果不是讨论作者本人或者管理员，无权修改讨论
-    bool is_author = UserService::GetInstance()->IsAuthorOrAbove(updatejson);
-    if (!is_author) {
+    bool is_author_or_above = UserService::GetInstance()->IsAuthorOrAbove(updatejson);
+    if (!is_author_or_above) {
         return response::Forbidden();
     }
     return DiscussService::GetInstance()->UpdateDiscuss(updatejson);
@@ -441,8 +441,8 @@ Json::Value Control::DeleteDiscuss(Json::Value &deletejson) {
     // 2. 将作者 UserId 注入到 deletejson 中用于权限校验
     deletejson["UserId"] = authorId;
     // 3. 如果不是讨论作者本人或者管理员，无权删除讨论
-    bool is_author = UserService::GetInstance()->IsAuthorOrAbove(deletejson);
-    if (!is_author) {
+    bool is_author_or_above = UserService::GetInstance()->IsAuthorOrAbove(deletejson);
+    if (!is_author_or_above) {
         return response::Forbidden();
     }
     Json::Value resjson = DiscussService::GetInstance()->DeleteDiscuss(deletejson);
@@ -534,8 +534,8 @@ Json::Value Control::UpdateSolution(Json::Value &updatejson) {
     // 2. 将作者 UserId 注入到 updatejson 中用于权限校验
     updatejson["UserId"] = authorId;
     // 3. 如果不是题解作者本人或者管理员，无权修改题解
-    bool is_author = UserService::GetInstance()->IsAuthorOrAbove(updatejson);
-    if (!is_author) {
+    bool is_author_or_above = UserService::GetInstance()->IsAuthorOrAbove(updatejson);
+    if (!is_author_or_above) {
         return response::Forbidden();
     }
     return SolutionService::GetInstance()->UpdateSolution(updatejson);
@@ -555,8 +555,8 @@ Json::Value Control::DeleteSolution(Json::Value &deletejson) {
     // 2. 将作者 UserId 注入到 deletejson 中用于权限校验
     deletejson["UserId"] = authorId;
     // 3. 如果不是题解作者本人或者管理员，无权删除题解
-    bool is_author = UserService::GetInstance()->IsAuthorOrAbove(deletejson);
-    if (!is_author) {
+    bool is_author_or_above = UserService::GetInstance()->IsAuthorOrAbove(deletejson);
+    if (!is_author_or_above) {
         return response::Forbidden();
     }
     Json::Value resjson = SolutionService::GetInstance()->DeleteSolution(deletejson);
@@ -648,8 +648,8 @@ Json::Value Control::DeleteComment(Json::Value &deletejson) {
     // 2. 将作者 UserId 注入到 deletejson 中用于权限校验
     deletejson["UserId"] = authorId;
     // 3. 如果不是评论作者本人或者管理员，无权删除评论
-    bool is_author = UserService::GetInstance()->IsAuthorOrAbove(deletejson);
-    if (!is_author) {
+    bool is_author_or_above = UserService::GetInstance()->IsAuthorOrAbove(deletejson);
+    if (!is_author_or_above) {
         return response::Forbidden();
     }
     // 先默认用户上传的评论为父评论，尝试删除父评论
