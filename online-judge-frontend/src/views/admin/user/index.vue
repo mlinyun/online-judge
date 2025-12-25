@@ -117,7 +117,7 @@ const handleView = (row: Api.User.UserManageListItem) => {
 
 /**
  * 处理编辑用户
- * @param row
+ * @param row 行数据
  */
 const handleEdit = (row: Api.User.UserManageListItem) => {
     editUserId.value = row._id;
@@ -283,7 +283,7 @@ onMounted(() => {
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="操作" width="80" fixed="right" align="right">
+                            <el-table-column label="操作" width="80" fixed="right" align="center">
                                 <template #default="scope">
                                     <el-dropdown
                                         trigger="click"

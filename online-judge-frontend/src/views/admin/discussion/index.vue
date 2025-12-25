@@ -329,7 +329,7 @@ onMounted(() => {
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="操作" width="120" fixed="right" align="right">
+                            <el-table-column label="操作" width="120" fixed="right" align="center">
                                 <template #default="scope">
                                     <el-dropdown
                                         trigger="click"

@@ -3,16 +3,17 @@
  * 管理后台 - 评论管理页面
  */
 import { computed, onMounted, ref, watch } from "vue";
-import { Delete, Edit, More, Search, User, View } from "@element-plus/icons-vue";
+import { Delete, More, Search, User, View } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 
 import { deleteComment, selectCommentListByAdmin } from "@/api/comment";
 import type { Api } from "@/types/api/api";
 import { DateUtils } from "@/utils/date/date-utils";
+import CommentDetailDrawer from "@/components/admin/comment/comment-detail-drawer/index.vue";
 
 defineOptions({ name: "AdminComment" });
 
-type ParentType = NonNullable<Api.Comment.SelectCommentListByAdminParams["SearchInfo"]>["ParentType"];
+type ParentType = Api.Comment.SelectCommentListByAdminItem["ParentType"];
 
 type ParentRow = Api.Comment.SelectCommentListByAdminItem & {
     __rowType: "parent";
@@ -23,6 +24,7 @@ type ChildRow = Api.Comment.ChildCommentListByAdminItem & {
     __rowType: "child";
     ParentId: Api.Comment.SelectCommentListByAdminItem["ParentId"];
     ParentType: ParentType;
+    FatherCommentId: Api.Comment.CommentId;
 };
 
 type CommentRow = ParentRow | ChildRow;
@@ -42,34 +44,38 @@ const comments = ref<ParentRow[]>([]);
 const requestSeq = ref(0);
 const childCache = ref(new Map<string, ChildRow[]>());
 
+const detailOpen = ref(false);
+const detailRow = ref<CommentRow | null>(null);
+const detailParentRow = ref<ParentRow | null>(null);
+
 const hasSearch = computed(() => {
     return Boolean(searchParentType.value) || Boolean(searchContent.value.trim()) || Boolean(searchUserId.value.trim());
 });
 
-function getUserFromRow(row: CommentRow): Api.User.SimpleUserInfo | null {
+const getUserFromRow = (row: CommentRow): Api.User.SimpleUserInfo | null => {
     const raw = (row as { User?: unknown }).User;
 
     if (!raw) return null;
     if (Array.isArray(raw)) return (raw[0] as Api.User.SimpleUserInfo) ?? null;
     return raw as Api.User.SimpleUserInfo;
-}
+};
 
-function getUserNickName(row: CommentRow): string {
+const getUserNickName = (row: CommentRow): string => {
     const user = getUserFromRow(row);
     return user?.NickName || "(未知用户)";
-}
+};
 
-function getUserId(row: CommentRow): string {
+const getUserId = (row: CommentRow): string => {
     const user = getUserFromRow(row);
     return user?._id || "";
-}
+};
 
-function getUserAvatar(row: CommentRow): string | undefined {
+const getUserAvatar = (row: CommentRow): string | undefined => {
     const user = getUserFromRow(row);
     return user?.Avatar;
-}
+};
 
-function getParentTypeLabel(type: ParentType): string {
+const getParentTypeLabel = (type: ParentType): string => {
     switch (type) {
         case "Announcement":
             return "公告";
@@ -80,9 +86,9 @@ function getParentTypeLabel(type: ParentType): string {
         default:
             return String(type);
     }
-}
+};
 
-function getParentTypeTagType(type: ParentType): "success" | "warning" | "info" {
+const getParentTypeTagType = (type: ParentType): "success" | "warning" | "info" => {
     switch (type) {
         case "Announcement":
             return "info";
@@ -93,9 +99,9 @@ function getParentTypeTagType(type: ParentType): "success" | "warning" | "info" 
         default:
             return "info";
     }
-}
+};
 
-function buildSearchInfo(): Api.Comment.SelectCommentListByAdminParams["SearchInfo"] | undefined {
+const buildSearchInfo = (): Api.Comment.SelectCommentListByAdminParams["SearchInfo"] | undefined => {
     const content = searchContent.value.trim();
     const userId = searchUserId.value.trim();
     const parentType = searchParentType.value;
@@ -110,9 +116,9 @@ function buildSearchInfo(): Api.Comment.SelectCommentListByAdminParams["SearchIn
     if (userId) info.UserId = userId;
 
     return info;
-}
+};
 
-async function fetchComments(): Promise<void> {
+const fetchComments = async () => {
     const current = ++requestSeq.value;
     loading.value = true;
     loadError.value = null;
@@ -153,7 +159,7 @@ async function fetchComments(): Promise<void> {
             loading.value = false;
         }
     }
-}
+};
 
 function debounce<T extends (...args: never[]) => void>(fn: T, delayMs: number): T {
     let timer: number | undefined;
@@ -172,20 +178,20 @@ watch([searchContent, searchUserId, searchParentType], () => {
     debouncedSearch();
 });
 
-function handlePageChange(newPage: number): void {
+const handlePageChange = (newPage: number): void => {
     page.value = newPage;
     fetchComments();
-}
+};
 
-function handleSizeChange(newSize: number): void {
+const handleSizeChange = (newSize: number): void => {
     pageSize.value = newSize;
     page.value = 1;
     fetchComments();
-}
+};
 
-async function handleDelete(row: CommentRow): Promise<void> {
+const handleDelete = async (row: CommentRow) => {
     const id = row._id;
-    const title = row.__rowType === "child" ? "删除子评论" : "删除评论";
+    const title = row.__rowType === "child" ? "删除回复" : "删除评论";
 
     try {
         await ElMessageBox.confirm("确定要删除该评论吗？此操作不可撤销。", title, {
@@ -209,60 +215,24 @@ async function handleDelete(row: CommentRow): Promise<void> {
     } catch (error) {
         ElMessage.error((error as Error)?.message || "删除失败");
     }
-}
+};
 
-function handleView(row: CommentRow): void {
-    const userName = getUserNickName(row);
-    const userId = getUserId(row);
-
-    const lines: string[] = [];
-    lines.push(`ID: ${row._id}`);
-    lines.push(`用户: ${userName}${userId ? ` (${userId})` : ""}`);
-
+const handleView = (row: CommentRow): void => {
+    detailRow.value = row;
     if (row.__rowType === "parent") {
-        lines.push(`类型: ${getParentTypeLabel(row.ParentType)}`);
-        lines.push(`发布时间: ${DateUtils.formatDateTime(row.CreateTime)}`);
-        lines.push(`点赞: ${row.Likes}`);
-        lines.push(`子评论: ${row.Child_Total}`);
+        detailParentRow.value = row;
     } else {
-        lines.push(`类型: 子评论`);
-        lines.push(`发布时间: ${DateUtils.formatDateTime(row.CreateTime)}`);
+        detailParentRow.value = comments.value.find((item) => item._id === row.FatherCommentId) ?? null;
     }
+    detailOpen.value = true;
+};
 
-    lines.push("\n内容:");
-    lines.push(row.Content);
-
-    ElMessageBox.alert(lines.join("\n"), "评论详情", {
-        confirmButtonText: "关闭",
-    });
-}
-
-function handleEdit(row: CommentRow): void {
-    ElMessageBox.prompt("请输入新的评论内容", "编辑评论", {
-        inputValue: row.Content,
-        inputType: "textarea",
-        inputPlaceholder: "评论内容",
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-    })
-        .then(() => {
-            // 当前前端/类型定义中未发现“更新评论内容”的后端接口，先给出一致的 UI 与提示。
-            ElMessage({
-                type: "info",
-                message: `评论编辑暂未接入后端接口（ID: ${row._id}）`,
-                showClose: true,
-            });
-        })
-        .catch(() => undefined);
-}
-
-function handleRowCommand(command: "view" | "edit" | "delete", row: CommentRow): void {
+const handleRowCommand = async (command: "view" | "delete", row: CommentRow) => {
     if (command === "view") return handleView(row);
-    if (command === "edit") return handleEdit(row);
     if (command === "delete") void handleDelete(row);
-}
+};
 
-function loadChildren(row: ParentRow, _treeNode: unknown, resolve: (data: ChildRow[]) => void): void {
+const loadChildren = (row: ParentRow, _treeNode: unknown, resolve: (data: ChildRow[]) => void): void => {
     const key = String(row._id);
     const cached = childCache.value.get(key);
     if (cached) {
@@ -275,11 +245,12 @@ function loadChildren(row: ParentRow, _treeNode: unknown, resolve: (data: ChildR
         __rowType: "child",
         ParentId: row.ParentId,
         ParentType: row.ParentType,
+        FatherCommentId: row._id,
     }));
 
     childCache.value.set(key, children);
     resolve(children);
-}
+};
 
 onMounted(() => {
     fetchComments();
@@ -290,28 +261,13 @@ onMounted(() => {
     <section class="admin-comment" aria-label="评论管理">
         <div class="toolbar oj-glass-panel">
             <div class="toolbar-left">
-                <el-input
-                    v-model="searchContent"
-                    class="toolbar-field"
-                    :prefix-icon="Search"
-                    clearable
-                    placeholder="评论内容 (Content)"
-                />
+                <el-input v-model="searchContent" class="toolbar-field" :prefix-icon="Search" clearable
+                    placeholder="评论内容 (Content)" />
 
-                <el-input
-                    v-model="searchUserId"
-                    class="toolbar-field"
-                    :prefix-icon="User"
-                    clearable
-                    placeholder="用户ID (UserId)"
-                />
+                <el-input v-model="searchUserId" class="toolbar-field" :prefix-icon="User" clearable
+                    placeholder="用户ID (UserId)" />
 
-                <el-select
-                    v-model="searchParentType"
-                    class="toolbar-field toolbar-select"
-                    clearable
-                    placeholder="所有类型"
-                >
+                <el-select v-model="searchParentType" class="toolbar-field toolbar-select" clearable placeholder="所有类型">
                     <el-option label="公告" value="Announcement" />
                     <el-option label="讨论" value="Discuss" />
                     <el-option label="题解" value="Solution" />
@@ -328,25 +284,15 @@ onMounted(() => {
                 </template>
 
                 <template #default>
-                    <el-empty
-                        v-if="!comments.length && !loadError"
-                        :description="hasSearch ? '暂无匹配的评论' : '暂无评论数据'"
-                    />
+                    <el-empty v-if="!comments.length && !loadError" :description="hasSearch ? '暂无匹配的评论' : '暂无评论数据'" />
 
                     <el-empty v-else-if="!comments.length && loadError" :description="loadError">
                         <el-button type="primary" plain @click="fetchComments">重试加载</el-button>
                     </el-empty>
 
                     <div v-else>
-                        <el-table
-                            :data="comments"
-                            class="comment-table"
-                            table-layout="fixed"
-                            row-key="_id"
-                            lazy
-                            :load="loadChildren"
-                            :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-                        >
+                        <el-table :data="comments" class="comment-table" table-layout="fixed" row-key="_id" lazy
+                            :load="loadChildren" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
                             <el-table-column label="评论内容" min-width="360">
                                 <template #default="scope">
                                     <p class="content-clamp" :title="scope.row.Content">{{ scope.row.Content }}</p>
@@ -387,7 +333,7 @@ onMounted(() => {
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="子评论" width="96" align="center">
+                            <el-table-column label="回复" width="96" align="center">
                                 <template #default="scope">
                                     <template v-if="scope.row.__rowType === 'parent'">
                                         <span class="muted-text">{{ scope.row.Child_Total }}</span>
@@ -402,20 +348,16 @@ onMounted(() => {
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="操作" width="120" fixed="right" align="right">
+                            <el-table-column label="操作" width="120" fixed="right" align="center">
                                 <template #default="scope">
-                                    <el-dropdown
-                                        trigger="click"
-                                        @command="(cmd) => handleRowCommand(cmd as any, scope.row)"
-                                    >
+                                    <el-dropdown trigger="click"
+                                        @command="(cmd) => handleRowCommand(cmd as any, scope.row)">
                                         <el-button class="opt-btn" link :icon="More">操作</el-button>
                                         <template #dropdown>
                                             <el-dropdown-menu>
                                                 <el-dropdown-item command="view" :icon="View">查看</el-dropdown-item>
-                                                <el-dropdown-item command="edit" :icon="Edit">编辑</el-dropdown-item>
-                                                <el-dropdown-item command="delete" :icon="Delete" divided
-                                                    >删除</el-dropdown-item
-                                                >
+                                                <el-dropdown-item command="delete" :icon="Delete"
+                                                    divided>删除</el-dropdown-item>
                                             </el-dropdown-menu>
                                         </template>
                                     </el-dropdown>
@@ -424,20 +366,18 @@ onMounted(() => {
                         </el-table>
 
                         <div class="pagination-bar">
-                            <el-pagination
-                                v-model:current-page="page"
-                                v-model:page-size="pageSize"
-                                :page-sizes="[10, 20, 40, 60]"
-                                :total="total"
-                                layout="total, sizes, prev, pager, next, jumper"
-                                @current-change="handlePageChange"
-                                @size-change="handleSizeChange"
-                            />
+                            <el-pagination v-model:current-page="page" v-model:page-size="pageSize"
+                                :page-sizes="[10, 20, 40, 60]" :total="total"
+                                layout="total, sizes, prev, pager, next, jumper" @current-change="handlePageChange"
+                                @size-change="handleSizeChange" />
                         </div>
                     </div>
                 </template>
             </el-skeleton>
         </div>
+
+        <CommentDetailDrawer v-model="detailOpen" :row="detailRow" :parent-row="detailParentRow"
+            @refresh="fetchComments" />
     </section>
 </template>
 
@@ -566,6 +506,13 @@ onMounted(() => {
     background-color: transparent;
 }
 
+.comment-table :deep(.el-table__body .el-table__cell .cell) {
+    display: flex;
+    gap: var(--oj-spacing-2);
+    align-items: center;
+    justify-content: center;
+}
+
 .comment-table :deep(.el-table__header-wrapper th.el-table__cell) {
     color: var(--oj-text-color-muted);
     background: var(--oj-table-header-bg);
@@ -582,18 +529,14 @@ onMounted(() => {
 
 .content-clamp {
     display: -webkit-box;
+    flex: 1;
+    min-width: 0;
     margin: 0;
     overflow: hidden;
     -webkit-line-clamp: 2;
     line-height: 1.4;
     color: var(--oj-text-color);
     -webkit-box-orient: vertical;
-}
-
-.id-mono {
-    font-family: var(--oj-font-family-mono), monospace;
-    font-size: var(--oj-font-size-xs);
-    color: var(--oj-text-color-secondary);
 }
 
 .user-cell {

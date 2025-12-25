@@ -309,7 +309,7 @@ onMounted(() => {
                             <el-table-column prop="SubmitNum" label="提交" width="96" align="right" />
                             <el-table-column prop="ACNum" label="通过" width="96" align="right" />
 
-                            <el-table-column label="操作" width="120" fixed="right" align="right">
+                            <el-table-column label="操作" width="120" fixed="right" align="center">
                                 <template #default="scope">
                                     <el-dropdown
                                         trigger="click"

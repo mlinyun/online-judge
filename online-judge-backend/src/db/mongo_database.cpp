@@ -2859,8 +2859,8 @@ Json::Value MoDB::SelectCommentListByAdmin(Json::Value &queryjson) {
             total = tmpjson["TotalNum"].asInt();
         }
 
-        // 按照时间先后顺序
-        pipe.sort({make_document(kvp("CreateTime", -1))});
+        // 稳定排序：CreateTime 可能秒级重复，且后续 $group 会打乱顺序，先加 _id 作为 tie-breaker
+        pipe.sort({make_document(kvp("CreateTime", -1), kvp("_id", -1))});
         // 跳过多少条
         pipe.skip(skip);
         // 限制多少条
@@ -2893,6 +2893,9 @@ Json::Value MoDB::SelectCommentListByAdmin(Json::Value &queryjson) {
                  << open_document << "$push" << "$Child_Comments" << close_document;
         pipe.group(document.view());
         document.clear();
+
+        // $group 之后顺序不保证稳定，重新排序以确保分页结果一致
+        pipe.sort({make_document(kvp("CreateTime", -1), kvp("_id", -1))});
 
         // 选择需要的字段
         document << "ParentId" << 1 << "ParentType" << 1 << "Content" << 1 << "Likes" << 1 << "User._id" << 1

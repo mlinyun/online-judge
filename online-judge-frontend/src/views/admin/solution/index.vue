@@ -299,7 +299,7 @@ onMounted(() => {
                             <el-table-column prop="Views" label="浏览" width="96" align="right" />
                             <el-table-column prop="Comments" label="评论" width="96" align="right" />
 
-                            <el-table-column label="操作" width="120" fixed="right" align="right">
+                            <el-table-column label="操作" width="120" fixed="right" align="center">
                                 <template #default="scope">
                                     <el-dropdown
                                         trigger="click"
