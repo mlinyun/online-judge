@@ -121,12 +121,7 @@ const handleSizeChange = (newSize: number) => {
 };
 
 const handleCreate = () => {
-    // 新前端已存在 ProblemEditor 视图，但路由暂未接入；先给出一致 UI + 提示
-    ElMessage({
-        type: "info",
-        message: "题目新增/编辑页暂未接入路由",
-        showClose: true,
-    });
+    router.push({ name: "problem-editor", query: { mode: "insert" } });
 };
 
 const handleView = (row: ProblemRow) => {
@@ -134,11 +129,7 @@ const handleView = (row: ProblemRow) => {
 };
 
 const handleEdit = (row: ProblemRow) => {
-    ElMessage({
-        type: "info",
-        message: `题目编辑页暂未接入路由（ID: ${row._id}）`,
-        showClose: true,
-    });
+    router.push({ name: "problem-editor", query: { mode: "update", id: row._id } });
 };
 
 const handleDelete = async (row: ProblemRow) => {

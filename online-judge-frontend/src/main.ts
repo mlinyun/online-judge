@@ -4,10 +4,14 @@ import App from "./App.vue";
 import { createApp } from "vue";
 import router from "./router";
 import { initPiniaStore } from "@/stores"; // 初始化 Pinia Store
+import { setupVMdEditor } from "@/plugins/v-md-editor"; // v-md-editor 插件
 
 const app = createApp(App);
 initPiniaStore(app); // 使用 Pinia Store
 
 app.use(router);
 
-app.mount("#app");
+// 初始化 v-md-editor（异步，等待插件加载完成后再挂载）
+setupVMdEditor(app).then(() => {
+    app.mount("#app");
+});

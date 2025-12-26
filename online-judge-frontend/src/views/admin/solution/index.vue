@@ -135,12 +135,7 @@ const handleView = (row: SolutionRow) => {
 };
 
 const handleEdit = (row: SolutionRow) => {
-    // 新前端暂未接入题解编辑路由（仅存在视图占位），先给出一致的 UI 与提示
-    ElMessage({
-        type: "info",
-        message: `题解编辑暂未接入路由（ID: ${row._id}）`,
-        showClose: true,
-    });
+    router.push({ name: "solution-editor", query: { mode: "update", id: row._id } });
 };
 
 const handleDelete = async (row: SolutionRow) => {

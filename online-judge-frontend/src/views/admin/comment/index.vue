@@ -335,7 +335,7 @@ onMounted(() => {
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="用户" width="160">
+                            <el-table-column label="用户" width="165">
                                 <template #default="scope">
                                     <div class="user-cell">
                                         <el-avatar :size="28" :src="getUserAvatar(scope.row)">

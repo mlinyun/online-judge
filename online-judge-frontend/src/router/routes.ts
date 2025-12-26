@@ -60,6 +60,16 @@ const AdminComment = () => import("@views/admin/comment/index.vue");
 // 系统设置页
 const AdminSetting = () => import("@views/admin/setting/index.vue");
 
+// 编辑器相关页面组件
+// 公告编辑器
+const AnnouncementEditor = () => import("@views/editor/announcement/index.vue");
+// 讨论编辑器
+const DiscussionEditor = () => import("@views/editor/discuss/index.vue");
+// 题解编辑器
+const SolutionEditor = () => import("@views/editor/solution/index.vue");
+// 题目编辑器
+const ProblemEditor = () => import("@views/editor/problem/index.vue");
+
 // 定义路由数组
 export const routes: Array<RouteRecordRaw> = [
     // 主布局路由
@@ -189,16 +199,34 @@ export const routes: Array<RouteRecordRaw> = [
                 meta: { title: "题目管理" },
             },
             {
+                path: "problem/editor",
+                name: "problem-editor",
+                component: ProblemEditor,
+                meta: { title: "题目编辑" },
+            },
+            {
                 path: "solution",
                 name: "admin-solution",
                 component: AdminSolution,
                 meta: { title: "题解管理" },
             },
             {
+                path: "solution/editor",
+                name: "solution-editor",
+                component: SolutionEditor,
+                meta: { title: "题解编辑" },
+            },
+            {
                 path: "announcement",
                 name: "admin-announcement",
                 component: AdminAnnouncement,
                 meta: { title: "公告管理" },
+            },
+            {
+                path: "announcement/editor",
+                name: "announcement-editor",
+                component: AnnouncementEditor,
+                meta: { title: "公告编辑" },
             },
             {
                 path: "user",
@@ -211,6 +239,12 @@ export const routes: Array<RouteRecordRaw> = [
                 name: "admin-discussion",
                 component: AdminDiscussion,
                 meta: { title: "讨论管理" },
+            },
+            {
+                path: "discussion/editor",
+                name: "discussion-editor",
+                component: DiscussionEditor,
+                meta: { title: "讨论编辑" },
             },
             {
                 path: "comment",

@@ -620,7 +620,7 @@ declare namespace Api {
             /** 更新时间 */
             UpdateTime: Common.DateTimeString;
             /** 讨论用户信息 */
-            User: User.SimpleUserInfo;
+            User: User.SimpleUserInfo[];
         }
         /** 查询讨论的详细内容响应参数 */
         type SelectDiscussResponse = ApiResponse<SelectDiscussResult>;

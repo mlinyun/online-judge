@@ -228,8 +228,13 @@ onUnmounted(() => {
 
                     <div v-else class="solution-list">
                         <el-card v-for="item in list" :key="String(item._id)" class="solution-card" shadow="never">
-                            <div class="solution-card-inner" role="button" tabindex="0" @click="handleCardClick(item)"
-                                @keydown.enter.prevent="handleCardClick(item)">
+                            <div
+                                class="solution-card-inner"
+                                role="button"
+                                tabindex="0"
+                                @click="handleCardClick(item)"
+                                @keydown.enter.prevent="handleCardClick(item)"
+                            >
                                 <div class="card-row">
                                     <div class="card-left">
                                         <el-avatar class="avatar" :size="56" :src="item.User?.Avatar" />
@@ -242,7 +247,7 @@ onUnmounted(() => {
                                             <span class="meta-dot">·</span>
                                             <span class="meta-item">{{
                                                 DateUtils.formatDateTime(item.CreateTime)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                     </div>
 

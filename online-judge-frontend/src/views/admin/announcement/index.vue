@@ -104,12 +104,7 @@ const handleSizeChange = (newSize: number) => {
  * 处理发布公告
  */
 const handlePublish = () => {
-    // TODO: 后期实现公告发布功能
-    ElMessage({
-        type: "info",
-        message: "公告编辑/发布页暂未实现",
-        showClose: true,
-    });
+    router.push({ name: "announcement-editor", query: { mode: "insert" } });
 };
 
 /**
@@ -117,7 +112,6 @@ const handlePublish = () => {
  * @param row 公告行数据
  */
 const handleView = (row: AnnouncementRow) => {
-    // TODO: 后期实现公告查看功能
     router.push({ name: "announcement-detail", params: { id: row._id } });
 };
 
@@ -126,12 +120,7 @@ const handleView = (row: AnnouncementRow) => {
  * @param row 公告行数据
  */
 const handleEdit = (row: AnnouncementRow) => {
-    // TODO: 后期实现公告编辑功能
-    ElMessage({
-        type: "info",
-        message: `暂不支持编辑公告（ID: ${row._id}）`,
-        showClose: true,
-    });
+    router.push({ name: "announcement-editor", query: { mode: "update", id: row._id } });
 };
 
 /**
@@ -303,7 +292,7 @@ onMounted(() => {
                             <el-table-column prop="Comments" label="评论数" width="110" align="center" />
                             <el-table-column prop="Level" label="公告级别" width="110" align="center" />
 
-                            <el-table-column label="发布时间" width="170">
+                            <el-table-column label="发布时间" width="140">
                                 <template #default="scope">
                                     <span class="time-text">{{ DateUtils.formatDateTime(scope.row.CreateTime) }}</span>
                                 </template>

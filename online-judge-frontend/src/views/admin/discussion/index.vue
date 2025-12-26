@@ -136,6 +136,11 @@ const handleSizeChange = (newSize: number) => {
     page.value = 1;
 };
 
+const getAuthorId = (row: DiscussionRow) => {
+    const user = normalizeUser(row);
+    return user?._id || "-";
+};
+
 const getAuthorName = (row: DiscussionRow) => {
     const user = normalizeUser(row);
     return user?.NickName || "-";
@@ -156,12 +161,7 @@ const handleView = (row: DiscussionRow) => {
 };
 
 const handleEdit = (row: DiscussionRow) => {
-    // 编辑入口暂未接入，先给出提示，保持与用户管理一致的交互
-    ElMessage({
-        type: "info",
-        message: `讨论编辑暂未接入路由（ID: ${row._id}）`,
-        showClose: true,
-    });
+    router.push({ name: "discussion-editor", query: { mode: "update", id: row._id } });
 };
 
 const handleDelete = async (row: DiscussionRow) => {
@@ -299,7 +299,7 @@ onMounted(() => {
                                         </el-avatar>
                                         <div class="user-meta">
                                             <div class="user-name">{{ getAuthorName(scope.row) }}</div>
-                                            <div class="user-sub">ID: {{ scope.row._id }}</div>
+                                            <div class="user-sub">ID: {{ getAuthorId(scope.row) }}</div>
                                         </div>
                                     </div>
                                 </template>

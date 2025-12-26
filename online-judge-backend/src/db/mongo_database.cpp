@@ -834,17 +834,13 @@ Json::Value MoDB::InsertProblem(Json::Value &insertjson) {
  */
 Json::Value MoDB::UpdateProblem(Json::Value &updatejson) {
     try {
-        // 提取题目信息（兼容字符串和数字类型）
-        int problemid = updatejson["ProblemId"].isString() ? stoi(updatejson["ProblemId"].asString())
-                                                           : updatejson["ProblemId"].asInt();
+        // 提取题目信息
+        int64_t problemid = stoll(updatejson["ProblemId"].asString());
         string title = updatejson["Title"].asString();
         string description = updatejson["Description"].asString();
-        int timelimit = updatejson["TimeLimit"].isString() ? stoi(updatejson["TimeLimit"].asString())
-                                                           : updatejson["TimeLimit"].asInt();
-        int memorylimit = updatejson["MemoryLimit"].isString() ? stoi(updatejson["MemoryLimit"].asString())
-                                                               : updatejson["MemoryLimit"].asInt();
-        int judgenum = updatejson["JudgeNum"].isString() ? stoi(updatejson["JudgeNum"].asString())
-                                                         : updatejson["JudgeNum"].asInt();
+        int timelimit = stoi(updatejson["TimeLimit"].asString());
+        int memorylimit = stoi(updatejson["MemoryLimit"].asString());
+        int judgenum = stoi(updatejson["JudgeNum"].asString());
         string usernickname = updatejson["UserNickName"].asString();
 
         // 获取数据库连接
