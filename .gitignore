@@ -7,9 +7,9 @@ node_modules/
 online-judge-backend/bin/
 online-judge-backend/CMakeUserPresets.json
 online-judge-frontend/node_modules/
-!/online-judge-frontend/src/types/import/auto-imports.d.ts
-!/online-judge-frontend/src/types/import/components.d.ts
-!/online-judge-frontend/.eslintrc-auto-import.json
+online-judge-frontend/.eslintrc-auto-import.json
+online-judge-frontend/src/types/import/auto-imports.d.ts
+online-judge-frontend/src/types/import/components.d.ts
 online-judge-ui/
 online-judge-interface/
 online-judge-docs/

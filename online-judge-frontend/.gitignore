@@ -36,6 +36,6 @@ coverage
 __screenshots__/
 
 # 自动生成的文件
-!/.eslintrc-auto-import.json
-!/src/types/import/auto-imports.d.ts
-!/src/types/import/components.d.ts
+.eslintrc-auto-import.json
+/src/types/import/auto-imports.d.ts
+/src/types/import/components.d.ts

@@ -346,17 +346,27 @@ onMounted(() => {
 <template>
     <section class="oj-comment" aria-label="评论">
         <div class="oj-comment-body">
-            <!--
-                UndrawUI 评论组件
-                - page: 开启回复分页
-            -->
-            <u-comment :config="config" page :loading="loading" @submit="handleSubmit" @reply-page="handleReplyPage"
-                @like="handleLike" @remove="handleRemove" />
+            <!-- UndrawUI 评论组件 page: 开启回复分页 -->
+            <u-comment
+                :config="config"
+                page
+                :loading="loading"
+                @submit="handleSubmit"
+                @reply-page="handleReplyPage"
+                @like="handleLike"
+                @remove="handleRemove"
+            />
         </div>
 
         <div class="oj-comment-pagination" v-if="total > 0">
-            <el-pagination v-model:current-page="currentPage" :page-size="pageSize" layout="total, prev, pager, next"
-                :total="total" background @current-change="refreshFatherComments" />
+            <el-pagination
+                v-model:current-page="currentPage"
+                :page-size="pageSize"
+                layout="total, prev, pager, next"
+                :total="total"
+                background
+                @current-change="refreshFatherComments"
+            />
         </div>
     </section>
 </template>
@@ -364,6 +374,21 @@ onMounted(() => {
 <style scoped>
 .oj-comment {
     width: 100%;
+
+    /*
+     * UndrawUI 会在 html.dark 上注入一套自己的 --el-* / --u-* 变量，
+     * 这里在评论组件作用域内把它们映射回项目的设计 Token，避免影响全局。
+     */
+    --el-color-primary: var(--oj-color-primary);
+    --el-text-color-primary: var(--oj-text-color);
+    --el-text-color-regular: var(--oj-text-color-secondary);
+    --el-text-color-secondary: var(--oj-text-color-muted);
+    --el-text-color-placeholder: var(--oj-input-placeholder);
+    --el-border-color: var(--oj-border-color-solid);
+    --el-border-color-light: var(--oj-border-color);
+    --el-fill-color: var(--oj-surface-elevated);
+    --el-fill-color-light: var(--oj-surface-base);
+    --el-fill-color-blank: transparent;
 }
 
 .oj-comment-body {
@@ -374,5 +399,79 @@ onMounted(() => {
     display: flex;
     justify-content: center;
     padding: var(--oj-spacing-4) 0 0;
+}
+
+/* -------------------- UndrawUI Comment 覆盖 -------------------- */
+
+.oj-comment :deep(.u-comment) {
+    /* 卡片外观对齐项目风格 */
+    --u-color-primary: var(--oj-color-primary);
+    --u-bg-color: var(--oj-card-bg);
+    --u-bg-color-overlay: var(--oj-content-bg-soft);
+    --u-bg-color-secondary: var(--oj-content-bg-soft);
+    --u-border-color: var(--oj-card-border);
+    --u-border-color-light: var(--oj-border-color);
+    --u-border-color-dark: var(--oj-border-color-solid);
+    --u-fill-color: var(--oj-surface-elevated);
+    --u-fill-color-light: var(--oj-surface-base);
+    --u-fill-color-dark: var(--oj-surface-elevated);
+    --u-text-color: var(--oj-text-color);
+    --u-text-color-regular: var(--oj-text-color-secondary);
+    --u-text-color-secondary: var(--oj-text-color-muted);
+    --u-text-color-placeholder: var(--oj-input-placeholder);
+
+    padding: var(--oj-spacing-6);
+    margin-top: 0;
+    background-color: var(--oj-card-bg);
+    border: 1px solid var(--oj-card-border);
+    border-radius: var(--oj-radius-lg);
+}
+
+/* 输入框/回复框 */
+.oj-comment :deep(.u-comment .el-textarea__inner) {
+    color: var(--oj-text-color);
+    background-color: var(--oj-input-bg);
+    border-color: var(--oj-input-border);
+}
+
+.oj-comment :deep(.u-comment .el-textarea__inner::placeholder) {
+    color: var(--oj-input-placeholder);
+}
+
+.oj-comment :deep(.u-comment .el-textarea__inner:focus) {
+    border-color: var(--oj-input-focus-border);
+}
+
+/* 评论列表分隔更柔和 */
+.oj-comment :deep(.u-comment .comment-list > .comment) {
+    border-top: 1px solid var(--oj-border-color);
+}
+
+.oj-comment :deep(.u-comment .comment-list > .comment:first-child) {
+    border-top: 0;
+}
+
+/* 时间、次要文案：覆盖 UndrawUI 硬编码色 */
+.oj-comment :deep(.u-comment .comment-main .user-info .time) {
+    color: var(--oj-text-color-muted);
+}
+
+.oj-comment :deep(.u-comment .reply-box .fetch-more) {
+    color: var(--oj-text-color-muted);
+}
+
+/* 排序条：覆盖硬编码背景/高亮 */
+.oj-comment :deep(.u-comment .nav__sort) {
+    background-color: var(--oj-surface-sunken);
+    border: 1px solid var(--oj-border-color);
+}
+
+.oj-comment :deep(.u-comment .nav__sort .item) {
+    color: var(--oj-text-color-muted);
+}
+
+.oj-comment :deep(.u-comment .nav__sort .active) {
+    color: var(--oj-link-color);
+    background: var(--oj-surface-base);
 }
 </style>

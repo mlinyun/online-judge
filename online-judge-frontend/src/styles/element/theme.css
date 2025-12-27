@@ -70,11 +70,125 @@
     /* ---------- Element Plus 过渡动画 ---------- */
     --el-transition-duration: 0.3s;
     --el-transition-duration-fast: 0.2s;
+
+    /* ---------- 深色主题变量 (默认) ---------- */
+
+    /* 背景色 */
+    --el-bg-color: var(--oj-bg-light);
+    --el-bg-color-page: var(--oj-bg-base);
+    --el-bg-color-overlay: var(--oj-bg-light);
+
+    /* 文本色 */
+    --el-text-color-primary: var(--oj-text-primary);
+    --el-text-color-regular: var(--oj-text-secondary);
+    --el-text-color-secondary: var(--oj-text-muted);
+    --el-text-color-placeholder: var(--oj-text-disabled);
+    --el-text-color-disabled: var(--oj-text-disabled);
+
+    /* 边框色 */
+    --el-border-color: var(--oj-slate-700);
+    --el-border-color-light: var(--oj-slate-600);
+    --el-border-color-lighter: var(--oj-slate-700);
+    --el-border-color-extra-light: var(--oj-slate-800);
+    --el-border-color-dark: var(--oj-slate-600);
+    --el-border-color-darker: var(--oj-slate-500);
+
+    /* 填充色 */
+    --el-fill-color: var(--oj-bg-elevated);
+    --el-fill-color-light: var(--oj-bg-light);
+    --el-fill-color-lighter: var(--oj-slate-800);
+    --el-fill-color-extra-light: var(--oj-slate-900);
+    --el-fill-color-dark: var(--oj-slate-600);
+    --el-fill-color-darker: var(--oj-slate-500);
+    --el-fill-color-blank: transparent;
+
+    /* 遮罩色 */
+    --el-mask-color: rgb(0 0 0 / 60%);
+    --el-mask-color-extra-light: rgb(0 0 0 / 30%);
+
+    /* 阴影 */
+    --el-box-shadow: var(--oj-shadow-md);
+    --el-box-shadow-light: var(--oj-shadow-sm);
+    --el-box-shadow-lighter: 0 1px 4px rgb(0 0 0 / 20%);
+    --el-box-shadow-dark: var(--oj-shadow-lg);
+
+    /* 禁用状态 */
+    --el-disabled-bg-color: var(--oj-slate-800);
+    --el-disabled-text-color: var(--oj-text-disabled);
+    --el-disabled-border-color: var(--oj-slate-700);
+
+    /* Hover/Active 状态 - 使用语义表面色 */
+    --el-fill-color-hover: var(--oj-surface-hover);
+    --el-fill-color-pressed: var(--oj-surface-active);
+    --el-bg-color-hover: var(--oj-surface-hover);
+    --el-bg-color-overlay-hover: var(--oj-surface-hover);
+
+    /* 选择器/下拉菜单状态 */
+    /* stylelint-disable custom-property-pattern -- Element Plus 官方变量名使用 camelCase */
+    --el-dropdown-menuItem-hover-fill: var(--oj-surface-hover);
+    --el-dropdown-menuItem-hover-color: var(--oj-text-color);
+    /* stylelint-enable custom-property-pattern */
+    --el-select-dropdown-item-hover-bg: var(--oj-surface-hover);
+    --el-menu-item-hover-fill: var(--oj-surface-hover);
+    --el-menu-item-active-bg: var(--oj-surface-selected);
 }
 
 /* -------------------- 深色主题 Element Plus 覆盖 (默认) -------------------- */
-:root,
-html.dark {
+
+/*
+ * 注意：某些页面会在路由懒加载时引入第三方 CSS（例如 undraw-ui / element-plus 的 dark css-vars），
+ * 它们通常以 `html.dark { --el-*: ... }` 的形式后插入到 DOM，可能覆盖本项目的主题变量。
+ * 这里使用更高优先级的选择器 `html.dark:root`，确保无论 CSS 插入顺序如何，本项目的变量都能生效。
+ */
+
+html.dark:root {
+    /* ---------- Element Plus 主色覆盖 ---------- */
+
+    /* Primary - 使用 Cyan 青色 */
+    --el-color-primary: var(--oj-color-primary);
+    --el-color-primary-light-3: #22d3ee;
+    --el-color-primary-light-5: #67e8f9;
+    --el-color-primary-light-7: #a5f3fc;
+    --el-color-primary-light-8: #cffafe;
+    --el-color-primary-light-9: #ecfeff;
+    --el-color-primary-dark-2: var(--oj-color-primary-dark);
+
+    /* Success - 绿色 */
+    --el-color-success: var(--oj-color-success);
+    --el-color-success-light-3: #34d399;
+    --el-color-success-light-5: #6ee7b7;
+    --el-color-success-light-7: #a7f3d0;
+    --el-color-success-light-8: #d1fae5;
+    --el-color-success-light-9: #ecfdf5;
+    --el-color-success-dark-2: var(--oj-color-success-dark);
+
+    /* Warning - 橙色 */
+    --el-color-warning: var(--oj-color-warning);
+    --el-color-warning-light-3: #fbbf24;
+    --el-color-warning-light-5: #fcd34d;
+    --el-color-warning-light-7: #fde68a;
+    --el-color-warning-light-8: #fef3c7;
+    --el-color-warning-light-9: #fffbeb;
+    --el-color-warning-dark-2: var(--oj-color-warning-dark);
+
+    /* Danger - 红色 */
+    --el-color-danger: var(--oj-color-danger);
+    --el-color-danger-light-3: #f87171;
+    --el-color-danger-light-5: #fca5a5;
+    --el-color-danger-light-7: #fecaca;
+    --el-color-danger-light-8: #fee2e2;
+    --el-color-danger-light-9: #fef2f2;
+    --el-color-danger-dark-2: var(--oj-color-danger-dark);
+
+    /* Info - 蓝色 */
+    --el-color-info: var(--oj-color-info);
+    --el-color-info-light-3: #60a5fa;
+    --el-color-info-light-5: #93c5fd;
+    --el-color-info-light-7: #bfdbfe;
+    --el-color-info-light-8: #dbeafe;
+    --el-color-info-light-9: #eff6ff;
+    --el-color-info-dark-2: var(--oj-color-info-dark);
+
     /* 背景色 */
     --el-bg-color: var(--oj-bg-light);
     --el-bg-color-page: var(--oj-bg-base);
@@ -136,7 +250,7 @@ html.dark {
 }
 
 /* -------------------- 浅色主题 Element Plus 覆盖 -------------------- */
-html.light {
+html.light:root {
     /* 背景色 */
     --el-bg-color: #fff;
     --el-bg-color-page: var(--oj-bg-light-base);

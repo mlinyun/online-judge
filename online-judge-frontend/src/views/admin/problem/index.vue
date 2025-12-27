@@ -531,6 +531,7 @@ onMounted(() => {
 
 .tag-item {
     flex: 0 0 auto;
+    color: var(--oj-text-color-muted);
 }
 
 .pagination-bar {

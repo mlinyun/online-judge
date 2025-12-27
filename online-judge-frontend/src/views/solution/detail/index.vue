@@ -128,7 +128,6 @@ onMounted(() => {
         </div>
 
         <div class="comment-placeholder oj-glass-panel" aria-label="评论区">
-            <div class="comment-title">评论</div>
             <OjComment v-if="solutionId" :parent-id="solutionId" parent-type="Solution" />
         </div>
     </section>
@@ -226,26 +225,19 @@ onMounted(() => {
     border-radius: var(--oj-radius-2xl);
 }
 
-.comment-title {
-    margin-bottom: var(--oj-spacing-4);
-    font-size: var(--oj-font-size-lg);
-    font-weight: var(--oj-font-weight-semibold);
-    color: var(--oj-text-color);
-}
-
 .skeleton-block {
     height: 24px;
     margin: var(--oj-spacing-3) 0;
     border-radius: var(--oj-radius-lg);
 }
 
-@media (width >=640px) {
+@media (width >= 640px) {
     .solution-detail-page {
         padding: var(--oj-spacing-6);
     }
 }
 
-@media (width >=1024px) {
+@media (width >= 1024px) {
     .solution-detail-page {
         padding: var(--oj-spacing-8);
     }
