@@ -30,6 +30,9 @@ public:
     // 管理员查询评论
     Json::Value SelectCommentListByAdmin(Json::Value &queryjson);
 
+    // 评论点赞/取消点赞（单接口 Toggle）
+    Json::Value ToggleCommentLike(Json::Value &likejson);
+
     // 删除父评论
     Json::Value DeleteFatherComment(Json::Value &deletejson);
 

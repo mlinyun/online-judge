@@ -864,6 +864,21 @@ declare namespace Api {
         /** 删除评论响应参数 */
         type DeleteCommentResponse = ApiResponse<Common.OperationResult>;
 
+        /** 评论点赞/取消点赞请求参数 */
+        interface ToggleCommentLikeParams {
+            /** 评论 ID */
+            CommentId: CommentId;
+        }
+        /** 评论点赞/取消点赞响应数据结构 */
+        interface ToggleCommentLikeResult {
+            /** 点赞结果，true 为点赞，false 为取消点赞 */
+            Liked: boolean;
+            /** 当前评论的总点赞数量 */
+            Likes: number;
+        }
+        /** 评论点赞/取消点赞响应参数 */
+        type ToggleCommentLikeResponse = ApiResponse<ToggleCommentLikeResult>;
+
         /** 分页获取评论列表请求参数 */
         // Page, PageSize, ParentId, SonNum
         interface SelectCommentListParams extends Common.PaginationParams {
@@ -879,7 +894,7 @@ declare namespace Api {
             /** 评论 ID */
             _id: CommentId;
             /** 评论用户信息 */
-            User: User.SimpleUserInfo;
+            User: User.SimpleUserInfo[];
             /** 评论内容 */
             Content: string;
             /** 点赞数量 */
@@ -892,7 +907,7 @@ declare namespace Api {
             /** 评论 ID */
             _id: CommentId;
             /** 评论用户信息 */
-            User: User.SimpleUserInfo;
+            User: User.SimpleUserInfo[];
             /** 父级 ID */
             ParentId: Announcement.AnnouncementId | Discuss.DiscussId | Solution.SolutionId;
             /** 评论内容 */
@@ -930,7 +945,7 @@ declare namespace Api {
             /** 评论内容 */
             Content: string;
             /** 评论用户信息 */
-            User: User.SimpleUserInfo;
+            User: User.SimpleUserInfo[];
             /** 创建时间：评论时间 */
             CreateTime: Common.DateTimeString;
         }
@@ -939,7 +954,7 @@ declare namespace Api {
             /** 评论 ID */
             _id: CommentId;
             /** 评论用户信息 */
-            User: User.SimpleUserInfo;
+            User: User.SimpleUserInfo[];
             /** 父级 ID */
             ParentId: Announcement.AnnouncementId | Discuss.DiscussId | Solution.SolutionId;
             /** 父类型 */

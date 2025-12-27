@@ -288,6 +288,12 @@ public:
     Json::Value SelectCommentListByAdmin(Json::Value &queryjson);
 
     /**
+     * 功能：评论点赞/取消点赞
+     * 权限：只允许普通用户及以上操作
+     */
+    Json::Value ToggleCommentLike(Json::Value &likejson);
+
+    /**
      * 功能：删除评论
      * 权限：只允许评论作者本人或者管理员删除
      */

@@ -2761,10 +2761,6 @@ Json::Value MoDB::GetFatherComment(Json::Value &queryjson) {
         Json::Value list(Json::arrayValue);
 
         mongocxx::cursor cursor = commentcoll.aggregate(pipe);
-        // 检查查询结果是否为空
-        if (cursor.begin() == cursor.end()) {
-            return response::CommentNotFound();
-        }
         // 遍历查询结果，构造返回列表
         for (auto doc : cursor) {
             Json::Value jsonvalue;
@@ -2841,10 +2837,6 @@ Json::Value MoDB::GetSonComment(Json::Value &queryjson) {
         Json::Value data;
 
         mongocxx::cursor cursor = commentcoll.aggregate(pipe);
-        // 检查查询结果是否为空
-        if (cursor.begin() == cursor.end()) {
-            return response::CommentNotFound();
-        }
         // 解析查询结果
         for (auto doc : cursor) {
             reader.parse(bsoncxx::to_json(doc), data);
@@ -3172,6 +3164,222 @@ bool MoDB::DeleteArticleComment(Json::Value &deletejson) {
         return true;
     } catch (const std::exception &e) {
         return false;
+    }
+}
+
+/**
+ * 功能：评论点赞/取消点赞（单接口 Toggle）
+ * @name ToggleCommentLike
+ * @brief 评论点赞/取消点赞
+ * @param likejson Json(CommentId, UserId)
+ * @return Json(success, code, message, data(Liked, Likes))
+ */
+Json::Value MoDB::ToggleCommentLike(Json::Value &likejson) {
+    try {
+        int64_t commentid = stoll(likejson["CommentId"].asString());
+        int64_t userid = stoll(likejson["UserId"].asString());
+
+        auto getInt64 = [](const auto &el) -> int64_t {
+            switch (el.type()) {
+                case bsoncxx::type::k_int32:
+                    return el.get_int32().value;
+                case bsoncxx::type::k_int64:
+                    return el.get_int64().value;
+                default:
+                    return 0;
+            }
+        };
+
+        auto getInt32Safe = [](const auto &el) -> int {
+            switch (el.type()) {
+                case bsoncxx::type::k_int32:
+                    return el.get_int32().value;
+                case bsoncxx::type::k_int64:
+                    return static_cast<int>(el.get_int64().value);
+                default:
+                    return 0;
+            }
+        };
+
+        // 获取数据库连接
+        auto client = pool.acquire();
+        mongocxx::collection commentcoll = (*client)[DATABASE_NAME][COLLECTION_COMMENTS];
+        mongocxx::collection usercoll = (*client)[DATABASE_NAME][COLLECTION_USERS];
+
+        // 1) 优先按父评论处理
+        bsoncxx::builder::stream::document filter{};
+        filter << "_id" << commentid;
+
+        bsoncxx::builder::stream::document projection{};
+        projection << "Likes" << 1 << "LikedUsers" << 1;
+
+        mongocxx::options::find options;
+        options.projection(projection.view());
+
+        auto father = commentcoll.find_one(filter.view(), options);
+        if (father) {
+            auto view = father->view();
+
+            int likes = 0;
+            if (view["Likes"]) {
+                likes = getInt32Safe(view["Likes"]);
+            }
+
+            bool alreadyLiked = false;
+            if (view["LikedUsers"] && view["LikedUsers"].type() == bsoncxx::type::k_array) {
+                for (auto &&u : view["LikedUsers"].get_array().value) {
+                    if (getInt64(u) == userid) {
+                        alreadyLiked = true;
+                        break;
+                    }
+                }
+            }
+
+            bsoncxx::builder::stream::document update{};
+            bool liked = false;
+            if (alreadyLiked) {
+                update << "$pull" << open_document << "LikedUsers" << userid << close_document << "$inc" << open_document
+                       << "Likes" << -1 << close_document;
+                liked = false;
+                likes -= 1;
+            } else {
+                update << "$addToSet" << open_document << "LikedUsers" << userid << close_document << "$inc"
+                       << open_document << "Likes" << 1 << close_document;
+                liked = true;
+                likes += 1;
+            }
+
+            auto result = commentcoll.update_one(filter.view(), update.view());
+            if (!result || result->matched_count() == 0 || result->modified_count() == 0) {
+                return response::DatabaseError("点赞操作失败！");
+            }
+
+            // 同步更新用户表中的 CommentLikes
+            bsoncxx::builder::stream::document userFilter{};
+            userFilter << "_id" << userid;
+            bsoncxx::builder::stream::document userUpdate{};
+            if (liked) {
+                userUpdate << "$addToSet" << open_document << "CommentLikes" << commentid << close_document;
+            } else {
+                userUpdate << "$pull" << open_document << "CommentLikes" << commentid << close_document;
+            }
+            auto userResult = usercoll.update_one(userFilter.view(), userUpdate.view());
+            if (!userResult || userResult->matched_count() == 0) {
+                // 回滚评论点赞状态，尽量保持一致性
+                bsoncxx::builder::stream::document rollback{};
+                if (liked) {
+                    rollback << "$pull" << open_document << "LikedUsers" << userid << close_document << "$inc"
+                             << open_document << "Likes" << -1 << close_document;
+                } else {
+                    rollback << "$addToSet" << open_document << "LikedUsers" << userid << close_document << "$inc"
+                             << open_document << "Likes" << 1 << close_document;
+                }
+                (void)commentcoll.update_one(filter.view(), rollback.view());
+                return response::DatabaseError("更新用户点赞列表失败！");
+            }
+
+            Json::Value data;
+            data["Liked"] = liked;
+            data["Likes"] = likes;
+            return response::Success(liked ? "点赞成功" : "取消点赞成功", data);
+        }
+
+        // 2) 再按子评论处理（使用位置操作符 $）
+        bsoncxx::builder::stream::document childFilter{};
+        childFilter << "Child_Comments._id" << commentid;
+
+        bsoncxx::builder::stream::document childProjection{};
+        childProjection << "Child_Comments" << 1;
+
+        mongocxx::options::find childOptions;
+        childOptions.projection(childProjection.view());
+
+        auto parentDoc = commentcoll.find_one(childFilter.view(), childOptions);
+        if (!parentDoc) {
+            return response::CommentNotFound();
+        }
+
+        int likes = 0;
+        bool alreadyLiked = false;
+        auto pv = parentDoc->view();
+        if (pv["Child_Comments"] && pv["Child_Comments"].type() == bsoncxx::type::k_array) {
+            for (auto &&c : pv["Child_Comments"].get_array().value) {
+                if (c.type() != bsoncxx::type::k_document) {
+                    continue;
+                }
+                auto cv = c.get_document().view();
+                if (!cv["_id"]) {
+                    continue;
+                }
+                if (getInt64(cv["_id"]) != commentid) {
+                    continue;
+                }
+
+                if (cv["Likes"]) {
+                    likes = getInt32Safe(cv["Likes"]);
+                }
+
+                if (cv["LikedUsers"] && cv["LikedUsers"].type() == bsoncxx::type::k_array) {
+                    for (auto &&u : cv["LikedUsers"].get_array().value) {
+                        if (getInt64(u) == userid) {
+                            alreadyLiked = true;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
+        bsoncxx::builder::stream::document update{};
+        bool liked = false;
+        if (alreadyLiked) {
+            update << "$pull" << open_document << "Child_Comments.$.LikedUsers" << userid << close_document << "$inc"
+                   << open_document << "Child_Comments.$.Likes" << -1 << close_document;
+            liked = false;
+            likes -= 1;
+        } else {
+            update << "$addToSet" << open_document << "Child_Comments.$.LikedUsers" << userid << close_document << "$inc"
+                   << open_document << "Child_Comments.$.Likes" << 1 << close_document;
+            liked = true;
+            likes += 1;
+        }
+
+        auto result = commentcoll.update_one(childFilter.view(), update.view());
+        if (!result || result->matched_count() == 0 || result->modified_count() == 0) {
+            return response::DatabaseError("点赞操作失败！");
+        }
+
+        // 同步更新用户表中的 CommentLikes
+        bsoncxx::builder::stream::document userFilter{};
+        userFilter << "_id" << userid;
+        bsoncxx::builder::stream::document userUpdate{};
+        if (liked) {
+            userUpdate << "$addToSet" << open_document << "CommentLikes" << commentid << close_document;
+        } else {
+            userUpdate << "$pull" << open_document << "CommentLikes" << commentid << close_document;
+        }
+        auto userResult = usercoll.update_one(userFilter.view(), userUpdate.view());
+        if (!userResult || userResult->matched_count() == 0) {
+            // 回滚评论点赞状态，尽量保持一致性
+            bsoncxx::builder::stream::document rollback{};
+            if (liked) {
+                rollback << "$pull" << open_document << "Child_Comments.$.LikedUsers" << userid << close_document
+                         << "$inc" << open_document << "Child_Comments.$.Likes" << -1 << close_document;
+            } else {
+                rollback << "$addToSet" << open_document << "Child_Comments.$.LikedUsers" << userid << close_document
+                         << "$inc" << open_document << "Child_Comments.$.Likes" << 1 << close_document;
+            }
+            (void)commentcoll.update_one(childFilter.view(), rollback.view());
+            return response::DatabaseError("更新用户点赞列表失败！");
+        }
+
+        Json::Value data;
+        data["Liked"] = liked;
+        data["Likes"] = likes;
+        return response::Success(liked ? "点赞成功" : "取消点赞成功", data);
+    } catch (const std::exception &e) {
+        return response::DatabaseError();
     }
 }
 

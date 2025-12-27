@@ -1408,6 +1408,33 @@ void doGetCommentListByAdmin(const httplib::Request &req, httplib::Response &res
 }
 
 /**
+ * 处理评论点赞/取消点赞请求
+ */
+void doToggleCommentLike(const httplib::Request &req, httplib::Response &res) {
+    cout << "doToggleCommentLike start!!!" << endl;
+    Json::Value jsonvalue;
+    Json::Reader reader;
+    Json::Value resjson;
+    if (!reader.parse(req.body, jsonvalue)) {
+        resjson = response::BadRequest("Invalid JSON format");
+    } else {
+        string errMsg;
+        const vector<string> requiredFields = {"CommentId"};
+        if (!validator::ParamValidator::CheckRequiredList(jsonvalue, requiredFields, &errMsg)) {
+            resjson = response::BadRequest(errMsg);
+        } else {
+            string token = GetRequestToken(req);
+            jsonvalue["Token"] = token;
+            resjson = control.ToggleCommentLike(jsonvalue);
+        }
+    }
+    cout << "doToggleCommentLike end!!!" << endl;
+    SetResponseStatus(resjson, res);
+    string resbody = JsonUtils::GetInstance()->JsonToString(resjson);
+    res.set_content(resbody, "application/json; charset=utf-8");
+}
+
+/**
  * 处理删除评论的请求
  */
 void doDeleteComment(const httplib::Request &req, httplib::Response &res) {
@@ -1894,6 +1921,8 @@ void HttpServer::Run() {
     server.Post(API + "/comment/insert", doInsertComment);
     // 获取评论
     server.Post(API + "/comment/info", doGetComment);
+    // 评论点赞/取消点赞
+    server.Post(API + "/comment/like", doToggleCommentLike);
     // 管理员查询评论
     server.Post(API + "/admin/comment/list", doGetCommentListByAdmin);
     // 删除评论

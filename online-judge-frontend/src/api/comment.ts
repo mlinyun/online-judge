@@ -87,3 +87,20 @@ export const deleteComment = (
         }
     );
 };
+
+/**
+ * 评论点赞/取消点赞
+ * @name toggleCommentLike
+ * @tags 评论模块
+ * @description 对评论进行点赞或取消点赞
+ * @request POST `/comment/like`
+ * @param data 点赞信息，详见 {@link Api.Comment.ToggleCommentLikeParams}
+ * @returns 点赞结果，详见 {@link Api.Comment.ToggleCommentLikeResponse}
+ */
+export const toggleCommentLike = (
+    data: Api.Comment.ToggleCommentLikeParams
+): Promise<AxiosResponse<Api.Comment.ToggleCommentLikeResponse>> => {
+    return post<Api.Comment.ToggleCommentLikeResult>("/comment/like", data, {
+        showSuccessMessage: true,
+    });
+};

@@ -51,6 +51,18 @@ Json::Value CommentService::SelectCommentListByAdmin(Json::Value &queryjson) {
     return MoDB::GetInstance()->SelectCommentListByAdmin(queryjson);
 }
 
+// 评论点赞/取消点赞（单接口 Toggle）
+Json::Value CommentService::ToggleCommentLike(Json::Value &likejson) {
+    // 从 Token 中获取 UserId 并设置到 likejson 中
+    std::string token = likejson["Token"].asString();
+    std::string userId = ReDB::GetInstance()->GetUserIdByToken(token);
+    if (userId.empty()) {
+        return response::UserNotFound();
+    }
+    likejson["UserId"] = userId;
+    return MoDB::GetInstance()->ToggleCommentLike(likejson);
+}
+
 // 删除父评论
 Json::Value CommentService::DeleteFatherComment(Json::Value &deletejson) {
     return MoDB::GetInstance()->DeleteFatherComment(deletejson);

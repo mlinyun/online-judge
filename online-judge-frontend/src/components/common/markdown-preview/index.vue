@@ -2,10 +2,8 @@
 /**
  * OJ Markdown 预览组件
  *
- * 基于 v-md-editor 封装的现代化、科技风 Markdown 预览组件
+ * 基于 v-md-editor 封装的 Markdown 预览组件
  * 用于展示公告、题解、题目、讨论等内容
- *
- * 注意：v-md-editor 已在 main.ts 中全局初始化
  */
 defineOptions({ name: "OjMarkdownPreview" });
 
@@ -27,7 +25,6 @@ withDefaults(defineProps<Props>(), {
 
 <template>
     <div class="oj-md-preview" :class="{ 'is-bordered': bordered, 'is-glass': glass }">
-        <!-- 预览内容（已在 main.ts 中全局注册为 VMdPreview） -->
         <v-md-preview :text="content" />
     </div>
 </template>

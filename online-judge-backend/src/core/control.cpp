@@ -650,6 +650,16 @@ Json::Value Control::SelectCommentListByAdmin(Json::Value &queryjson) {
     return CommentService::GetInstance()->SelectCommentListByAdmin(queryjson);
 }
 
+// 评论点赞/取消点赞
+Json::Value Control::ToggleCommentLike(Json::Value &likejson) {
+    // 如果不是普通用户及以上，无权点赞
+    bool is_ordinary_user = UserService::GetInstance()->IsOrdinaryUserOrAbove(likejson);
+    if (!is_ordinary_user) {
+        return response::Forbidden();
+    }
+    return CommentService::GetInstance()->ToggleCommentLike(likejson);
+}
+
 // 删除评论
 Json::Value Control::DeleteComment(Json::Value &deletejson) {
     // 1. 先查询评论作者的 UserId

@@ -2,10 +2,8 @@
 /**
  * OJ Markdown 编辑器组件
  *
- * 基于 v-md-editor 封装的现代化、科技风 Markdown 编辑器
+ * 基于 v-md-editor 封装的 Markdown 编辑器
  * 支持公告、题解、题目、讨论等内容编辑
- *
- * 注意：v-md-editor 已在 main.ts 中全局初始化
  */
 import { computed, ref, useTemplateRef, watch } from "vue";
 
@@ -119,7 +117,6 @@ defineExpose({
     <div class="oj-md-editor" :class="{ 'is-focused': isFocused, 'is-disabled': disabled }">
         <div class="editor-glow" />
         <div class="editor-container">
-            <!-- 编辑器（已在 main.ts 中全局注册为 VMdEditor） -->
             <v-md-editor
                 ref="editorRef"
                 v-model="content"

@@ -442,6 +442,13 @@ public:
     Json::Value DeleteSonComment(Json::Value &deletejson);
 
     /**
+     * 功能：评论点赞/取消点赞（单接口 Toggle）
+     * 传入：Json(CommentId, UserId)
+     * 传出：Json(success, code, message, data(Liked, Likes))
+     */
+    Json::Value ToggleCommentLike(Json::Value &likejson);
+
+    /**
      * 功能：获取评论的作者 UserId
      * 传入：评论 ID
      * 传出：作者 UserId，如果不存在返回空字符串
