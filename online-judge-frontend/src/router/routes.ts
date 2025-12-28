@@ -7,6 +7,8 @@ const MainLayout = () => import("@/layouts/main/index.vue");
 const AuthLayout = () => import("@/layouts/auth/index.vue");
 // 管理后台布局组件
 const AdminLayout = () => import("@/layouts/admin/index.vue");
+// 判题系统布局组件
+const JudgeLayout = () => import("@/layouts/judge/index.vue");
 
 // 主应用相关页面组件将使用路由懒加载，在路由配置中直接引入
 // 首页（包含公告列表）
@@ -102,16 +104,16 @@ export const routes: Array<RouteRecordRaw> = [
                 meta: { title: "题库" },
             },
             {
-                path: "problem/detail/:id",
-                name: "problem-detail",
-                component: ProblemDetail,
-                meta: { title: "题目详情" },
-            },
-            {
                 path: "discussion/list",
                 name: "discussion-list",
                 component: DiscussionList,
                 meta: { title: "讨论" },
+            },
+            {
+                path: "discussion/editor",
+                name: "discussion-write",
+                component: DiscussionEditor,
+                meta: { title: "写讨论" },
             },
             {
                 path: "discussion/detail/:id",
@@ -124,6 +126,12 @@ export const routes: Array<RouteRecordRaw> = [
                 name: "solution-list",
                 component: SolutionList,
                 meta: { title: "题解" },
+            },
+            {
+                path: "solution/editor",
+                name: "solution-write",
+                component: SolutionEditor,
+                meta: { title: "写题解" },
             },
             {
                 path: "solution/detail/:id",
@@ -154,6 +162,20 @@ export const routes: Array<RouteRecordRaw> = [
                 name: "user-setting",
                 component: UserSetting,
                 meta: { title: "个人设置" },
+            },
+        ],
+    },
+
+    // 判题系统布局路由
+    {
+        path: "/judge",
+        component: JudgeLayout,
+        children: [
+            {
+                path: "problem/detail/:id",
+                name: "problem-detail",
+                component: ProblemDetail,
+                meta: { title: "题目详情" },
             },
         ],
     },

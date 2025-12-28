@@ -157,6 +157,16 @@ const loadMore = async () => {
     }
 };
 
+const handleWriteSolution = () => {
+    void router.push({
+        name: "solution-write",
+        query: {
+            mode: "insert",
+            ...(parentId.value ? { parentId: String(parentId.value) } : {}),
+        },
+    });
+};
+
 const handleCardClick = (item: UiSolutionItem) => {
     void router.push({ name: "solution-detail", params: { id: item._id } });
 };
@@ -196,7 +206,7 @@ onUnmounted(() => {
     <section class="solution-list-page" aria-label="题解列表">
         <div class="header oj-glass-panel">
             <div class="header-left">
-                <div class="title">题解</div>
+                <el-button class="title" type="primary" @click="handleWriteSolution">写题解</el-button>
                 <div class="subtitle" v-if="parentId || userId">
                     <span v-if="parentId" class="mono">Problem: {{ parentId }}</span>
                     <span v-if="userId" class="mono">User: {{ userId }}</span>
@@ -228,13 +238,8 @@ onUnmounted(() => {
 
                     <div v-else class="solution-list">
                         <el-card v-for="item in list" :key="String(item._id)" class="solution-card" shadow="never">
-                            <div
-                                class="solution-card-inner"
-                                role="button"
-                                tabindex="0"
-                                @click="handleCardClick(item)"
-                                @keydown.enter.prevent="handleCardClick(item)"
-                            >
+                            <div class="solution-card-inner" role="button" tabindex="0" @click="handleCardClick(item)"
+                                @keydown.enter.prevent="handleCardClick(item)">
                                 <div class="card-row">
                                     <div class="card-left">
                                         <el-avatar class="avatar" :size="56" :src="item.User?.Avatar" />
@@ -247,7 +252,7 @@ onUnmounted(() => {
                                             <span class="meta-dot">·</span>
                                             <span class="meta-item">{{
                                                 DateUtils.formatDateTime(item.CreateTime)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                     </div>
 
@@ -323,7 +328,7 @@ onUnmounted(() => {
 .title {
     font-size: var(--oj-font-size-lg);
     font-weight: var(--oj-font-weight-semibold);
-    color: var(--oj-text-color);
+    white-space: nowrap;
 }
 
 .subtitle {

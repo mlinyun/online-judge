@@ -418,9 +418,15 @@ Json::Value MoDB::SelectUserRankValue(Json::Value &queryjson) {
         auto view = user_opt->view();
         auto get_int = [](const bsoncxx::document::view &v, const char *key) -> int64_t {
             auto ele = v[key];
-            if (!ele) return 0;
-            if (ele.type() == bsoncxx::type::k_int32) return ele.get_int32().value;
-            if (ele.type() == bsoncxx::type::k_int64) return ele.get_int64().value;
+            if (!ele) {
+                return 0;
+            }
+            if (ele.type() == bsoncxx::type::k_int32) {
+                return ele.get_int32().value;
+            }
+            if (ele.type() == bsoncxx::type::k_int64) {
+                return ele.get_int64().value;
+            }
             return 0;
         };
 
@@ -430,12 +436,10 @@ Json::Value MoDB::SelectUserRankValue(Json::Value &queryjson) {
         // 统计“比该用户更靠前”的用户数量：
         // ACNum 更大；或 ACNum 相同但 SubmitNum 更小；或两者相同但 _id 更小（与排行榜的 _id 升序一致）
         bsoncxx::builder::stream::document filter;
-        filter << "$or" << open_array
-               << open_document << "ACNum" << open_document << "$gt" << acnum << close_document << close_document
-               << open_document << "ACNum" << acnum << "SubmitNum" << open_document << "$lt" << submitnum << close_document
-               << close_document
-               << open_document << "ACNum" << acnum << "SubmitNum" << submitnum << "_id" << open_document << "$lt" << userid
-               << close_document << close_document
+        filter << "$or" << open_array << open_document << "ACNum" << open_document << "$gt" << acnum << close_document
+               << close_document << open_document << "ACNum" << acnum << "SubmitNum" << open_document << "$lt"
+               << submitnum << close_document << close_document << open_document << "ACNum" << acnum << "SubmitNum"
+               << submitnum << "_id" << open_document << "$lt" << userid << close_document << close_document
                << close_array;
 
         int rank = static_cast<int>(usercoll.count_documents(filter.view())) + 1;
@@ -3238,8 +3242,8 @@ Json::Value MoDB::ToggleCommentLike(Json::Value &likejson) {
             bsoncxx::builder::stream::document update{};
             bool liked = false;
             if (alreadyLiked) {
-                update << "$pull" << open_document << "LikedUsers" << userid << close_document << "$inc" << open_document
-                       << "Likes" << -1 << close_document;
+                update << "$pull" << open_document << "LikedUsers" << userid << close_document << "$inc"
+                       << open_document << "Likes" << -1 << close_document;
                 liked = false;
                 likes -= 1;
             } else {
@@ -3339,8 +3343,8 @@ Json::Value MoDB::ToggleCommentLike(Json::Value &likejson) {
             liked = false;
             likes -= 1;
         } else {
-            update << "$addToSet" << open_document << "Child_Comments.$.LikedUsers" << userid << close_document << "$inc"
-                   << open_document << "Child_Comments.$.Likes" << 1 << close_document;
+            update << "$addToSet" << open_document << "Child_Comments.$.LikedUsers" << userid << close_document
+                   << "$inc" << open_document << "Child_Comments.$.Likes" << 1 << close_document;
             liked = true;
             likes += 1;
         }

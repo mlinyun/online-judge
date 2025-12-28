@@ -271,9 +271,7 @@ declare namespace Api {
         type Tags = string[];
 
         /** 获取所有题目标签请求参数 */
-        interface GetProblemTagsParams {
-            TagType: "Problem";
-        }
+        type GetProblemTagsParams = "Problem";
         /** 获取所有题目标签响应数据结构 */
         interface GetProblemTagsResult {
             /** 题目标签列表 */
@@ -659,7 +657,7 @@ declare namespace Api {
             /** 搜索信息 */
             SearchInfo?: {
                 /** 父 ID，0 或者题目 ID */
-                ParentId?: DiscussId;
+                ParentId?: Problem.ProblemId | "0";
                 /** 用户 ID */
                 UserId?: User.UserId;
             };

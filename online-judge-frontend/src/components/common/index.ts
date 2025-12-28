@@ -9,3 +9,6 @@ export { default as OjMarkdownPreview } from "./markdown-preview/index.vue";
 
 // 评论
 export { default as OjComment } from "./comment/index.vue";
+
+// 代码编辑器
+export { default as OjCodeEditor } from "./code-editor/index.vue";

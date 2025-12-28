@@ -48,14 +48,14 @@ defineOptions({ name: "MainLayout" });
     margin-left: auto;
 }
 
-@media (width >=640px) {
+@media (width >= 640px) {
     .main-container {
         padding-right: var(--oj-spacing-6);
         padding-left: var(--oj-spacing-6);
     }
 }
 
-@media (width >=1024px) {
+@media (width >= 1024px) {
     .main-container {
         padding-right: var(--oj-spacing-8);
         padding-left: var(--oj-spacing-8);

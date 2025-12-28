@@ -45,6 +45,17 @@ const submitting = ref(false);
 
 const pageTitle = computed(() => (editMode.value === "insert" ? "发布题解" : "编辑题解"));
 
+const getAfterSubmitRoute = () => {
+    if (route.name === "solution-write") {
+        return {
+            name: "solution-list",
+            query: parentId.value ? { ParentId: parentId.value } : undefined,
+        } as const;
+    }
+
+    return { name: "admin-solution" } as const;
+};
+
 const fetchSolutionData = async () => {
     if (!solutionId.value) return;
 
@@ -112,7 +123,7 @@ const handleInsert = async () => {
     try {
         const response = await insertSolution(params);
         if (response.data.code === 0) {
-            router.push({ name: "admin-solution" });
+            router.push(getAfterSubmitRoute());
         }
     } catch (err) {
         console.error("发布题解失败:", err);
@@ -136,7 +147,7 @@ const handleUpdate = async () => {
     try {
         const response = await updateSolution(params);
         if (response.data.code === 0) {
-            router.push({ name: "admin-solution" });
+            router.push(getAfterSubmitRoute());
         }
     } catch (err) {
         console.error("更新题解失败:", err);
@@ -212,14 +223,8 @@ onMounted(() => {
                                 <span class="label-text">题解标题</span>
                                 <span class="label-required">*</span>
                             </label>
-                            <el-input
-                                v-model="title"
-                                class="title-input"
-                                placeholder="请输入题解标题..."
-                                maxlength="50"
-                                show-word-limit
-                                clearable
-                            />
+                            <el-input v-model="title" class="title-input" placeholder="请输入题解标题..." maxlength="50"
+                                show-word-limit clearable />
                         </div>
 
                         <div class="form-item form-item-inline">

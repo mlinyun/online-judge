@@ -42,6 +42,15 @@ const submitting = ref(false);
 
 const pageTitle = computed(() => (editMode.value === "insert" ? "发布讨论" : "编辑讨论"));
 
+const getAfterSubmitRoute = () => {
+    if (route.name === "discussion-write") {
+        const q = parentId.value !== "0" ? { ParentId: parentId.value } : undefined;
+        return { name: "discussion-list", query: q } as const;
+    }
+
+    return { name: "admin-discussion" } as const;
+};
+
 const fetchDiscussData = async () => {
     if (!discussId.value) return;
 
@@ -98,7 +107,7 @@ const handleInsert = async () => {
     try {
         const response = await insertDiscuss(params);
         if (response.data.code === 0) {
-            router.push({ name: "admin-discussion" });
+            router.push(getAfterSubmitRoute());
         }
     } catch (err) {
         console.error("发布讨论失败:", err);
@@ -121,7 +130,7 @@ const handleUpdate = async () => {
     try {
         const response = await updateDiscuss(params);
         if (response.data.code === 0) {
-            router.push({ name: "admin-discussion" });
+            router.push(getAfterSubmitRoute());
         }
     } catch (err) {
         console.error("更新讨论失败:", err);
@@ -197,14 +206,8 @@ onMounted(() => {
                                 <span class="label-text">讨论标题</span>
                                 <span class="label-required">*</span>
                             </label>
-                            <el-input
-                                v-model="title"
-                                class="title-input"
-                                placeholder="请输入讨论标题..."
-                                maxlength="50"
-                                show-word-limit
-                                clearable
-                            />
+                            <el-input v-model="title" class="title-input" placeholder="请输入讨论标题..." maxlength="50"
+                                show-word-limit clearable />
                         </div>
 
                         <div class="form-item">

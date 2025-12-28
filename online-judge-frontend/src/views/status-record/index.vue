@@ -5,6 +5,9 @@ import { Document, Search, User } from "@element-plus/icons-vue";
 import { selectStatusRecordList } from "@/api/status";
 import { DateUtils } from "@/utils/date/date-utils";
 import type { Api } from "@/types/api/api";
+import type { TableInstance } from "element-plus";
+
+import StatusRecordDetailDialog from "./components/status-record-detail-dialog.vue";
 
 defineOptions({ name: "StatusRecord" });
 
@@ -25,6 +28,11 @@ const pageSize = ref(20);
 const total = ref(0);
 
 const records = ref<StatusRow[]>([]);
+// 表格布局方式
+const tableLayout = ref<TableInstance["tableLayout"]>("fixed");
+
+const detailDialogOpen = ref(false);
+const activeStatusRecordId = ref<Api.Status.StatusRecordId | undefined>(undefined);
 
 // Toolbar: SearchInfo
 const searchUserId = ref("");
@@ -146,6 +154,11 @@ watch(
 onMounted(() => {
     fetchRecords();
 });
+
+const handleRowClick = (row: StatusRow) => {
+    activeStatusRecordId.value = row._id;
+    detailDialogOpen.value = true;
+};
 </script>
 
 <template>
@@ -153,36 +166,17 @@ onMounted(() => {
         <!-- Toolbar -->
         <div class="toolbar oj-glass-panel">
             <div class="toolbar-left">
-                <el-input
-                    v-model="searchUserId"
-                    class="toolbar-field"
-                    :prefix-icon="User"
-                    clearable
-                    placeholder="用户ID (UserId)"
-                />
+                <el-input v-model="searchUserId" class="toolbar-field" :prefix-icon="User" clearable
+                    placeholder="用户ID (UserId)" />
 
-                <el-input
-                    v-model="searchProblemId"
-                    class="toolbar-field"
-                    :prefix-icon="Document"
-                    clearable
-                    placeholder="题目ID (ProblemId)"
-                />
+                <el-input v-model="searchProblemId" class="toolbar-field" :prefix-icon="Document" clearable
+                    placeholder="题目ID (ProblemId)" />
 
-                <el-input
-                    v-model="searchProblemTitle"
-                    class="toolbar-field"
-                    :prefix-icon="Search"
-                    clearable
-                    placeholder="题目标题 (ProblemTitle)"
-                />
+                <el-input v-model="searchProblemTitle" class="toolbar-field" :prefix-icon="Search" clearable
+                    placeholder="题目标题 (ProblemTitle)" />
 
-                <el-select
-                    v-model="searchStatus"
-                    class="toolbar-field toolbar-select"
-                    placeholder="判题状态 (Status)"
-                    popper-class="oj-status-record-popper"
-                >
+                <el-select v-model="searchStatus" class="toolbar-field toolbar-select" placeholder="判题状态 (Status)"
+                    popper-class="oj-status-record-popper">
                     <el-option label="全部" value="all" />
                     <el-option label="Pending" :value="0" />
                     <el-option label="Compile Error" :value="1" />
@@ -194,12 +188,8 @@ onMounted(() => {
                     <el-option label="System Error" :value="7" />
                 </el-select>
 
-                <el-select
-                    v-model="searchLanguage"
-                    class="toolbar-field toolbar-select"
-                    placeholder="语言 (Language)"
-                    popper-class="oj-status-record-popper"
-                >
+                <el-select v-model="searchLanguage" class="toolbar-field toolbar-select" placeholder="语言 (Language)"
+                    popper-class="oj-status-record-popper">
                     <el-option label="全部" value="all" />
                     <el-option label="C" value="C" />
                     <el-option label="C++" value="C++" />
@@ -229,17 +219,15 @@ onMounted(() => {
                 </template>
 
                 <template #default>
-                    <el-empty
-                        v-if="!records.length && !loadError"
-                        :description="hasSearch ? '暂无匹配的测评记录' : '暂无测评记录'"
-                    />
+                    <el-empty v-if="!records.length && !loadError" :description="hasSearch ? '暂无匹配的测评记录' : '暂无测评记录'" />
 
                     <el-empty v-else-if="!records.length && loadError" :description="loadError">
                         <el-button type="primary" plain @click="fetchRecords">重试</el-button>
                     </el-empty>
 
                     <div v-else>
-                        <el-table :data="records" class="record-table" table-layout="fixed">
+                        <el-table :data="records" class="record-table" :table-layout="tableLayout"
+                            @row-click="handleRowClick">
                             <el-table-column label="记录ID" min-width="180">
                                 <template #default="scope">
                                     <span class="mono id-text" :title="String(scope.row._id)">{{ scope.row._id }}</span>
@@ -268,11 +256,8 @@ onMounted(() => {
 
                             <el-table-column label="状态" width="160" align="center">
                                 <template #default="scope">
-                                    <el-tag
-                                        size="small"
-                                        :type="getStatusTagType(scope.row.Status)"
-                                        :title="`Status=${scope.row.Status}`"
-                                    >
+                                    <el-tag size="small" :type="getStatusTagType(scope.row.Status)"
+                                        :title="`Status=${scope.row.Status}`">
                                         {{ getStatusTitle(scope.row.Status) }}
                                     </el-tag>
                                 </template>
@@ -306,20 +291,17 @@ onMounted(() => {
                         </el-table>
 
                         <div class="pagination-bar">
-                            <el-pagination
-                                v-model:current-page="page"
-                                v-model:page-size="pageSize"
-                                :page-sizes="[10, 20, 40, 60]"
-                                :total="total"
-                                layout="total, sizes, prev, pager, next, jumper"
-                                @current-change="handlePageChange"
-                                @size-change="handleSizeChange"
-                            />
+                            <el-pagination v-model:current-page="page" v-model:page-size="pageSize"
+                                :page-sizes="[10, 20, 40, 60]" :total="total"
+                                layout="total, sizes, prev, pager, next, jumper" @current-change="handlePageChange"
+                                @size-change="handleSizeChange" />
                         </div>
                     </div>
                 </template>
             </el-skeleton>
         </div>
+
+        <StatusRecordDetailDialog v-model="detailDialogOpen" :status-record-id="activeStatusRecordId" />
     </section>
 </template>
 
@@ -510,6 +492,10 @@ onMounted(() => {
 
 .record-table :deep(.el-table__body tr:hover > td.el-table__cell) {
     background: var(--oj-table-row-hover-bg);
+}
+
+.record-table :deep(.el-table__row) {
+    cursor: pointer;
 }
 
 .record-table :deep(td.el-table__cell) {
