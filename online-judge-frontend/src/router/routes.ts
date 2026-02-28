@@ -44,6 +44,9 @@ const UserLogin = () => import("@views/user/login/index.vue");
 // 用户注册页
 const UserRegister = () => import("@views/user/register/index.vue");
 
+// 我的提交记录页
+const UserSubmissions = () => import("@views/user/submissions/index.vue");
+
 // 管理后台相关页面组件将使用路由懒加载，在路由配置中直接引入
 // 仪表盘页
 const DashboardView = () => import("@views/admin/dashboard/index.vue");
@@ -144,6 +147,12 @@ export const routes: Array<RouteRecordRaw> = [
                 name: "status-record",
                 component: StatusRecord,
                 meta: { title: "测评状态" },
+            },
+            {
+                path: "user/submissions",
+                name: "user-submissions",
+                component: UserSubmissions,
+                meta: { title: "我的提交" },
             },
             {
                 path: "user/rank",

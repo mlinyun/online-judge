@@ -1,24 +1,38 @@
 // 创建 "online_judge" 数据库
 use("online_judge");
 
-// 创建数据库管理员用户
+// 创建开发环境下的数据库管理员用户
 db.createUser({
   user: "online_judge_admin",
   pwd: "StrongPassw0rd!",
   roles: [{ role: "dbOwner", db: "online_judge" }],
 });
 
+// 创建生产环境下的数据库读写用户
+db.createUser({
+  user: "online_judge_app",
+  pwd: "StrongPassw0rd!",
+  roles: [{ role: "readWrite", db: "online_judge" }],
+});
+
 // 创建公告表
+db.getCollection("announcements").drop();
 db.createCollection("announcements");
 // 创建评论表
+db.getCollection("comments").drop();
 db.createCollection("comments");
 // 创建讨论表
+db.getCollection("discusses").drop();
 db.createCollection("discusses");
 // 创建题目表
+db.getCollection("problems").drop();
 db.createCollection("problems");
 // 创建题解表
+db.getCollection("solutions").drop();
 db.createCollection("solutions");
 // 创建状态记录表
+db.getCollection("status_records").drop();
 db.createCollection("status_records");
 // 创建用户表
+db.getCollection("users").drop();
 db.createCollection("users");

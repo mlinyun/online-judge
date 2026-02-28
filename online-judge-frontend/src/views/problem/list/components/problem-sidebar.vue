@@ -61,17 +61,17 @@ const isTagSelected = (tag: string) => props.selectedTags.includes(tag);
             </div>
 
             <div class="ring-wrap">
-                <div class="ring" :style="{ '--p': `${solvedRate * 100}%` }" aria-label="通过率">
+                <div class="ring" :style="{ '--p': `${solvedRate * 100}%` }" aria-label="完成率">
                     <div class="ring-center">
                         <div class="ring-v">{{ solvedRateText }}</div>
-                        <div class="ring-k">通过率</div>
+                        <div class="ring-k">完成率</div>
                     </div>
                 </div>
             </div>
 
             <div class="stats">
                 <div class="stat">
-                    <span class="k">已通过</span>
+                    <span class="k">已解决</span>
                     <span class="v">{{ solvedCount }}</span>
                 </div>
                 <div class="stat">
@@ -95,8 +95,14 @@ const isTagSelected = (tag: string) => props.selectedTags.includes(tag);
             </div>
 
             <div class="tags">
-                <button v-for="t in allTags" :key="t" type="button" class="tag"
-                    :class="{ 'is-active': isTagSelected(t) }" @click="emit('toggleTag', t)">
+                <button
+                    v-for="t in allTags"
+                    :key="t"
+                    type="button"
+                    class="tag"
+                    :class="{ 'is-active': isTagSelected(t) }"
+                    @click="emit('toggleTag', t)"
+                >
                     {{ t }}
                 </button>
             </div>
@@ -170,7 +176,10 @@ const isTagSelected = (tag: string) => props.selectedTags.includes(tag);
     place-items: center;
     width: 132px;
     height: 132px;
-    background: conic-gradient(var(--oj-color-primary) var(--p), rgb(var(--oj-color-primary-rgb) / 10%) 0);
+    background: conic-gradient(
+        var(--oj-color-primary) var(--oj-color-primary-light),
+        rgb(var(--oj-color-primary-rgb) / 10%) 0
+    );
     border-radius: 999px;
 }
 
@@ -187,7 +196,7 @@ const isTagSelected = (tag: string) => props.selectedTags.includes(tag);
 }
 
 .ring-v {
-    font-family: var(--oj-font-family-mono);
+    font-family: var(--oj-font-family-mono), monospace;
     font-size: var(--oj-font-size-lg);
     font-weight: var(--oj-font-weight-bold);
     color: var(--oj-text-color);
@@ -212,7 +221,7 @@ const isTagSelected = (tag: string) => props.selectedTags.includes(tag);
 }
 
 .stat .v {
-    font-family: var(--oj-font-family-mono);
+    font-family: var(--oj-font-family-mono), monospace;
     color: var(--oj-text-color);
 }
 
@@ -245,16 +254,16 @@ const isTagSelected = (tag: string) => props.selectedTags.includes(tag);
 }
 
 .vk {
-    font-family: var(--oj-font-family-mono);
+    font-family: var(--oj-font-family-mono), monospace;
     color: var(--oj-text-color-muted);
 }
 
 .vv {
-    font-family: var(--oj-font-family-mono);
+    font-family: var(--oj-font-family-mono), monospace;
     color: var(--oj-text-color);
 }
 
-@media (width <=768px) {
+@media (width <= 768px) {
     .sidebar {
         gap: var(--oj-spacing-4);
     }
@@ -265,7 +274,7 @@ const isTagSelected = (tag: string) => props.selectedTags.includes(tag);
 
     .card-title {
         margin-bottom: var(--oj-spacing-3);
-        font-size: var(--oj-font-size-md);
+        font-size: var(--oj-font-size-base);
     }
 
     .ring {

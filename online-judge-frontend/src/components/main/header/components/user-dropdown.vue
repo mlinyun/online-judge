@@ -24,7 +24,7 @@ const handleCommand = (command: string) => {
             router.push("/user/profile");
             break;
         case "submissions":
-            router.push("/status?user=me");
+            router.push({ name: "user-submissions" });
             break;
         case "settings":
             router.push("/user/settings");
@@ -158,7 +158,7 @@ const handleLogout = async () => {
     color: var(--oj-text-muted);
 }
 
-@media (width >= 768px) {
+@media (width >=768px) {
     .user-name {
         display: block;
     }
