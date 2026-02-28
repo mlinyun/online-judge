@@ -74,6 +74,8 @@ const DiscussionEditor = () => import("@views/editor/discuss/index.vue");
 const SolutionEditor = () => import("@views/editor/solution/index.vue");
 // 题目编辑器
 const ProblemEditor = () => import("@views/editor/problem/index.vue");
+// 404 页面
+const NotFound = () => import("@views/error/404.vue");
 
 // 定义路由数组
 export const routes: Array<RouteRecordRaw> = [
@@ -116,7 +118,7 @@ export const routes: Array<RouteRecordRaw> = [
                 path: "discussion/editor",
                 name: "discussion-write",
                 component: DiscussionEditor,
-                meta: { title: "写讨论" },
+                meta: { title: "写讨论", requiresAuth: true },
             },
             {
                 path: "discussion/detail/:id",
@@ -134,7 +136,7 @@ export const routes: Array<RouteRecordRaw> = [
                 path: "solution/editor",
                 name: "solution-write",
                 component: SolutionEditor,
-                meta: { title: "写题解" },
+                meta: { title: "写题解", requiresAuth: true },
             },
             {
                 path: "solution/detail/:id",
@@ -152,7 +154,7 @@ export const routes: Array<RouteRecordRaw> = [
                 path: "user/submissions",
                 name: "user-submissions",
                 component: UserSubmissions,
-                meta: { title: "我的提交" },
+                meta: { title: "我的提交", requiresAuth: true },
             },
             {
                 path: "user/rank",
@@ -161,7 +163,7 @@ export const routes: Array<RouteRecordRaw> = [
                 meta: { title: "排行榜" },
             },
             {
-                path: "user/profile",
+                path: "user/profile/:id?",
                 name: "user-profile",
                 component: UserProfile,
                 meta: { title: "个人主页" },
@@ -170,7 +172,7 @@ export const routes: Array<RouteRecordRaw> = [
                 path: "/user/setting",
                 name: "user-setting",
                 component: UserSetting,
-                meta: { title: "个人设置" },
+                meta: { title: "个人设置", requiresAuth: true },
             },
         ],
     },
@@ -294,6 +296,8 @@ export const routes: Array<RouteRecordRaw> = [
     // 404 页面路由
     {
         path: "/:pathMatch(.*)*",
-        redirect: "/",
+        name: "not-found",
+        component: NotFound,
+        meta: { title: "页面未找到" },
     },
 ];

@@ -147,7 +147,7 @@ export const selectUserRank = (
 export const selectUserRankById = (
     userId: Api.User.UserId
 ): Promise<AxiosResponse<Api.User.SelectUserRankValueResponse>> => {
-    return get<Api.User.SelectUserRankValueResult>("/user/rank/info", { UserId: userId });
+    return get<Api.User.SelectUserRankValueResult>("/user/rank/value", { UserId: userId });
 };
 
 /**

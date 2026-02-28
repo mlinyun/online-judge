@@ -245,9 +245,9 @@ declare namespace Api {
         /** 用户修改密码请求参数 */
         interface UpdateUserPasswordParams {
             /** 旧密码 */
-            OldPassword: string;
+            OldPassWord: string;
             /** 新密码 */
-            NewPassword: string;
+            NewPassWord: string;
         }
         /** 用户修改密码响应参数 */
         type UpdateUserPasswordResponse = ApiResponse<Common.OperationResult>;

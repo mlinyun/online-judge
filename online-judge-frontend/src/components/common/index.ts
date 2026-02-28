@@ -12,3 +12,6 @@ export { default as OjComment } from "./comment/index.vue";
 
 // 代码编辑器
 export { default as OjCodeEditor } from "./code-editor/index.vue";
+
+// 饼图
+export { default as OjPieChart } from "./pie-chart/index.vue";
