@@ -331,6 +331,47 @@ defineExpose({
     background: transparent;
 }
 
+/* 行号插件 - 代码块容器背景 */
+.oj-md-editor :deep(.v-md-editor-preview div[class*="v-md-pre-wrapper-"]) {
+    background-color: var(--oj-editor-bg);
+    border: 1px solid var(--oj-glass-border);
+    border-radius: var(--oj-radius-lg);
+}
+
+/* 行号插件 - 容器内的 pre 去除重复边框和圆角 */
+.oj-md-editor :deep(.v-md-editor-preview div[class*="v-md-pre-wrapper-"] pre) {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+}
+
+/* 行号插件 - 行号区域背景色 */
+.oj-md-editor :deep(.v-md-editor-preview div[class*="v-md-pre-wrapper-"].line-numbers-mode::after) {
+    background-color: var(--oj-editor-bg);
+    border-right: 1px solid var(--oj-glass-border);
+    border-radius: var(--oj-radius-lg) 0 0 var(--oj-radius-lg);
+}
+
+/* 行号插件 - 行号文字颜色及对齐 */
+.oj-md-editor :deep(.v-md-editor-preview div[class*="v-md-pre-wrapper-"].line-numbers-mode .line-numbers-wrapper) {
+    padding: 16px 0;
+    color: var(--oj-editor-line-number);
+    font-size: 85%;
+    line-height: 1.45;
+}
+
+/* 行号插件 - 单个行号的 font-size 与代码保持一致 */
+.oj-md-editor :deep(.v-md-editor-preview div[class*="v-md-pre-wrapper-"].line-numbers-mode .line-numbers-wrapper .line-number) {
+    font-size: 1em;
+}
+
+/* hljs 高亮块：移除自身 padding，避免与 pre 的 padding 叠加导致行号错位 */
+.oj-md-editor :deep(.v-md-editor-preview .hljs) {
+    padding: 0;
+    color: var(--oj-text-color);
+    background: transparent;
+}
+
 .oj-md-editor :deep(.v-md-editor-preview blockquote) {
     padding-left: var(--oj-spacing-4);
     color: var(--oj-text-color-secondary);
@@ -349,6 +390,16 @@ defineExpose({
 
 .oj-md-editor :deep(.v-md-editor-preview table th) {
     background: var(--oj-table-header-bg);
+}
+
+/* 覆盖 github 主题默认的浅色行背景，适配深色/浅色主题 */
+.oj-md-editor :deep(.v-md-editor-preview table tr) {
+    background-color: transparent;
+    border-top-color: var(--oj-glass-border);
+}
+
+.oj-md-editor :deep(.v-md-editor-preview table tr:nth-child(2n)) {
+    background-color: var(--oj-table-row-bg);
 }
 
 .oj-md-editor :deep(.v-md-editor-preview table tr:hover) {
