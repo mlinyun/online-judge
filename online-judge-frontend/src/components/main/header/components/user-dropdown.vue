@@ -21,16 +21,16 @@ const userInfo = userStore.getUserInfo;
 const handleCommand = (command: string) => {
     switch (command) {
         case "profile":
-            router.push("/user/profile");
+            router.push({ name: "user-profile" });
             break;
         case "submissions":
             router.push({ name: "user-submissions" });
             break;
-        case "settings":
-            router.push("/user/settings");
+        case "setting":
+            router.push({ name: "user-setting" });
             break;
         case "admin":
-            router.push("/admin");
+            router.push({ name: "admin-dashboard" });
             break;
         case "logout":
             // 调用登出接口
@@ -87,7 +87,7 @@ const handleLogout = async () => {
                     </el-icon>
                     <span>我的提交</span>
                 </el-dropdown-item>
-                <el-dropdown-item command="settings">
+                <el-dropdown-item command="setting">
                     <el-icon>
                         <i-ep-setting />
                     </el-icon>
