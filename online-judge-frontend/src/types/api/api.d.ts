@@ -1004,6 +1004,22 @@ declare namespace Api {
             Language: string;
             /** 代码 */
             Code: string;
+            /** 题目 ID */
+            ProblemId: Problem.ProblemId;
+            /** 题目标题 */
+            ProblemTitle: string;
+            /** 用户 ID */
+            UserId: User.UserId;
+            /** 用户昵称 */
+            UserNickName: string;
+            /** 提交时间 */
+            SubmitTime: Common.DateTimeString;
+            /** 运行时间 */
+            RunTime: string;
+            /** 运行内存 */
+            RunMemory: string;
+            /** 代码长度 */
+            Length: string;
             /** 编译器信息 */
             CompilerInfo: string;
             /** 测试信息 */

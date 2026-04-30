@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import { Document, Search, User } from "@element-plus/icons-vue";
 
 import { selectStatusRecordList } from "@/api/status";
@@ -16,6 +17,8 @@ type StatusTagType = "success" | "warning" | "danger" | "info";
 
 const loading = ref(false);
 const loadError = ref("");
+
+const router = useRouter();
 
 let debounceTimer: number | undefined;
 const debounce = (fn: () => void, delay = 300) => {
@@ -159,6 +162,22 @@ const handleRowClick = (row: StatusRow) => {
     activeStatusRecordId.value = row._id;
     detailDialogOpen.value = true;
 };
+
+const handleGoDetail = (row: StatusRow) => {
+    void router.push({
+        name: "status-record-detail",
+        params: { id: row._id },
+        query: {
+            problemId: row.ProblemId,
+            problemTitle: row.ProblemTitle,
+            userId: row.UserId,
+            userNickName: row.UserNickName,
+            submitTime: row.SubmitTime,
+            runTime: row.RunTime,
+            runMemory: row.RunMemory,
+        },
+    });
+};
 </script>
 
 <template>
@@ -166,17 +185,36 @@ const handleRowClick = (row: StatusRow) => {
         <!-- Toolbar -->
         <div class="toolbar oj-glass-panel">
             <div class="toolbar-left">
-                <el-input v-model="searchUserId" class="toolbar-field" :prefix-icon="User" clearable
-                    placeholder="用户ID (UserId)" />
+                <el-input
+                    v-model="searchUserId"
+                    class="toolbar-field"
+                    :prefix-icon="User"
+                    clearable
+                    placeholder="用户ID (UserId)"
+                />
 
-                <el-input v-model="searchProblemId" class="toolbar-field" :prefix-icon="Document" clearable
-                    placeholder="题目ID (ProblemId)" />
+                <el-input
+                    v-model="searchProblemId"
+                    class="toolbar-field"
+                    :prefix-icon="Document"
+                    clearable
+                    placeholder="题目ID (ProblemId)"
+                />
 
-                <el-input v-model="searchProblemTitle" class="toolbar-field" :prefix-icon="Search" clearable
-                    placeholder="题目标题 (ProblemTitle)" />
+                <el-input
+                    v-model="searchProblemTitle"
+                    class="toolbar-field"
+                    :prefix-icon="Search"
+                    clearable
+                    placeholder="题目标题 (ProblemTitle)"
+                />
 
-                <el-select v-model="searchStatus" class="toolbar-field toolbar-select" placeholder="判题状态 (Status)"
-                    popper-class="oj-status-record-popper">
+                <el-select
+                    v-model="searchStatus"
+                    class="toolbar-field toolbar-select"
+                    placeholder="判题状态 (Status)"
+                    popper-class="oj-status-record-popper"
+                >
                     <el-option label="全部" value="all" />
                     <el-option label="Pending" :value="0" />
                     <el-option label="Compile Error" :value="1" />
@@ -188,8 +226,12 @@ const handleRowClick = (row: StatusRow) => {
                     <el-option label="System Error" :value="7" />
                 </el-select>
 
-                <el-select v-model="searchLanguage" class="toolbar-field toolbar-select" placeholder="语言 (Language)"
-                    popper-class="oj-status-record-popper">
+                <el-select
+                    v-model="searchLanguage"
+                    class="toolbar-field toolbar-select"
+                    placeholder="语言 (Language)"
+                    popper-class="oj-status-record-popper"
+                >
                     <el-option label="全部" value="all" />
                     <el-option label="C" value="C" />
                     <el-option label="C++" value="C++" />
@@ -219,15 +261,22 @@ const handleRowClick = (row: StatusRow) => {
                 </template>
 
                 <template #default>
-                    <el-empty v-if="!records.length && !loadError" :description="hasSearch ? '暂无匹配的测评记录' : '暂无测评记录'" />
+                    <el-empty
+                        v-if="!records.length && !loadError"
+                        :description="hasSearch ? '暂无匹配的测评记录' : '暂无测评记录'"
+                    />
 
                     <el-empty v-else-if="!records.length && loadError" :description="loadError">
                         <el-button type="primary" plain @click="fetchRecords">重试</el-button>
                     </el-empty>
 
                     <div v-else>
-                        <el-table :data="records" class="record-table" :table-layout="tableLayout"
-                            @row-click="handleRowClick">
+                        <el-table
+                            :data="records"
+                            class="record-table"
+                            :table-layout="tableLayout"
+                            @row-click="handleRowClick"
+                        >
                             <el-table-column label="记录ID" min-width="180">
                                 <template #default="scope">
                                     <span class="mono id-text" :title="String(scope.row._id)">{{ scope.row._id }}</span>
@@ -256,10 +305,26 @@ const handleRowClick = (row: StatusRow) => {
 
                             <el-table-column label="状态" width="160" align="center">
                                 <template #default="scope">
-                                    <el-tag size="small" :type="getStatusTagType(scope.row.Status)"
-                                        :title="`Status=${scope.row.Status}`">
+                                    <el-tag
+                                        size="small"
+                                        :type="getStatusTagType(scope.row.Status)"
+                                        :title="`Status=${scope.row.Status}`"
+                                    >
                                         {{ getStatusTitle(scope.row.Status) }}
                                     </el-tag>
+                                </template>
+                            </el-table-column>
+
+                            <el-table-column label="操作" width="120" align="center">
+                                <template #default="scope">
+                                    <el-button
+                                        size="small"
+                                        type="primary"
+                                        plain
+                                        @click.stop="handleGoDetail(scope.row)"
+                                    >
+                                        详情页
+                                    </el-button>
                                 </template>
                             </el-table-column>
 
@@ -291,10 +356,15 @@ const handleRowClick = (row: StatusRow) => {
                         </el-table>
 
                         <div class="pagination-bar">
-                            <el-pagination v-model:current-page="page" v-model:page-size="pageSize"
-                                :page-sizes="[10, 20, 40, 60]" :total="total"
-                                layout="total, sizes, prev, pager, next, jumper" @current-change="handlePageChange"
-                                @size-change="handleSizeChange" />
+                            <el-pagination
+                                v-model:current-page="page"
+                                v-model:page-size="pageSize"
+                                :page-sizes="[10, 20, 40, 60]"
+                                :total="total"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                @current-change="handlePageChange"
+                                @size-change="handleSizeChange"
+                            />
                         </div>
                     </div>
                 </template>

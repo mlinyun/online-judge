@@ -104,6 +104,22 @@ const handleRowClick = (row: StatusRow) => {
     detailDialogOpen.value = true;
 };
 
+const handleGoDetail = (row: StatusRow) => {
+    void router.push({
+        name: "status-record-detail",
+        params: { id: row._id },
+        query: {
+            problemId: row.ProblemId,
+            problemTitle: row.ProblemTitle,
+            userId: row.UserId,
+            userNickName: row.UserNickName,
+            submitTime: row.SubmitTime,
+            runTime: row.RunTime,
+            runMemory: row.RunMemory,
+        },
+    });
+};
+
 const handleGoProblem = (problemId: Api.Problem.ProblemId) => {
     void router.push({ name: "problem-detail", params: { id: problemId } });
 };
@@ -172,8 +188,15 @@ onMounted(() => {
             </el-skeleton>
 
             <div v-else class="table-wrap">
-                <el-table class="record-table" :data="list" border stripe table-layout="fixed" height="100%"
-                    @row-click="handleRowClick">
+                <el-table
+                    class="record-table"
+                    :data="list"
+                    border
+                    stripe
+                    table-layout="fixed"
+                    height="100%"
+                    @row-click="handleRowClick"
+                >
                     <el-table-column prop="_id" label="记录ID" width="220">
                         <template #default="scope">
                             <span class="mono">{{ scope.row._id }}</span>
@@ -186,8 +209,12 @@ onMounted(() => {
                                 <el-icon class="problem-ic">
                                     <Document />
                                 </el-icon>
-                                <button class="problem-btn" type="button" :title="scope.row.ProblemTitle"
-                                    @click.stop="handleGoProblem(scope.row.ProblemId)">
+                                <button
+                                    class="problem-btn"
+                                    type="button"
+                                    :title="scope.row.ProblemTitle"
+                                    @click.stop="handleGoProblem(scope.row.ProblemId)"
+                                >
                                     {{ scope.row.ProblemTitle }}
                                 </button>
                             </div>
@@ -212,11 +239,25 @@ onMounted(() => {
                             <span class="time">{{ DateUtils.formatDateTime(scope.row.SubmitTime) }}</span>
                         </template>
                     </el-table-column>
+
+                    <el-table-column label="操作" width="120" align="center">
+                        <template #default="scope">
+                            <el-button size="small" type="primary" plain @click.stop="handleGoDetail(scope.row)">
+                                详情页
+                            </el-button>
+                        </template>
+                    </el-table-column>
                 </el-table>
 
                 <div class="pager">
-                    <el-pagination background layout="prev, pager, next" :page-size="pageSize" :total="total"
-                        :current-page="page" @current-change="(p: number) => (page = p)" />
+                    <el-pagination
+                        background
+                        layout="prev, pager, next"
+                        :page-size="pageSize"
+                        :total="total"
+                        :current-page="page"
+                        @current-change="(p: number) => (page = p)"
+                    />
                 </div>
             </div>
         </div>

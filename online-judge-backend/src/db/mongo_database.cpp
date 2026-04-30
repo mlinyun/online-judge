@@ -3470,7 +3470,8 @@ int64_t mystoll(string num) {
  * @name SelectStatusRecord
  * @brief 查询指定测评记录的详细信息
  * @param queryjson Json(StatusRecordId)
- * @return Json(success, code, message, data(Status, Language, Code, CompilerInfo, TestInfo))
+ * @return Json(success, code, message, data(Status, Language, Code, CompilerInfo, TestInfo, ProblemId,
+ * ProblemTitle, UserId, UserNickName, SubmitTime, RunTime, RunMemory, Length))
  */
 Json::Value MoDB::SelectStatusRecord(Json::Value &queryjson) {
     try {
@@ -3485,7 +3486,9 @@ Json::Value MoDB::SelectStatusRecord(Json::Value &queryjson) {
         mongocxx::pipeline pipe;
         bsoncxx::builder::stream::document document{};
         pipe.match({make_document(kvp("_id", statusrecordid))});
-        document << "Status" << 1 << "Language" << 1 << "Code" << 1 << "CompilerInfo" << 1 << "TestInfo" << 1;
+        document << "Status" << 1 << "Language" << 1 << "Code" << 1 << "CompilerInfo" << 1 << "TestInfo" << 1
+                 << "ProblemId" << 1 << "ProblemTitle" << 1 << "UserId" << 1 << "UserNickName" << 1 << "SubmitTime" << 1
+                 << "RunTime" << 1 << "RunMemory" << 1 << "Length" << 1;
         pipe.project(document.view());
 
         // 查询测评记录

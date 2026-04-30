@@ -31,6 +31,8 @@ const SolutionList = () => import("@views/solution/list/index.vue");
 const SolutionDetail = () => import("@views/solution/detail/index.vue");
 // 测评状态页
 const StatusRecord = () => import("@views/status-record/index.vue");
+// 测评详情页
+const StatusRecordDetail = () => import("@views/status-record/detail/index.vue");
 // 用户排名页
 const UserRank = () => import("@views/user/rank/index.vue");
 // 用户资料页
@@ -149,6 +151,12 @@ export const routes: Array<RouteRecordRaw> = [
                 name: "status-record",
                 component: StatusRecord,
                 meta: { title: "测评状态" },
+            },
+            {
+                path: "status-record/detail/:id",
+                name: "status-record-detail",
+                component: StatusRecordDetail,
+                meta: { title: "提交详情" },
             },
             {
                 path: "user/submissions",
