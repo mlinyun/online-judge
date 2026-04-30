@@ -11,10 +11,10 @@ defineOptions({ name: "MainFooter" });
 const currentYear = new Date().getFullYear();
 
 const links = [
-    { name: "关于我们", href: "/about" },
-    { name: "帮助中心", href: "/help" },
-    { name: "隐私政策", href: "/privacy" },
-    { name: "服务条款", href: "/terms" },
+    { name: "关于我们", to: "/about" },
+    { name: "帮助中心", to: "/help" },
+    { name: "隐私政策", to: "/privacy" },
+    { name: "服务条款", to: "/terms" },
 ];
 </script>
 
@@ -34,9 +34,9 @@ const links = [
 
                 <!-- 链接 -->
                 <div class="footer-links">
-                    <a v-for="link in links" :key="link.name" :href="link.href" class="footer-link">
+                    <router-link v-for="link in links" :key="link.name" :to="link.to" class="footer-link">
                         {{ link.name }}
-                    </a>
+                    </router-link>
                 </div>
             </div>
 

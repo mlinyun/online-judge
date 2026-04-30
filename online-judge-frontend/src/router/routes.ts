@@ -39,6 +39,11 @@ const UserRank = () => import("@views/user/rank/index.vue");
 const UserProfile = () => import("@views/user/profile/index.vue");
 // 个人设置页
 const UserSetting = () => import("@views/user/setting/index.vue");
+// 静态页面
+const AboutView = () => import("@views/static/about/index.vue");
+const HelpView = () => import("@views/static/help/index.vue");
+const PrivacyView = () => import("@views/static/privacy/index.vue");
+const TermsView = () => import("@views/static/terms/index.vue");
 
 // 认证相关页面组件将使用路由懒加载，在路由配置中直接引入
 // 用户登录页
@@ -181,6 +186,30 @@ export const routes: Array<RouteRecordRaw> = [
                 name: "user-setting",
                 component: UserSetting,
                 meta: { title: "个人设置", requiresAuth: true },
+            },
+            {
+                path: "about",
+                name: "about",
+                component: AboutView,
+                meta: { title: "关于我们" },
+            },
+            {
+                path: "help",
+                name: "help",
+                component: HelpView,
+                meta: { title: "帮助中心" },
+            },
+            {
+                path: "privacy",
+                name: "privacy",
+                component: PrivacyView,
+                meta: { title: "隐私政策" },
+            },
+            {
+                path: "terms",
+                name: "terms",
+                component: TermsView,
+                meta: { title: "服务条款" },
             },
         ],
     },
